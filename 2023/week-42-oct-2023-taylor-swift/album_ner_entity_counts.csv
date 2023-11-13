@@ -1,0 +1,700 @@
+Album,Track_Name,Album_Release,Entity_Type,Entity,Count
+Taylor Swift,Tim McGraw,,GPE,Georgia,2
+Taylor Swift,Tim McGraw,,ORG,Chevy,1
+Taylor Swift,Tim McGraw,,PERSON,Tim McGraw,6
+Taylor Swift,Tim McGraw,,PERSON,God,1
+Taylor Swift,Tim McGraw,,DATE,September,1
+Taylor Swift,Tim McGraw,,DATE,a month of,1
+Taylor Swift,Tim McGraw,,DATE,three summers back,1
+Taylor Swift,Tim McGraw,,ORDINAL,first,2
+Taylor Swift,Picture To Burn,,NORP,redneck,3
+Taylor Swift,Teardrops On My Guitar,,PERSON,Drew,4
+Taylor Swift,A Place In This World,,DATE,tomorrow,1
+Taylor Swift,The Outside,,ORDINAL,first,1
+Taylor Swift,Stay Beautiful,,PERSON,Corey,2
+Taylor Swift,Should've Said No,,DATE,Yesterday,1
+Taylor Swift,Should've Said No,,CARDINAL,one,2
+Taylor Swift,Mary's Song (Oh My My My),,DATE,seven,1
+Taylor Swift,Mary's Song (Oh My My My),,DATE,nine,1
+Taylor Swift,Mary's Song (Oh My My My),,DATE,sixteen,1
+Taylor Swift,Mary's Song (Oh My My My),,DATE,A few years,1
+Taylor Swift,Mary's Song (Oh My My My),,DATE,so many years before,1
+Taylor Swift,Mary's Song (Oh My My My),,DATE,eighty-seven,1
+Taylor Swift,Mary's Song (Oh My My My),,DATE,eighty-nine,1
+Taylor Swift,Mary's Song (Oh My My My),,CARDINAL,two,3
+Taylor Swift,Mary's Song (Oh My My My),,CARDINAL,one,1
+Taylor Swift,Mary's Song (Oh My My My),,QUANTITY,one,1
+Taylor Swift,Mary's Song (Oh My My My),,TIME,Two A.M.,1
+Taylor Swift,Mary's Song (Oh My My My),,ORDINAL,first,1
+Taylor Swift,Our Song,,CARDINAL,one,1
+Taylor Swift,Our Song,,ORDINAL,first,3
+Taylor Swift,Our Song,,PERSON,God,3
+Taylor Swift,Our Song,,DATE,that day,1
+Taylor Swift,I'm Only Me When I'm With You,,TIME,Friday night beneath the stars,1
+Taylor Swift,I'm Only Me When I'm With You,,CARDINAL,half,6
+Taylor Swift,A Perfectly Good Heart,,ORDINAL,first,4
+Taylor Swift,Teardrops On My Guitar (Pop Version),,PERSON,Drew,4
+Fearless,Fearless,,ORDINAL,first,5
+Fearless,Fearless,,CARDINAL,one,1
+Fearless,Fifteen,,ORDINAL,first,4
+Fearless,Fifteen,,DATE,the next four years,1
+Fearless,Fifteen,,DATE,fifteen,7
+Fearless,Fifteen,,CARDINAL,one,1
+Fearless,Fifteen,,CARDINAL,ten,1
+Fearless,Fifteen,,CARDINAL,Fifteen,1
+Fearless,Fifteen,,CARDINAL,fifteen,1
+Fearless,Fifteen,,PERSON,Abigail,2
+Fearless,Love Story,,ORDINAL,first,2
+Fearless,Love Story,,PERSON,Romeo,6
+Fearless,Love Story,,PERSON,Juliet,3
+Fearless,Hey Stephen,,PERSON,Stephen,5
+Fearless,Hey Stephen,,TIME,tonight,1
+Fearless,Hey Stephen,,CARDINAL,fifty,1
+Fearless,White Horse,,GPE,Hollywood,2
+Fearless,You Belong With Me,,DATE,Tuesday,1
+Fearless,Breathe,,TIME,2 A.M,2
+Fearless,Tell Me Why,,TIME,last night,3
+Fearless,The Way I Loved You,,TIME,tonight,1
+Fearless,The Way I Loved You,,TIME,2AM,3
+Fearless,Forever & Always,,DATE,Tuesday,1
+Fearless,Forever & Always,,TIME,one second,1
+Fearless,The Best Day,,DATE,five years old,1
+Fearless,The Best Day,,DATE,thirteen,1
+Fearless,The Best Day,,PERSON,Snow White's,1
+Fearless,The Best Day,,CARDINAL,three,1
+Fearless,The Best Day,,CARDINAL,seven,1
+Fearless,Change,,TIME,Tonight,1
+Fearless,Change,,DATE,all these years,1
+Fearless,Untouchable,,CARDINAL,million,6
+Fearless,Untouchable,,CARDINAL,half,1
+Fearless,Forever & Always (Piano Version),,DATE,Tuesday,1
+Fearless,Forever & Always (Piano Version),,TIME,one second,1
+Fearless,SuperStar,,ORDINAL,first,1
+Fearless,SuperStar,,PERSON,Superstar,1
+Fearless,The Other Side Of The Door,,CARDINAL,hundred,1
+Fearless (Taylor's Version),Fearless (Taylor's Version),,ORDINAL,first,5
+Fearless (Taylor's Version),Fearless (Taylor's Version),,CARDINAL,one,1
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,ORDINAL,first,4
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,DATE,the next four years,1
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,DATE,fifteen,7
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,CARDINAL,one,1
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,CARDINAL,ten,1
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,CARDINAL,Fifteen,1
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,CARDINAL,fifteen,1
+Fearless (Taylor's Version),Fifteen (Taylor's Version),,PERSON,Abigail,2
+Fearless (Taylor's Version),Love Story (Taylor's Version),,ORDINAL,first,2
+Fearless (Taylor's Version),Love Story (Taylor's Version),,PERSON,Romeo,6
+Fearless (Taylor's Version),Love Story (Taylor's Version),,PERSON,Juliet,3
+Fearless (Taylor's Version),Hey Stephen (Taylor's Version),,PERSON,Stephen,5
+Fearless (Taylor's Version),Hey Stephen (Taylor's Version),,TIME,tonight,1
+Fearless (Taylor's Version),Hey Stephen (Taylor's Version),,CARDINAL,fifty,1
+Fearless (Taylor's Version),White Horse (Taylor's Version),,GPE,Hollywood,2
+Fearless (Taylor's Version),You Belong With Me (Taylor's Version),,DATE,Tuesday,1
+Fearless (Taylor's Version),Breathe (Taylor's Version),,TIME,2 A.M.,2
+Fearless (Taylor's Version),Tell Me Why (Taylor's Version),,TIME,last night,3
+Fearless (Taylor's Version),The Way I Loved You (Taylor's Version),,TIME,tonight,1
+Fearless (Taylor's Version),The Way I Loved You (Taylor's Version),,TIME,2AM,3
+Fearless (Taylor's Version),Forever & Always (Taylor's Version),,DATE,Tuesday,1
+Fearless (Taylor's Version),Forever & Always (Taylor's Version),,TIME,one second,1
+Fearless (Taylor's Version),The Best Day (Taylor's Version),,DATE,five years old,1
+Fearless (Taylor's Version),The Best Day (Taylor's Version),,DATE,thirteen,1
+Fearless (Taylor's Version),The Best Day (Taylor's Version),,PERSON,Snow White's,1
+Fearless (Taylor's Version),The Best Day (Taylor's Version),,CARDINAL,three,1
+Fearless (Taylor's Version),The Best Day (Taylor's Version),,CARDINAL,seven,1
+Fearless (Taylor's Version),Change (Taylor's Version),,TIME,Tonight,1
+Fearless (Taylor's Version),Change (Taylor's Version),,DATE,all these years,1
+Fearless (Taylor's Version),Untouchable (Taylor's Version),,CARDINAL,million,6
+Fearless (Taylor's Version),Untouchable (Taylor's Version),,CARDINAL,half,1
+Fearless (Taylor's Version),Forever & Always (Piano Version) [Taylor's Version],,DATE,Tuesday,1
+Fearless (Taylor's Version),Forever & Always (Piano Version) [Taylor's Version],,TIME,one second,1
+Fearless (Taylor's Version),SuperStar (Taylor's Version),,ORDINAL,first,1
+Fearless (Taylor's Version),SuperStar (Taylor's Version),,PERSON,Superstar,1
+Fearless (Taylor's Version),The Other Side Of The Door (Taylor's Version),,CARDINAL,hundred,1
+Fearless (Taylor's Version),Today Was A Fairytale (Taylor's Version),,DATE,Today,16
+Fearless (Taylor's Version),Today Was A Fairytale (Taylor's Version),,CARDINAL,six,1
+Fearless (Taylor's Version),You All Over Me (Taylor's Version) [From The Vault],,DATE,The best and worst day of June,1
+Fearless (Taylor's Version),Mr. Perfectly Fine (Taylor's Version) [From The Vault],,PERSON,Miss Misery,3
+Fearless (Taylor's Version),Mr. Perfectly Fine (Taylor's Version) [From The Vault],,PERSON,Gon,1
+Speak Now,Mine,,ORDINAL,first,4
+Speak Now,Mine,,TIME,2:30 AM,1
+Speak Now,Back To December,,DATE,December,10
+Speak Now,Back To December,,ORDINAL,first,1
+Speak Now,Dear John,,PERSON,John,4
+Speak Now,Dear John,,DATE,nineteen,1
+Speak Now,Mean,,CARDINAL,one,1
+Speak Now,Mean,,DATE,years from now,1
+Speak Now,Never Grow Up,,TIME,tonight,1
+Speak Now,Never Grow Up,,DATE,fourteen,1
+Speak Now,Enchanted,,TIME,This night,5
+Speak Now,Enchanted,,TIME,2AM,1
+Speak Now,Enchanted,,ORDINAL,first,1
+Speak Now,Innocent,,DATE,32,2
+Speak Now,Innocent,,DATE,Today,1
+Speak Now,Last Kiss,,TIME,1:58,1
+Speak Now,Last Kiss,,DATE,That July 9th,1
+Speak Now,If This Was A Movie,,TIME,Last night,1
+Speak Now,If This Was A Movie,,DATE,Six months,1
+Speak Now,If This Was A Movie,,CARDINAL,thousand,1
+Speak Now,Superman,,CARDINAL,one,1
+Speak Now,Superman,,ORDINAL,first,2
+Red,State Of Grace,,CARDINAL,four,1
+Red,State Of Grace,,NORP,Mosaic,1
+Red,State Of Grace,,DATE,the golden age,1
+Red,Red,,PRODUCT,Maserati,2
+Red,Red,,PERSON,Red,1
+Red,Treacherous,,CARDINAL,Two,2
+Red,All Too Well,,DATE,that very first week,1
+Red,All Too Well,,CARDINAL,one,1
+Red,22,,TIME,midnight,1
+Red,22,,TIME,Tonight,2
+Red,22,,CARDINAL,22,11
+Red,22,,CARDINAL,one,8
+Red,22,,PERSON,Taylor Swift,1
+Red,22,,DATE,22,1
+Red,I Almost Do,,DATE,a long hard week,2
+Red,I Almost Do,,PERSON,babe,1
+Red,We Are Never Ever Getting Back Together,,ORDINAL,first,1
+Red,We Are Never Ever Getting Back Together,,DATE,a month,1
+Red,We Are Never Ever Getting Back Together,,DATE,a day,1
+Red,We Are Never Ever Getting Back Together,,TIME,last night,1
+Red,We Are Never Ever Getting Back Together,,TIME,tonight,1
+Red,Stay Stay Stay,,TIME,last night,1
+Red,Stay Stay Stay,,TIME,This morning,1
+Red,Holy Ground,,ORDINAL,first,2
+Red,Holy Ground,,GPE,New York,1
+Red,Holy Ground,,DATE,the first day,1
+Red,Holy Ground,,TIME,Tonight,4
+Red,The Lucky One,,DATE,sixties,1
+Red,The Lucky One,,DATE,a few years later,1
+Red,The Lucky One,,LOC,Riviera,1
+Red,The Lucky One,,FAC,Madison Square,1
+Red,Everything Has Changed,,TIME,this morning,1
+Red,Everything Has Changed,,TIME,18 hours ago,1
+Red,Starlight,,PERSON,Bobby,1
+Red,Starlight,,DATE,summer of '45,1
+Red,Starlight,,DATE,17,1
+Red,Starlight,,TIME,late one night,1
+Red,Starlight,,QUANTITY,ten,1
+Red,Begin Again,,DATE,the last eight months,3
+Red,Begin Again,,DATE,Wednesday,4
+Red,Begin Again,,DATE,every single Christmas,1
+Red,Begin Again,,CARDINAL,one,1
+Red,Begin Again,,PERSON,James Taylor,1
+Red,Begin Again,,ORDINAL,first,1
+Red,The Moment I Knew,,CARDINAL,million,1
+Red,The Moment I Knew,,CARDINAL,one,3
+Red,The Moment I Knew,,DATE,Christmas,1
+Red,Come Back...Be Here,,TIME,4 AM,1
+Red,Come Back...Be Here,,DATE,the second day,1
+Red,Come Back...Be Here,,DATE,today,3
+Red,Come Back...Be Here,,CARDINAL,One,1
+Red,Come Back...Be Here,,GPE,New York,3
+Red,Come Back...Be Here,,GPE,London,2
+Red,Treacherous (Original Demo Recording),,CARDINAL,Two,2
+Red,Red (Original Demo Recording),,PRODUCT,Maserati,2
+Red,State Of Grace (Acoustic Version),,CARDINAL,four,1
+Red,State Of Grace (Acoustic Version),,NORP,Mosaic,1
+Red (Taylor's Version),State Of Grace (Taylor's Version),,CARDINAL,four,1
+Red (Taylor's Version),State Of Grace (Taylor's Version),,NORP,Mosaic,1
+Red (Taylor's Version),State Of Grace (Taylor's Version),,DATE,the golden age,1
+Red (Taylor's Version),Red (Taylor's Version),,PRODUCT,Maserati,2
+Red (Taylor's Version),Treacherous (Taylor's Version),,CARDINAL,Two,2
+Red (Taylor's Version),All Too Well (Taylor's Version),,DATE,that very first week,1
+Red (Taylor's Version),All Too Well (Taylor's Version),,CARDINAL,one,1
+Red (Taylor's Version),22 (Taylor's Version),,TIME,midnight,1
+Red (Taylor's Version),22 (Taylor's Version),,TIME,Tonight,2
+Red (Taylor's Version),22 (Taylor's Version),,DATE,twenty-two,4
+Red (Taylor's Version),22 (Taylor's Version),,DATE,Twenty-two,1
+Red (Taylor's Version),22 (Taylor's Version),,CARDINAL,Twenty-two,12
+Red (Taylor's Version),22 (Taylor's Version),,CARDINAL,one,8
+Red (Taylor's Version),22 (Taylor's Version),,PERSON,Taylor Swift,1
+Red (Taylor's Version),I Almost Do (Taylor's Version),,DATE,a long hard week,2
+Red (Taylor's Version),I Almost Do (Taylor's Version),,PERSON,babe,1
+Red (Taylor's Version),We Are Never Ever Getting Back Together (Taylor's Version),,ORDINAL,first,1
+Red (Taylor's Version),We Are Never Ever Getting Back Together (Taylor's Version),,DATE,a month,1
+Red (Taylor's Version),We Are Never Ever Getting Back Together (Taylor's Version),,DATE,a day,1
+Red (Taylor's Version),We Are Never Ever Getting Back Together (Taylor's Version),,TIME,last night,1
+Red (Taylor's Version),We Are Never Ever Getting Back Together (Taylor's Version),,TIME,tonight,1
+Red (Taylor's Version),Stay Stay Stay (Taylor's Version),,TIME,last night,1
+Red (Taylor's Version),Stay Stay Stay (Taylor's Version),,TIME,This morning,1
+Red (Taylor's Version),Holy Ground (Taylor's Version),,ORDINAL,first,2
+Red (Taylor's Version),Holy Ground (Taylor's Version),,GPE,New York,1
+Red (Taylor's Version),Holy Ground (Taylor's Version),,DATE,the first day,1
+Red (Taylor's Version),Holy Ground (Taylor's Version),,TIME,Tonight,4
+Red (Taylor's Version),The Lucky One (Taylor's Version),,DATE,sixties,1
+Red (Taylor's Version),The Lucky One (Taylor's Version),,DATE,a few years later,1
+Red (Taylor's Version),The Lucky One (Taylor's Version),,LOC,Riviera,1
+Red (Taylor's Version),The Lucky One (Taylor's Version),,FAC,Madison Square,1
+Red (Taylor's Version),Everything Has Changed (Taylor's Version),,TIME,this morning,1
+Red (Taylor's Version),Everything Has Changed (Taylor's Version),,TIME,18 hours ago,1
+Red (Taylor's Version),Starlight (Taylor's Version),,PERSON,Bobby,1
+Red (Taylor's Version),Starlight (Taylor's Version),,DATE,summer of '45,1
+Red (Taylor's Version),Starlight (Taylor's Version),,DATE,seventeen,1
+Red (Taylor's Version),Starlight (Taylor's Version),,TIME,one night,1
+Red (Taylor's Version),Starlight (Taylor's Version),,QUANTITY,ten,1
+Red (Taylor's Version),Begin Again (Taylor's Version),,DATE,the last eight months,3
+Red (Taylor's Version),Begin Again (Taylor's Version),,DATE,Wednesday,4
+Red (Taylor's Version),Begin Again (Taylor's Version),,DATE,every single Christmas,1
+Red (Taylor's Version),Begin Again (Taylor's Version),,CARDINAL,one,1
+Red (Taylor's Version),Begin Again (Taylor's Version),,PERSON,James Taylor,1
+Red (Taylor's Version),Begin Again (Taylor's Version),,ORDINAL,first,1
+Red (Taylor's Version),The Moment I Knew (Taylor's Version),,CARDINAL,million,1
+Red (Taylor's Version),The Moment I Knew (Taylor's Version),,CARDINAL,one,3
+Red (Taylor's Version),The Moment I Knew (Taylor's Version),,DATE,Christmas,1
+Red (Taylor's Version),Come Back...Be Here (Taylor's Version),,TIME,4 AM,1
+Red (Taylor's Version),Come Back...Be Here (Taylor's Version),,DATE,the second day,1
+Red (Taylor's Version),Come Back...Be Here (Taylor's Version),,DATE,today,3
+Red (Taylor's Version),Come Back...Be Here (Taylor's Version),,CARDINAL,One,1
+Red (Taylor's Version),Come Back...Be Here (Taylor's Version),,GPE,New York,3
+Red (Taylor's Version),Come Back...Be Here (Taylor's Version),,GPE,London,2
+Red (Taylor's Version),State Of Grace (Acoustic Version) [Taylor's Version],,CARDINAL,four,1
+Red (Taylor's Version),State Of Grace (Acoustic Version) [Taylor's Version],,NORP,Mosaic,1
+Red (Taylor's Version),Ronan (Taylor's Version),,DATE,four years,3
+Red (Taylor's Version),Ronan (Taylor's Version),,DATE,Halloween,1
+Red (Taylor's Version),Ronan (Taylor's Version),,DATE,the last day,1
+Red (Taylor's Version),Ronan (Taylor's Version),,CARDINAL,one,1
+Red (Taylor's Version),Better Man (Taylor's Version) [From The Vault],,TIME,4 AM,1
+Red (Taylor's Version),Better Man (Taylor's Version) [From The Vault],,TIME,any given minute,1
+Red (Taylor's Version),Nothing New (Taylor's Version) [From The Vault],,TIME,tonight,2
+Red (Taylor's Version),Nothing New (Taylor's Version) [From The Vault],,DATE,eighteen,3
+Red (Taylor's Version),Nothing New (Taylor's Version) [From The Vault],,DATE,twenty-two,3
+Red (Taylor's Version),Nothing New (Taylor's Version) [From The Vault],,DATE,seventeen,1
+Red (Taylor's Version),Babe (Taylor's Version) [From The Vault],,PERSON,babe,1
+Red (Taylor's Version),Message In A Bottle (Taylor's Version) [From The Vault],,GPE,London,1
+Red (Taylor's Version),I Bet You Think About Me (Taylor's Version) [From The Vault],,TIME,3 AM,1
+Red (Taylor's Version),I Bet You Think About Me (Taylor's Version) [From The Vault],,GPE,Beverly Hills,1
+Red (Taylor's Version),I Bet You Think About Me (Taylor's Version) [From The Vault],,PERSON,Superior,1
+Red (Taylor's Version),I Bet You Think About Me (Taylor's Version) [From The Vault],,MONEY,million-dollar,1
+Red (Taylor's Version),Forever Winter (Taylor's Version) [From The Vault],,TIME,3 AM,2
+Red (Taylor's Version),Forever Winter (Taylor's Version) [From The Vault],,TIME,5 AM,2
+Red (Taylor's Version),Forever Winter (Taylor's Version) [From The Vault],,CARDINAL,one,1
+Red (Taylor's Version),Run (Taylor's Version) [From The Vault],,CARDINAL,One,1
+Red (Taylor's Version),Run (Taylor's Version) [From The Vault],,CARDINAL,two,1
+Red (Taylor's Version),Run (Taylor's Version) [From The Vault],,CARDINAL,three,1
+Red (Taylor's Version),Run (Taylor's Version) [From The Vault],,CARDINAL,four,1
+Red (Taylor's Version),Run (Taylor's Version) [From The Vault],,CARDINAL,hundred,1
+Red (Taylor's Version),Run (Taylor's Version) [From The Vault],,PERSON,Darling,3
+Red (Taylor's Version),The Very First Night (Taylor's Version) [From The Vault],,ORDINAL,first,5
+Red (Taylor's Version),The Very First Night (Taylor's Version) [From The Vault],,ORG,Polaroid,1
+Red (Taylor's Version),The Very First Night (Taylor's Version) [From The Vault],,GPE,L.A,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,DATE,three months,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,DATE,twenty-one,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,DATE,that very first week,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,TIME,late-night,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,CARDINAL,one,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,CARDINAL,half,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,GPE,Brooklyn,1
+Red (Taylor's Version),All Too Well (10 Minute Version) [Taylor's Version] [From The Vault],,ORDINAL,first,1
+1989,Welcome To New York,,GPE,New York,30
+1989,Welcome To New York,,ORDINAL,first,1
+1989,Blank Space,,DATE,a month,1
+1989,Blank Space,,ORDINAL,second,1
+1989,Style,,WORK_OF_ART,Midnight,1
+1989,Style,,PERSON,James Dean,3
+1989,Out Of The Woods,,WORK_OF_ART,Polaroid,1
+1989,Out Of The Woods,,DATE,Last December,2
+1989,Out Of The Woods,,CARDINAL,Two,1
+1989,Out Of The Woods,,CARDINAL,Twenty,1
+1989,I Wish You Would,,TIME,2AM,2
+1989,Wildest Dreams,,CARDINAL,one,1
+1989,How You Get The Girl,,DATE,a long six months,1
+1989,Clean,,DATE,months,2
+1989,Clean,,DATE,Ten months,1
+1989,Clean,,DATE,Ten months older,1
+1989,Wonderland,,CARDINAL,one,1
+1989,Wonderland,,WORK_OF_ART,Wonderland,8
+1989,Wonderland,,NORP,Cheshire,1
+1989,Wonderland,,LOC,Wonderland,1
+1989,You Are In Love,,CARDINAL,One,2
+1989,You Are In Love,,CARDINAL,one,1
+1989,You Are In Love,,CARDINAL,two,1
+1989,You Are In Love,,TIME,midnight,1
+1989,You Are In Love,,TIME,Morning,1
+1989,You Are In Love,,TIME,One night,1
+1989,You Are In Love,,DATE,Sunday,1
+reputation,...Ready For It?,,ORDINAL,first,2
+reputation,...Ready For It?,,PERSON,Burton,1
+reputation,...Ready For It?,,PERSON,Taylor,1
+reputation,End Game,,ORDINAL,first,7
+reputation,End Game,,ORDINAL,First,2
+reputation,End Game,,CARDINAL,one,1
+reputation,End Game,,CARDINAL,four,1
+reputation,End Game,,PRODUCT,a G5 (,1
+reputation,End Game,,DATE,the 4th of July,1
+reputation,End Game,,DATE,days,1
+reputation,I Did Something Bad,,CARDINAL,three,1
+reputation,I Did Something Bad,,CARDINAL,one,2
+reputation,Don't Blame Me,,ORDINAL,first,1
+reputation,Don't Blame Me,,PERSON,Halo,1
+reputation,Delicate,,LOC,the East Side,1
+reputation,Delicate,,LOC,the West Side,1
+reputation,Delicate,,PRODUCT,Nikes,1
+reputation,Delicate,,ORDINAL,Third,1
+reputation,Look What You Made Me Do,,DATE,another day,1
+reputation,Look What You Made Me Do,,CARDINAL,one,1
+reputation,Look What You Made Me Do,,PERSON,Taylor,1
+reputation,So It Goes...,,CARDINAL,One,1
+reputation,So It Goes...,,CARDINAL,two,1
+reputation,So It Goes...,,CARDINAL,three,1
+reputation,Getaway Car,,ORDINAL,first,11
+reputation,Getaway Car,,WORK_OF_ART,Old Fashioned,2
+reputation,Getaway Car,,CARDINAL,three,1
+reputation,Getaway Car,,PERSON,Bonnie,1
+reputation,Getaway Car,,PERSON,Clyde,1
+reputation,King Of My Heart,,DATE,a few weeks ago,1
+reputation,King Of My Heart,,NORP,American,2
+reputation,King Of My Heart,,ORG,Motown,2
+reputation,King Of My Heart,,PRODUCT,Range Rovers,2
+reputation,King Of My Heart,,PRODUCT,Jaguars,2
+reputation,King Of My Heart,,TIME,Late in the night,1
+reputation,Dancing With Our Hands Tied,,ORDINAL,First,2
+reputation,Dancing With Our Hands Tied,,ORDINAL,first,7
+reputation,Dancing With Our Hands Tied,,DATE,twenty-five years old,1
+reputation,Dress,,CARDINAL,one,1
+reputation,This Is Why We Can't Have Nice Things,,PERSON,Gatsby,1
+reputation,This Is Why We Can't Have Nice Things,,PERSON,Darling,1
+reputation,This Is Why We Can't Have Nice Things,,DATE,that whole year,1
+reputation,This Is Why We Can't Have Nice Things,,ORDINAL,second,1
+reputation,Call It What You Want,,CARDINAL,one,4
+reputation,Call It What You Want,,DATE,months,1
+reputation,Call It What You Want,,DATE,late November,1
+reputation,New Year's Day,,WORK_OF_ART,Polaroids,2
+reputation,New Year's Day,,EVENT,New Year's Day,3
+reputation,New Year's Day,,CARDINAL,three,1
+reputation,New Year's Day,,PERSON,babe,1
+Lover,I Forgot That You Existed,,PERSON,Drake,1
+Lover,I Forgot That You Existed,,CARDINAL,one,1
+Lover,Lover,,DATE,January,1
+Lover,Lover,,DATE,twenty seconds,1
+Lover,Lover,,DATE,twenty years,1
+Lover,Lover,,DATE,three summers,1
+Lover,Lover,,PERSON,Darling,1
+Lover,The Man,,PERSON,Leo,1
+Lover,The Man,,GPE,Saint-Tropez,1
+Lover,The Archer,,CARDINAL,hundred,1
+Lover,I Think He Knows,,DATE,17,1
+Lover,I Think He Knows,,FAC,16th Avenue,4
+Lover,Miss Americana & The Heartbreak Prince,,DATE,16,1
+Lover,Miss Americana & The Heartbreak Prince,,NORP,American,2
+Lover,Miss Americana & The Heartbreak Prince,,WORK_OF_ART,Miss Americana,3
+Lover,Miss Americana & The Heartbreak Prince,,PERSON,The Heartbreak Prince,3
+Lover,Miss Americana & The Heartbreak Prince,,PERSON,Darling,1
+Lover,Paper Rings,,ORDINAL,first,2
+Lover,Paper Rings,,CARDINAL,two,1
+Lover,Paper Rings,,CARDINAL,three,1
+Lover,Paper Rings,,CARDINAL,Three,2
+Lover,Paper Rings,,CARDINAL,1,4
+Lover,Paper Rings,,CARDINAL,2,4
+Lover,Paper Rings,,CARDINAL,3,2
+Lover,Paper Rings,,CARDINAL,4,2
+Lover,Paper Rings,,PERSON,Darling,6
+Lover,Paper Rings,,DATE,Mondays,2
+Lover,Cornelia Street,,FAC,Cornelia Street,16
+Lover,Cornelia Street,,DATE,Years ago,1
+Lover,Cornelia Street,,PERSON,Barefoot,1
+Lover,Death By A Thousand Cuts,,CARDINAL,thousand,6
+Lover,London Boy,,GPE,London,7
+Lover,London Boy,,GPE,Motown,1
+Lover,London Boy,,GPE,Tennessee,1
+Lover,London Boy,,GPE,Highgate,3
+Lover,London Boy,,GPE,Brixton,1
+Lover,London Boy,,GPE,Shoreditch,1
+Lover,London Boy,,LOC,SoCal,1
+Lover,London Boy,,PERSON,Springsteen,1
+Lover,London Boy,,PERSON,Darling,3
+Lover,London Boy,,PERSON,Babes,1
+Lover,London Boy,,PERSON,God,1
+Lover,London Boy,,PERSON,Hackney,2
+Lover,London Boy,,PERSON,Louis V,2
+Lover,London Boy,,PERSON,Stella McCartney,2
+Lover,London Boy,,ORDINAL,first,1
+Lover,London Boy,,FAC,Camden Market,1
+Lover,London Boy,,FAC,the West End,1
+Lover,London Boy,,FAC,Bond Street,2
+Lover,London Boy,,FAC,Soho,1
+Lover,London Boy,,NORP,American,3
+Lover,London Boy,,NORP,English,1
+Lover,London Boy,,NORP,Tennessee,2
+Lover,London Boy,,ORG,Uni,1
+Lover,Soon You'll Get Better,,ORDINAL,first,1
+Lover,Soon You'll Get Better,,PERSON,Jesus,1
+Lover,Soon You'll Get Better,,DATE,years,1
+Lover,False God,,GPE,New York City,1
+Lover,False God,,LOC,the West Village,1
+Lover,False God,,PERSON,babe,1
+Lover,You Need To Calm Down,,PERSON,Patrón,1
+Lover,You Need To Calm Down,,TIME,7 AM,1
+Lover,ME!,,CARDINAL,one,2
+Lover,ME!,,CARDINAL,1,2
+Lover,ME!,,CARDINAL,2,2
+Lover,ME!,,CARDINAL,3,2
+Lover,It's Nice To Have A Friend,,CARDINAL,20,1
+Lover,It's Nice To Have A Friend,,DATE,The whole weekend,1
+Lover,Daylight,,DATE,20-year,3
+Lover,Daylight,,GPE,New York,2
+folklore,the 1,,DATE,Sunday,1
+folklore,the 1,,DATE,twenties,2
+folklore,the 1,,DATE,another day,1
+folklore,the 1,,DATE,today,1
+folklore,the 1,,CARDINAL,one,1
+folklore,cardigan,,ORG,Sequin,1
+folklore,cardigan,,PRODUCT,Levi,1
+folklore,cardigan,,CARDINAL,two,1
+folklore,cardigan,,CARDINAL,one,1
+folklore,cardigan,,CARDINAL,twenty,1
+folklore,cardigan,,FAC,the High Line,1
+folklore,cardigan,,PERSON,Peter,1
+folklore,cardigan,,PERSON,Wendy,1
+folklore,the last great american dynasty,,PERSON,Rebekah,2
+folklore,the last great american dynasty,,PERSON,Bill,1
+folklore,the last great american dynasty,,PERSON,Dalí,1
+folklore,the last great american dynasty,,TIME,afternoon,1
+folklore,the last great american dynasty,,TIME,midnight,1
+folklore,the last great american dynasty,,GPE,St. Louis,1
+folklore,the last great american dynasty,,GPE,Rhode Island,1
+folklore,the last great american dynasty,,ORG,Standard Oil,1
+folklore,the last great american dynasty,,ORG,Bitch Pack,1
+folklore,the last great american dynasty,,FAC,Holiday House,2
+folklore,the last great american dynasty,,NORP,American,2
+folklore,the last great american dynasty,,DATE,Fifty years,1
+folklore,exile,,TIME,five whole minutes,1
+folklore,exile,,ORDINAL,Second,1
+folklore,exile,,ORDINAL,third,1
+folklore,exile,,ORDINAL,hundredth,1
+folklore,mirrorball,,CARDINAL,million,1
+folklore,seven,,CARDINAL,seven,1
+folklore,seven,,GPE,Pennsylvania,1
+folklore,seven,,GPE,India,1
+folklore,august,,DATE,August,6
+folklore,august,,DATE,summer,1
+folklore,this is me trying,,CARDINAL,one,1
+folklore,illicit affairs,,CARDINAL,one,2
+folklore,illicit affairs,,CARDINAL,million,3
+folklore,illicit affairs,,CARDINAL,hundred,1
+folklore,illicit affairs,,ORDINAL,first,1
+folklore,invisible string,,FAC,Centennial Park,2
+folklore,invisible string,,PERSON,Teal,1
+folklore,invisible string,,PERSON,Bold,1
+folklore,invisible string,,DATE,sixteen,1
+folklore,invisible string,,DATE,three-year,1
+folklore,invisible string,,ORDINAL,first,1
+folklore,invisible string,,GPE,LA,1
+folklore,invisible string,,LOC,Lakes,1
+folklore,invisible string,,NORP,American,1
+folklore,invisible string,,CARDINAL,One,1
+folklore,mad woman,,CARDINAL,two,1
+folklore,epiphany,,PERSON,Doc,1
+folklore,epiphany,,TIME,Only twenty minutes,2
+folklore,epiphany,,CARDINAL,one,2
+folklore,betty,,PERSON,Betty,5
+folklore,betty,,PERSON,Inez,2
+folklore,betty,,PERSON,James,1
+folklore,betty,,CARDINAL,one,1
+folklore,betty,,DATE,seventeen,3
+folklore,betty,,DATE,all summer long,1
+folklore,betty,,DATE,weeks,1
+folklore,peace,,DATE,this summer,1
+folklore,peace,,CARDINAL,two,1
+folklore,hoax,,GPE,New York,1
+folklore,hoax,,PERSON,Darling,1
+folklore,the lakes,,LOC,Lakes,3
+folklore,the lakes,,LOC,Windermere,3
+evermore,willow,,CARDINAL,one,1
+evermore,willow,,DATE,'90s,1
+evermore,champagne problems,,PERSON,Pérignon,1
+evermore,champagne problems,,PRODUCT,Midas,1
+evermore,champagne problems,,ORG,Chevy,1
+evermore,champagne problems,,DATE,November,1
+evermore,champagne problems,,CARDINAL,One,1
+evermore,champagne problems,,CARDINAL,two,1
+evermore,gold rush,,ORG,Eagles,1
+evermore,'tis the damn season,,DATE,the weekend,4
+evermore,'tis the damn season,,DATE,the damn season,4
+evermore,'tis the damn season,,DATE,half the day,1
+evermore,'tis the damn season,,FAC,Methodist,1
+evermore,'tis the damn season,,GPE,L.A.,1
+evermore,"no body, no crime",,PERSON,Este,4
+evermore,"no body, no crime",,PRODUCT,Merlot,1
+evermore,"no body, no crime",,TIME,Tuesday night,1
+evermore,"no body, no crime",,FAC,Olive Garden,1
+evermore,"no body, no crime",,DATE,fifteen,1
+evermore,happiness,,TIME,midnight,2
+evermore,happiness,,DATE,seven years,1
+evermore,dorothea,,PERSON,Dorothea,8
+evermore,dorothea,,PERSON,Honey,1
+evermore,dorothea,,GPE,Tupelo,2
+evermore,coney island,,CARDINAL,two,1
+evermore,coney island,,CARDINAL,one,1
+evermore,coney island,,GPE,Coney Island,2
+evermore,coney island,,DATE,every single day,1
+evermore,coney island,,QUANTITY,A universe,1
+evermore,cowboy like me,,CARDINAL,one,1
+evermore,cowboy like me,,LOC,the Gardens of Babylon,1
+evermore,marjorie,,PERSON,Marjorie,1
+evermore,evermore,,DATE,November,1
+evermore,evermore,,DATE,July,1
+evermore,evermore,,DATE,December,1
+evermore,evermore,,DATE,the dog days,3
+evermore,evermore,,PERSON,Barefoot,1
+evermore,right where you left me,,DATE,twenty-three,2
+evermore,right where you left me,,DATE,Christmas,1
+evermore,it's time to go,,DATE,Twenty years,1
+evermore,it's time to go,,DATE,Fifteen years,1
+evermore,it's time to go,,CARDINAL,one,4
+evermore,it's time to go,,CARDINAL,fifteen million,1
+Midnights,Lavender Haze,,TIME,midnight,1
+Midnights,Lavender Haze,,DATE,1950s,3
+Midnights,Lavender Haze,,CARDINAL,one,1
+Midnights,Maroon,,GPE,New York,2
+Midnights,Maroon,,WORK_OF_ART,Maroon,2
+Midnights,Snow On The Beach,,TIME,One night,1
+Midnights,Snow On The Beach,,TIME,Tonight,3
+Midnights,Snow On The Beach,,DATE,a few moons ago,1
+Midnights,Snow On The Beach,,PERSON,Janet,1
+Midnights,"You're On Your Own, Kid",,DATE,Summer,1
+Midnights,"You're On Your Own, Kid",,PERSON,Daisy May,1
+Midnights,Midnight Rain,,TIME,midnight,4
+Midnights,Midnight Rain,,DATE,Holiday,1
+Midnights,Question...?,,CARDINAL,one,3
+Midnights,Question...?,,TIME,fifteen seconds later,3
+Midnights,Question...?,,ORDINAL,Second,1
+Midnights,Vigilante Shit,,ORG,FBI,1
+Midnights,Bejeweled,,ORDINAL,first,1
+Midnights,Bejeweled,,CARDINAL,five,1
+Midnights,Bejeweled,,TIME,tonight,1
+Midnights,Karma,,PERSON,Karma,9
+Midnights,Karma,,PERSON,Spider boy,1
+Midnights,Karma,,DATE,the weekend,3
+Midnights,Karma,,DATE,all those years,1
+Midnights,Sweet Nothing,,DATE,last July,1
+Midnights,Sweet Nothing,,GPE,Wicklow,1
+Midnights,Mastermind,,PERSON,Checkmate,1
+Midnights,Mastermind,,ORDINAL,first,4
+Midnights,The Great War,,EVENT,the Great War,7
+Midnights,Bigger Than The Whole Sky,,LOC,Asia,1
+Midnights,Paris,,DATE,ages ago,1
+Midnights,Paris,,DATE,2003,1
+Midnights,Paris,,GPE,Paris,6
+Midnights,Paris,,TIME,midnight,1
+Midnights,High Infidelity,,DATE,April 29th,3
+Midnights,Glitch,,DATE,some weekend,1
+Midnights,Glitch,,DATE,two-thousand one-hundred and ninety days,1
+Midnights,Glitch,,TIME,Five seconds later,3
+Midnights,Glitch,,PERSON,Glitch,1
+Midnights,"Would've, Could've, Should've",,ORDINAL,first,3
+Midnights,"Would've, Could've, Should've",,DATE,19,3
+Midnights,"Would've, Could've, Should've",,PERSON,God,2
+Midnights,Dear Reader,,ORDINAL,fourth,1
+Midnights,Hits Different,,PERSON,Kens,1
+Midnights,"You're On Your Own, Kid (Strings Remix)",,DATE,Summer,1
+Midnights,"You're On Your Own, Kid (Strings Remix)",,PERSON,Daisy May,1
+Midnights,Sweet Nothing (Piano Remix),,DATE,last July,1
+Midnights,Sweet Nothing (Piano Remix),,GPE,Wicklow,1
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,Last Christmas,5
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,the very next day,6
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,This year,6
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,a year,1
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,Merry Christmas,1
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,this year,3
+The Taylor Swift Holiday Collection,Last Christmas,,DATE,last Christmas,2
+The Taylor Swift Holiday Collection,Christmases When You Were Mine,,DATE,this year,2
+The Taylor Swift Holiday Collection,Christmases When You Were Mine,,CARDINAL,one,1
+The Taylor Swift Holiday Collection,Christmases When You Were Mine,,TIME,tonight,1
+The Taylor Swift Holiday Collection,Santa Baby,,PERSON,Santa,9
+The Taylor Swift Holiday Collection,Santa Baby,,DATE,'54,1
+The Taylor Swift Holiday Collection,Santa Baby,,DATE,Next year,1
+The Taylor Swift Holiday Collection,Santa Baby,,DATE,all year,1
+The Taylor Swift Holiday Collection,Santa Baby,,TIME,tonight,1
+The Taylor Swift Holiday Collection,Santa Baby,,CARDINAL,one,2
+The Taylor Swift Holiday Collection,Santa Baby,,ORG,Tiffany's,1
+The Taylor Swift Holiday Collection,Silent Night,,PERSON,Christ the Saviour,2
+The Taylor Swift Holiday Collection,Silent Night,,PERSON,Christ our Saviour,1
+The Taylor Swift Holiday Collection,Silent Night,,PERSON,Son of God,1
+The Taylor Swift Holiday Collection,Silent Night,,PERSON,Jesus Lord,2
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,CARDINAL,five,1
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,PERSON,God,1
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,PERSON,Jesus Christ,1
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,DATE,Christmas,6
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,DATE,today,2
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,DATE,this time of year,1
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,DATE,the day,1
+The Taylor Swift Holiday Collection,Christmas Must Be Something More,,QUANTITY,Hundred-mile-an-hour,1
+Beautiful Eyes,Beautiful Eyes,,TIME,late at night,1
+Beautiful Eyes,Should've Said No (Alternate Version),,DATE,Yesterday,1
+Beautiful Eyes,Should've Said No (Alternate Version),,CARDINAL,one,2
+Beautiful Eyes,Teardrops On My Guitar (Acoustic Version),,PERSON,Drew,4
+Beautiful Eyes,Picture To Burn (Radio Edit),,NORP,redneck,4
+Beautiful Eyes,I'm Only Me When I'm With You,,TIME,Friday night beneath the stars,1
+Beautiful Eyes,I'm Only Me When I'm With You,,CARDINAL,half,6
+,American Girl,,NORP,American,4
+,American Girl,,CARDINAL,one,2
+,American Girl,,FAC,441,1
+,Bad Blood (Remix),,GPE,Iraq,1
+,Beautiful Ghosts,,GPE,London,3
+,Beautiful Ghosts,,TIME,Perilous night,1
+,Carolina,,GPE,Carolina,6
+,Carolina,,PERSON,Carolina,3
+,Carolina,,DATE,years,2
+,Christmas Tree Farm,,PERSON,Darling,1
+,Christmas Tree Farm,,EVENT,Merry Christmas,1
+,Eyes Open,,DATE,yesterday,1
+,Eyes Open,,CARDINAL,two,1
+,I Don't Wanna Live Forever,,CARDINAL,four,1
+,I Don't Wanna Live Forever,,CARDINAL,one,1
+,Lover (Remix),,DATE,January,1
+,Lover (Remix),,DATE,20 years,1
+,Lover (Remix),,TIME,20 seconds,1
+,Lover (Remix),,CARDINAL,eighty,1
+,Lover (Remix),,FAC,Titanic,1
+,Lover (Remix),,PERSON,Darling,1
+,Ronan,,DATE,four years,3
+,Ronan,,DATE,Halloween,1
+,Ronan,,DATE,the last day,1
+,Ronan,,CARDINAL,one,1
+,Safe & Sound,,TIME,morning,3
+,Safe & Sound,,PERSON,Darling,1
+,September,,TIME,The 28th night of September,2
+,September,,DATE,September,6
+,September,,DATE,December,1
+,Sweeter Than Fiction,,QUANTITY,ten feet,3
+,Sweeter Than Fiction,,CARDINAL,one,4
+,Today Was A Fairytale,,DATE,Today,16
+,Today Was A Fairytale,,CARDINAL,six,1
+,Wildest Dreams (Taylor's Version),,CARDINAL,one,1
+,Babe,,PERSON,babe,1
+,Birch,,PERSON,Madeline,1
+,Birch,,PERSON,Jennifer,1
+,Both Of Us,,CARDINAL,20,1
+,Both Of Us,,CARDINAL,one,8
+,Both Of Us,,GPE,Hollywood,1
+,Both Of Us,,PERSON,Bobby Ray,2
+,Half Of My Heart,,CARDINAL,half,7
+,Half Of My Heart,,CARDINAL,Half,17
+,Highway Don't Care,,TIME,tonight,2
+,Highway Don't Care,,PERSON,God,1
+,Highway Don't Care,,ORDINAL,first,1
+,Renegade,,ORDINAL,first,4
+,The Joker And The Queen,,QUANTITY,thousand,2
+,Three Sad Virgins,,PERSON,Pete,9
+,Three Sad Virgins,,PERSON,Martin,3
+,Three Sad Virgins,,PERSON,Ben,7
+,Three Sad Virgins,,PERSON,John,3
+,Three Sad Virgins,,PERSON,Zendaya,1
+,Three Sad Virgins,,PERSON,Wendy,2
+,Three Sad Virgins,,PERSON,Taylor,1
+,Three Sad Virgins,,PERSON,Ron Weasley,1
+,Three Sad Virgins,,PERSON,Big Bird,1
+,Three Sad Virgins,,GPE,Staten Island,1
+,Three Sad Virgins,,DATE,this year,1
+,Three Sad Virgins,,WORK_OF_ART,Page Six,1
+,Three Sad Virgins,,WORK_OF_ART,Dune,3
+,Three Sad Virgins,,CARDINAL,three,3
+,Three Sad Virgins,,CARDINAL,Three,14
+,Three Sad Virgins,,CARDINAL,one,1
+,Three Sad Virgins,,ORDINAL,second,1
+,Three Sad Virgins,,PRODUCT,Dune,2
+,Three Sad Virgins,,LOC,Dune,1
+,Two Is Better Than One,,DATE,the first day,2
+,Two Is Better Than One,,CARDINAL,two,6
+,Two Is Better Than One,,CARDINAL,one,8
+,Two Is Better Than One,,CARDINAL,Two,2

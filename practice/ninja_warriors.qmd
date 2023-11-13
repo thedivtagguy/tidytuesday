@@ -1,0 +1,125 @@
+---
+title: "Ninja Warriors"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+
+library(tidytuesdayR)
+library(tidyverse)
+theme_set(theme_light())
+library(scales)
+
+
+tt <- tt_load("2020-12-15")$ninja_warrior %>% 
+  mutate(round_stage = trimws(str_remove(round_stage, "\\(Regional/City\\)")))
+
+tt %>% 
+  count(round_stage, location, sort = TRUE) 
+
+
+tt %>% 
+  filter(!str_detect(round_stage, "National")) %>% 
+  count(season, location, round_stage) %>% 
+  ggplot(aes(n, fill= round_stage)) + 
+  geom_histogram() + 
+  scale_x_continuous(breaks = 1:10) + 
+  labs(x = "# of obstacles")
+```
+
+```{r}
+
+library(tidylo)
+
+tt %>%
+  filter(round_stage %in% c("Qualifying", "Finals")) %>%
+  count(round_stage, obstacle_name, sort = T) %>%
+  bind_log_odds(round_stage, obstacle_name, n) %>%
+  arrange(desc(log_odds_weighted)) %>%
+  filter(round_stage == "Finals") %>%
+  top_n(16, abs(log_odds_weighted)) %>%
+  mutate(obstacle_name = fct_reorder(obstacle_name, log_odds_weighted)) %>%
+  ggplot(aes(log_odds_weighted, obstacle_name, fill = log_odds_weighted > 0)) +
+  geom_col() +
+  labs(x = "More / less likely to be in finals") +
+  theme(legend.position = "none")
+```
+
+```{r}
+
+total_rounds <- tt %>%
+  filter(round_stage %in% c("Qualifying")) %>%
+  distinct(season, location) %>%
+  nrow()
+
+
+
+tt %>% 
+  filter(round_stage %in% c("Qualifying", "Finals")) %>%
+  unite(season_location, season, location, remove = FALSE) %>%
+  group_by(round_stage) %>%
+  mutate(total_rounds = n_distinct(season_location)) %>%
+  group_by(round_stage, obstacle_name) %>%
+  summarize(avg_position = mean(obstacle_order),
+            n_rounds = n(),
+            pct_rounds = n_rounds / first(total_rounds)) %>%
+  arrange(desc(n_rounds)) %>%
+  top_n(10, n_rounds) %>%
+  ungroup() %>%
+  mutate(obstacle_name = tidytext::reorder_within(obstacle_name, avg_position, round_stage)) %>%
+  ggplot(aes(avg_position, obstacle_name, size = pct_rounds)) +
+  geom_point() +
+  facet_wrap(~ round_stage, nrow = 2, scales = "free_y") +
+  scale_x_continuous(breaks = 1:10) +
+  drlib::scale_y_reordered() +
+  scale_size_continuous(labels = percent) +
+  labs(x = "Average position within the obstacle course",
+       y = "",
+       size = "% of courses")
+
+```
+
+```{r}
+tt %>% 
+  filter(round_stage == "Qualifying") %>% 
+  add_count(obstacle_order, round_stage, name = "round_stage_total") %>% 
+  filter(round_stage_total >= 10) %>% 
+  mutate(obstacle_name = fct_lump(obstacle_name, 10)) %>% 
+  mutate(obstacle_name = fct_reorder(obstacle_name, obstacle_order)) %>%
+    count(round_stage_total, obstacle_name, obstacle_order) %>% 
+ 
+  ggplot(aes(obstacle_order, n / round_stage_total, fill= obstacle_name)) + 
+  geom_col() + 
+  scale_y_continuous(labels = percent) + 
+  scale_x_continuous(breaks = 1:6) +
+  facet_wrap(~obstacle_order, scales = "free_y")
+  labs(y = "% of courses", title = "What does a typical qualifying course look like?")
+```
+
+-   Always starts with floating steps, quad or quintuple steps
+
+-   always ends with warped or mega wall
+
+-   Common second step is log grip, rolling log
+
+```{r}
+library(glue)
+
+tt %>%
+  filter(round_stage == "Finals") %>%
+  add_count(obstacle_order, round_stage, name = "round_stage_total") %>%
+  filter(round_stage_total >= 10) %>%
+  add_count(obstacle_name, name = "obstacle_total") %>%
+  mutate(obstacle_name = glue("{ obstacle_name } ({ obstacle_total })")) %>%
+  mutate(obstacle_name = fct_lump(obstacle_name, 10)) %>%
+  mutate(obstacle_name = fct_reorder(obstacle_name, obstacle_order)) %>%
+  ggplot(aes(obstacle_order, obstacle_name)) +
+  geom_boxplot() +
+  scale_x_continuous(breaks = 1:10) +
+  labs(x = "Step",
+       y = "% of courses",
+       fill = "Obstacle")
+```

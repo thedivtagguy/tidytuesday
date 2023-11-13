@@ -1,0 +1,100 @@
+## NER and other variables across albums
+
+For named-entity recognition, I've already processed this in Python using spacy.
+
+```{python}
+
+# This was mostly written by ChatGPT
+
+import pandas as pd
+import spacy
+from collections import defaultdict
+from tqdm import tqdm
+
+# Load your CSV file
+df = pd.read_csv('./taylordata.csv')
+
+# Initialize spaCy NER
+nlp = spacy.load('en_core_web_trf')
+
+# Initialize dictionaries to hold the NER information by album
+album_ner_entity_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+
+# Loop over each row in the DataFrame with a progress bar
+for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+    album = row['album_name']
+    track = row['track_name']
+    release_date = row['album_release']
+    lyrics = row['lyric']
+    
+    # Perform NER on the lyrics
+    doc = nlp(lyrics)
+    
+    # Loop over each identified entity
+    for ent in doc.ents:
+        entity = ent.text
+        entity_type = ent.label_
+        
+        # Increment the count for this specific entity in this album
+        album_ner_entity_dict[(album, track, release_date)][entity_type][entity] += 1
+
+# Convert the entity counts to a DataFrame
+album_ner_entity_df = pd.DataFrame.from_dict(
+    {(i, j, k, l): count 
+     for i, j, k in album_ner_entity_dict.keys() 
+     for l, count in album_ner_entity_dict[i][j][k].items()},
+    orient='index'
+)
+
+# Set multi-index for the DataFrame
+album_ner_entity_df.index = pd.MultiIndex.from_tuples(album_ner_entity_df.index, names=['Album', 'Track_Name', 'Album_Release', 'Entity'])
+
+# Set column name
+album_ner_entity_df.columns = ['Count']
+
+# Save to CSV
+album_ner_entity_df.to_csv('./album_ner_entity_counts.csv')
+
+```
+
+```{r}
+
+ner_counts <- read_csv("album_ner_entity_counts.csv") %>%
+  janitor::clean_names() %>%
+  drop_na(album)
+
+ner_counts %>%
+  select(-entity) %>%
+  mutate(
+    entity_type = case_when(
+      entity_type %in% c("DATE", "TIME", "ORDINAL", "CARDINAL") ~ "Time & Numbers",
+      entity_type %in% c("GPE", "LOC", "FAC") ~ "Place",
+      entity_type %in% c("EVENT", "NORP", "ORG", "PERSON") ~ "People & Groups",
+      entity_type %in% c("MONEY", "PRODUCT", "QUANTITY") ~ "Money & Things",
+      entity_type %in% c("WORK_OF_ART") ~ "Miscellaneous",
+      TRUE ~ "Other"
+    ),
+    album = case_when(
+      album %in% c("Red", "Red (Taylor's Version)") ~ "Red",
+      album %in% c("Fearless", "Fearless (Taylor's Version)") ~ "Fearless",
+      TRUE ~ album
+    )
+  ) %>%
+  filter(!album %in% c("The Taylor Swift Holiday Collection", "Beautiful Eyes")) %>%
+  group_by(entity_type, album, track_name) %>%
+  summarise(count = sum(count), .groups = 'drop') %>%
+  pivot_wider(names_from = entity_type, values_from = count) %>%
+  replace_na(
+    list(
+      `Time & Numbers` = 0,
+      Place = 0,
+      `People & Groups` = 0,
+      `Money & Things` = 0,
+      `Miscellaneous` = 0,
+      Other = 0
+    )
+  ) %>%
+  mutate(across(`Time & Numbers`:`Miscellaneous`, ~ log1p(.))) %>%
+  arrange(album) %>%
+  jsonlite::write_json("ner.json")
+```

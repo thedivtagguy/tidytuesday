@@ -1,0 +1,215 @@
+---
+title: "Horror Snopes"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidytuesdayR)
+library(tidyverse)
+theme_set(theme_light())
+library(scales)
+library(tidytext)
+library(stringr)
+
+data <- read_csv("horror_articles.csv") %>%
+  mutate(
+    published = ymd(published), 
+    # year = year(published),          
+    # month_name = month(published, label = TRUE),  
+    # month = month(published)  
+  )
+
+
+```
+
+The only dates we have are when this was published, can we try to guess when the claim was made based on the article text? A regex to extract the year or something maybe?
+
+```{r}
+# Function to extract the first year from text and return the decade
+extract_decades <- function(text) {
+  decades <- str_extract_all(text, "\\b(1\\d{3}|20\\d{2})\\b")[[1]] %>%
+    as.numeric() %>%
+    {if (length(.) > 0) . %/% 10 * 10 else return(NA)} %>%
+    table() %>%
+    sort(decreasing = TRUE) %>%
+    head(3) %>%
+    names() %>%
+    as.numeric()
+  
+  if (length(decades) == 0) {
+    return(NA)
+  }
+  
+  decades
+}
+
+data <- data %>%
+  mutate(decade = map(article_text, possibly(extract_decades, NA)))
+
+write_csv(data, "data.csv")
+
+
+# How many are we missing?
+data %>%
+  summarise(
+    total = n(),
+    na_count = sum(is.na(decade)),
+    na_percentage = (na_count / total) * 100
+  )
+
+```
+
+That's...not bad at all! What is the distribution like?
+
+```{r}
+data %>% 
+  ggplot(aes(decade)) + 
+  geom_histogram()
+
+# Too few before 1800. What are the ratings likes?
+data %>% 
+  group_by(rating) %>% 
+  count() %>% 
+  arrange(desc(n))
+
+data %>%
+  filter(decade > 1800, rating %in% c('false', 'true', 'legend')) %>%
+  count(decade, rating) %>%
+  group_by(decade) %>%
+  mutate(total_count = sum(n)) %>%
+  ungroup() %>%
+  mutate(proportion = n / total_count) %>%
+  arrange(decade, desc(proportion)) %>%
+  ggplot(aes(x = as.factor(decade), y = n, fill = rating)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(x = "Decade", y = "Proportion")
+```
+
+```{r}
+library(tidylo)
+library(tidytext)
+
+
+tidy_articles <-
+  data %>%
+  unnest_tokens(word, article_text) %>% 
+  anti_join(stop_words, by = "word") %>% 
+  unnest(cols = c(decade))
+
+
+log_odds <- tidy_articles %>%
+  filter(rating %in% c('false', 'true', 'legend'),
+         !word %in% c('nobr', 'nbsp', 'window.status', 'legend', 'dd', 'dt', 'td'),
+         decade > 1900) %>%
+  anti_join(stop_words, by = "word") %>%
+  count(decade, word, sort = TRUE) %>%
+  bind_log_odds(decade, word, n) %>%
+  filter(n > 5) %>%
+  group_by(decade) %>%
+  slice_max(log_odds_weighted, n = 10) %>%
+  ungroup() %>%
+  distinct(word, .keep_all = TRUE) %>%
+  mutate(word = reorder_within(word, log_odds_weighted, decade), 
+         word = str_remove_all(word, "_+\\d+"))
+
+# Cols
+log_odds %>%
+  ggplot(aes(x = log_odds_weighted, y = fct_reorder(word, log_odds_weighted, .desc = F), fill = factor(decade))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(vars(decade), scales = "free") +
+  scale_y_reordered() +
+  scale_fill_viridis_d() +
+  labs(y = NULL) +
+  hrbrthemes::theme_ipsum_rc(grid="X")
+
+```
+
+```{r}
+# Calculate tf-idf
+tf_idf_data <- tidy_articles %>%
+  count(decade, word) %>%
+  bind_tf_idf(word, decade, n) %>%
+  arrange(desc(tf_idf))
+
+tf_idf_data %>%
+  group_by(decade) %>%
+  slice_max(tf_idf, n = 15) %>%
+  ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(word, tf_idf), fill = decade)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~decade, ncol = 2, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
+
+
+tf_idf_data %>%
+  filter(word %in% c("alligators", "chocolate", "houdini")) %>% # Replace with your words of interest
+  ggplot(aes(x = decade, y = tf_idf, color = word)) +
+  geom_line() +
+  # geom_point() +
+  theme_minimal() +
+  labs(x = "Decade", y = "TF-IDF Score")
+```
+
+```{r}
+library(broom)
+
+
+# Individual Words
+significant_trends <- tidy_articles %>%
+  count(decade, word, sort = TRUE) %>%
+  group_by(decade) %>%
+  mutate(total = sum(n)) %>%
+  ungroup() %>%
+  mutate(decade_numeric = as.numeric(as.character(decade)),
+         tf = n / total) %>%
+  group_by(word) %>%
+  do(tidy(lm(tf ~ decade_numeric, data = .))) %>%
+  ungroup() %>%
+  filter(term == "decade_numeric") %>%
+  mutate(trend = if_else(estimate > 0, "Increasing", "Decreasing")) %>%
+  filter(p.value < 0.05) %>%
+  filter(!grepl("^[0-9]+$", word)) %>%
+  group_by(trend) %>%
+  top_n(10, if_else(trend == "Increasing", estimate, -estimate)) %>%
+  ungroup() %>%
+  arrange(trend, desc(abs(estimate))) %>%
+  select(word, estimate, p.value, trend)
+
+```
+
+```{r}
+library(spacyr)
+
+spacy_initialize(model = "en_core_web_trf")
+
+extract_entities <- function(text) {
+  ents <- spacy_extract_entity(text)
+  return(ents$entity)
+}
+
+# Apply named entity recognition on the article text
+entity_trends <- data %>%
+  mutate(entities = map(article_text, extract_entities)) %>%
+  unnest(entities) 
+
+
+%>%
+  count(decade, entities, sort = TRUE) %>%
+  group_by(decade) %>%
+  mutate(total = sum(n)) %>%
+  ungroup() %>%
+  mutate(decade_numeric = as.numeric(decade),
+         tf = n / total) %>%
+  group_by(entities) %>%
+  do(tidy(lm(tf ~ decade_numeric, data = .))) %>%
+  ungroup() %>%
+  filter(term == "decade_numeric") %>%
+  mutate(trend = if_else(estimate > 0, "Increasing", "Decreasing")) %>%
+  filter(p.value < 0.05) %>%
+  group_by(trend) %>%
+  top_n(10, abs(estimate)) %>%
+  ungroup() %>%
+  arrange(trend, desc(abs(estimate))) %>%
+  select(entities, estimate, p.value, trend)
+```

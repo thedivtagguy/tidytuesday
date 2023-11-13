@@ -1,0 +1,11 @@
+Binding: create_project
+Title: TidyTuesday Project Template
+OpenFiles: README.md, analysis/notebook.qmd
+
+Parameter: tidytuesdayYear
+Widget: TextInput
+Label: Enter the TidyTuesday year (e.g., '2023')
+
+Parameter: tidytuesdayWeek
+Widget: TextInput
+Label: Enter the TidyTuesday week number (e.g., '45')

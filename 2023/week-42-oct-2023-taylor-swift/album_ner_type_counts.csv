@@ -1,0 +1,137 @@
+Album,NER_Type,Count
+Taylor Swift,GPE,2
+Taylor Swift,ORG,1
+Taylor Swift,PERSON,20
+Taylor Swift,DATE,13
+Taylor Swift,ORDINAL,11
+Taylor Swift,NORP,3
+Taylor Swift,CARDINAL,13
+Taylor Swift,QUANTITY,1
+Taylor Swift,TIME,2
+Fearless,ORDINAL,12
+Fearless,CARDINAL,16
+Fearless,DATE,14
+Fearless,PERSON,18
+Fearless,TIME,13
+Fearless,GPE,2
+Fearless (Taylor's Version),ORDINAL,12
+Fearless (Taylor's Version),CARDINAL,17
+Fearless (Taylor's Version),DATE,31
+Fearless (Taylor's Version),PERSON,22
+Fearless (Taylor's Version),TIME,13
+Fearless (Taylor's Version),GPE,2
+Speak Now,ORDINAL,8
+Speak Now,TIME,10
+Speak Now,DATE,18
+Speak Now,PERSON,4
+Speak Now,CARDINAL,3
+Red,CARDINAL,32
+Red,NORP,2
+Red,DATE,25
+Red,PRODUCT,4
+Red,PERSON,5
+Red,TIME,15
+Red,ORDINAL,4
+Red,GPE,6
+Red,LOC,1
+Red,FAC,1
+Red,QUANTITY,1
+Red (Taylor's Version),CARDINAL,40
+Red (Taylor's Version),NORP,2
+Red (Taylor's Version),DATE,44
+Red (Taylor's Version),PRODUCT,2
+Red (Taylor's Version),TIME,25
+Red (Taylor's Version),PERSON,9
+Red (Taylor's Version),ORDINAL,10
+Red (Taylor's Version),GPE,10
+Red (Taylor's Version),LOC,1
+Red (Taylor's Version),FAC,1
+Red (Taylor's Version),QUANTITY,1
+Red (Taylor's Version),MONEY,1
+Red (Taylor's Version),ORG,1
+1989,GPE,30
+1989,ORDINAL,2
+1989,DATE,9
+1989,WORK_OF_ART,10
+1989,PERSON,3
+1989,CARDINAL,8
+1989,TIME,5
+1989,NORP,1
+1989,LOC,1
+reputation,ORDINAL,34
+reputation,PERSON,9
+reputation,CARDINAL,16
+reputation,PRODUCT,6
+reputation,DATE,8
+reputation,LOC,2
+reputation,WORK_OF_ART,4
+reputation,NORP,2
+reputation,ORG,2
+reputation,TIME,1
+reputation,EVENT,3
+Lover,PERSON,29
+Lover,CARDINAL,33
+Lover,DATE,14
+Lover,GPE,18
+Lover,FAC,25
+Lover,NORP,8
+Lover,WORK_OF_ART,3
+Lover,ORDINAL,4
+Lover,LOC,2
+Lover,ORG,1
+Lover,TIME,1
+folklore,DATE,21
+folklore,CARDINAL,19
+folklore,ORG,3
+folklore,PRODUCT,1
+folklore,FAC,5
+folklore,PERSON,18
+folklore,TIME,5
+folklore,GPE,6
+folklore,NORP,3
+folklore,ORDINAL,5
+folklore,LOC,7
+evermore,CARDINAL,11
+evermore,DATE,25
+evermore,PERSON,16
+evermore,PRODUCT,2
+evermore,ORG,2
+evermore,FAC,2
+evermore,GPE,5
+evermore,TIME,3
+evermore,QUANTITY,1
+evermore,LOC,1
+Midnights,TIME,17
+Midnights,DATE,23
+Midnights,CARDINAL,5
+Midnights,GPE,10
+Midnights,WORK_OF_ART,2
+Midnights,PERSON,18
+Midnights,ORDINAL,10
+Midnights,ORG,1
+Midnights,EVENT,7
+Midnights,LOC,1
+The Taylor Swift Holiday Collection,DATE,39
+The Taylor Swift Holiday Collection,CARDINAL,4
+The Taylor Swift Holiday Collection,TIME,2
+The Taylor Swift Holiday Collection,PERSON,17
+The Taylor Swift Holiday Collection,ORG,1
+The Taylor Swift Holiday Collection,QUANTITY,1
+Beautiful Eyes,TIME,2
+Beautiful Eyes,DATE,1
+Beautiful Eyes,CARDINAL,8
+Beautiful Eyes,PERSON,4
+Beautiful Eyes,NORP,4
+,NORP,4
+,CARDINAL,80
+,FAC,2
+,GPE,12
+,TIME,9
+,PERSON,40
+,DATE,36
+,EVENT,1
+,QUANTITY,5
+,ORDINAL,6
+,WORK_OF_ART,4
+,PRODUCT,2
+,LOC,1

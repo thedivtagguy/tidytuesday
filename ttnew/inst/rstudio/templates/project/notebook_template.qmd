@@ -1,0 +1,57 @@
+---
+title: "TidyTuesday {{year}}-{{week}} Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Tidytuesday {{year}}-{{week}}
+
+This is the notebook for analysis of the data of week {{week}} ({{year}}) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", {{year}}, "_", {{week}}))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load({{year}}, week = {{week}})
+
+names(tuesdata)
+glimpse(tuesdata[[1]])
+
+```
+
+## Data exploration and initial plots
+
+```{r}
+# What is the data like?
+
+```
+
+## Questions
+
+```{r}
+# Let us try to answer them one by one
+
+```

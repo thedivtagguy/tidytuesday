@@ -1,0 +1,184 @@
+---
+title: "Human Day"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+library(tidyverse)
+
+all_countries <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-12/all_countries.csv')
+country_regions <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-12/country_regions.csv')
+global_human_day <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-12/global_human_day.csv')
+global_economic_day <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-12/global_economic_activity.csv')
+
+##Download gdp data from gapminder - available under a CC BY-4 license.
+if (!file.exists(file.path("gapminder-gdp.xlsx"))) {
+  download.file("https://github.com/Gapminder-Indicators/gdppc_cppp/raw/master/gdppc_cppp-by-gapminder.xlsx", destfile=file.path("gapminder-gdp.xlsx"))
+}
+
+gdp_long <- readxl::read_xlsx(file.path( "gapminder-gdp.xlsx"), sheet=2) %>%
+  rename(country=`geo.name`) %>%
+  select(-geo,-indicator,-indicator.name) %>%
+  gather(key="year", value="gdp", -country,) %>%
+  filter(!is.na(gdp)) %>% 
+  mutate(gdp = gdp / 365.25)
+```
+
+```{r}
+if (!file.exists(file.path("gapminder-gini-v2.xlsx"))) {
+  download.file(
+    "https://docs.google.com/spreadsheets/d/1V9ueokiba2KKO0Un8UwJ73rBPr2Zub8j7bfT6Fi222E/export?format=xlsx",
+    destfile = file.path("gapminder-gini-v2.xlsx")
+  )
+}
+gini <- readxl::read_xlsx(file.path("gapminder-gini-v2.xlsx"), sheet = 2) %>%
+  rename(country = `Row Labels`) %>% select(-`Geo code`,-indicator) %>% as.tbl()
+gini_long <- gini %>%
+  gather(key = "year", value = "gini",-country) %>%
+  mutate(year = as.character(as.numeric(year)))
+
+if (!file.exists(file.path("gapminder-pop.csv"))) {
+  download.file(
+    "https://docs.google.com/spreadsheet/pub?key=phAwcNAVuyj0XOoBL_n5tAQ&output=csv",
+    destfile = file.path("gapminder-pop.csv")
+  )
+}
+pop <- readr::read_csv(file = file.path("gapminder-pop.csv")) %>%
+  rename(country = `Total population`)
+pop_long <- pop  %>%  gather(key = "year", value = "population",-country) %>%
+  filter(!is.na(population))
+
+##Regions, see https://www.gapminder.org/gsdev
+if (!file.exists(file.path("gapminder-countrygroups.xls"))) {
+  download.file(
+    "https://www.gapminder.org/gsdev/files/popReg/en/list_country_groups_en.xls",
+    destfile = file.path("gapminder-countrygroups.xls")
+  )
+}
+groups <- readxl::read_xls(file.path("gapminder-countrygroups.xls"), sheet =
+                             1) %>%
+  rename(country = Entity,
+         region = Region,
+         code = ID
+  )
+
+gm <- inner_join(gini_long, gdp_long, by=c("country","year")) %>%
+  inner_join(pop_long, by=c("country","year")) %>%
+  inner_join(groups, by=c("country")) %>%
+  select(country, region, code, everything())
+
+##Add weights (by year) column and by year and region
+gm <- gm %>% group_by(year) %>%
+  mutate(w=population/sum(population)) %>%
+  group_by(year, region) %>%
+  mutate(w_region = population/sum(population)) %>%
+  ungroup() %>% 
+  rename(
+   country_iso3 = code
+  ) %>% 
+  inner_join(
+    all_countries,
+    by=c("country_iso3")
+  )
+```
+
+You can add options to executable code like this
+
+```{r}
+
+rmix <- function(n, meanlog, sdlog, w) {
+  ##Sanity checks
+  stopifnot( (length(meanlog) == length(sdlog)) & (length(meanlog) == length(w)) )
+
+  ##Sample component and then from its density
+  i <- sample(seq_len(length(meanlog)), size=n, prob=w, replace=TRUE)
+  rlnorm(n, meanlog=meanlog[i], sdlog=sdlog[i])
+}
+
+#' Density of the log-normal mixture
+dmix <- function(x, meanlog, sdlog, w) {
+  ##Sanity check
+  stopifnot( (length(meanlog) == length(sdlog)) & (length(meanlog) == length(w)) )
+
+  one_x <- function(x) sum(w*dlnorm(x, meanlog=meanlog, sdlog=sdlog))
+  sapply(x, one_x)
+}
+
+#' Cumulative density of the log-normal mixture
+pmix <- function(q, meanlog, sdlog, w) {
+  ##Sanity check
+  stopifnot( (length(meanlog) == length(sdlog)) & (length(meanlog) == length(w)) )
+
+  one_q <- function(q) sum(w*plnorm(q, meanlog=meanlog, sdlog=sdlog))
+  sapply(q, one_q)
+}
+
+##Quantile function of the log-normal mixture
+qmix <- function(p, meanlog, sdlog, w) {
+  ##Sanity check
+  stopifnot( (length(meanlog) == length(sdlog)) & (length(meanlog) == length(w)) )
+
+  ##Find one quantile numerically
+  one_p <- function(p) {
+    target <- function(x) {
+      pmix(x, meanlog=meanlog, sdlog=sdlog, w=w) - p
+    }
+    uniroot(target,lower=0, upper=1e99)$root
+  }
+  sapply(p, one_p)
+}
+
+# gm %>%
+#   ggplot(aes(x=gdp, y=hoursPerDayCombined, fill=Category)) +
+#   geom_col(width = 2) +
+#   scale_x_log10() +
+#   labs(title="Multi Density Chart of Hours vs Income",
+#        x="Log-normal Income per Day",
+#        y="Density of Hours Per Day") +
+#   theme_minimal()
+
+gm_recent <- gm %>% 
+  filter(year == 2000)
+```
+
+```{r}
+make_mountain_df <- function(gm_df, log2x=seq(-2,9,by=0.25)) {
+  ##Make a data.frame containing the intervals with appropriate annotation
+  df <- data.frame(log2x=log2x) %>%
+    mutate(x=2^log2x)  %>%
+    mutate(xm1 = lag(x), log2xm1=lag(log2x)) %>%
+    mutate(xm1=if_else(is.na(xm1),0,xm1),
+           log2xm1=if_else(is.na(log2xm1),0,log2xm1),
+           mid_log2 = (log2x+log2xm1)/2,
+           width = (x-xm1),
+           width_log2 = (log2x-log2xm1)) %>%
+    ##Format the interval character representation
+    mutate(interval=if_else(xm1<2, sprintf("[%6.1f-%6.1f]",xm1,x), sprintf("[%4.0f-%4.0f]",xm1,x)),
+           interval_log2x=sprintf("[2^(%4.1f)-2^(%4.1f)]",log2xm1,log2x))
+  ##Compute expected number of individuals in each bin.
+  people <- gm_df %>% group_by(Category) %>% do({
+    countries <- .
+    temp <- df %>% slice(-1) %>% rowwise %>%
+      mutate(
+        prob_mass = diff(pmix(c(xm1,x), meanlog=countries$meanlog, sdlog=countries$sdlog, w=countries$w_region)),
+        people = prob_mass * sum(countries$population)
+      )
+    temp %>% mutate(year = max(gm_df$year))
+  })
+  ##Done
+  return(people)
+}
+##Create mountain plot data set for gm_recent with default spacing.
+(people <- make_mountain_df(gm_recent)) 
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

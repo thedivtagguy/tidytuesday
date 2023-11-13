@@ -1,0 +1,102 @@
+---
+title: "Similarity Example"
+format: html
+editor: visual
+---
+
+## Getting Similarity networks
+
+```{r}
+library(tidyverse)
+library(httr)
+
+# Data is something
+
+# Get your embeddings 
+embeddings_url <- "https://api.openai.com/v1/embeddings"
+auth <-
+  add_headers(Authorization = paste("Bearer", Sys.getenv("OPENAI_API_KEY")))
+body <-
+  list(model = "text-embedding-ada-002", input = data$article_text)
+
+resp <- POST(embeddings_url,
+             auth,
+             body = body,
+             encode = "json")
+
+embeddings <- content(resp, as = "text", encoding = "UTF-8") %>%
+  jsonlite::fromJSON(flatten = TRUE) %>%
+  pluck("data", "embedding")
+
+horror_embeddings <-
+  data %>%
+  mutate(embeddings = embeddings)
+
+embeddings_mat <- matrix(unlist(horror_embeddings$embeddings),
+                         ncol = 1536,
+                         byrow = TRUE)
+
+embeddings_similarity <-
+  embeddings_mat / sqrt(rowSums(embeddings_mat * embeddings_mat))
+embeddings_similarity <-
+  embeddings_similarity %*% t(embeddings_similarity)
+```
+
+Now that you have your embeddings similarity matrix you can find similar ones
+
+```{r}
+enframe(embeddings_similarity[54,], name = "title", value = "similarity") %>%
+  arrange(-similarity)
+
+data %>% 
+  slice(c(48, 63, 171)) %>% 
+  select(title, claim)
+```
+
+This is tedious so how can we get all the similar articles?
+
+```{r}
+similarity_threshold <- 0.8
+
+get_similar_indices <- function(row_index, similarity_matrix) {
+  similarities <- similarity_matrix[row_index, ]
+  indices <- seq_along(similarities)
+  
+  tibble(indices, similarities) %>%
+    filter(similarities >= similarity_threshold, indices != row_index) %>%
+    arrange(desc(similarities)) %>%
+    with(setNames(similarities, indices))
+}
+
+data_with_similarity <- data %>%
+  mutate(id = row_number()) %>%
+  mutate(similar = map(id, ~ get_similar_indices(.x, embeddings_similarity))) %>%
+  select(id,
+         title,
+         claim,
+         rating,
+         decade,
+         author,
+         url,
+         similar) %>% 
+  unnest_longer(col = similar) 
+```
+
+And from this if you want to make a network graph, you can also do that.
+
+```{r}
+# Create nodes data frame
+nodes <- data_with_similarity %>%
+  select(id, rating) %>%
+  distinct()
+
+# Create edges data frame
+edges <- data_with_similarity %>%
+  select(id, similar_id, similar) %>%
+  distinct() %>% 
+  rename(
+    source = "id",
+    target = "similar_id",
+    value = similar
+  )
+```

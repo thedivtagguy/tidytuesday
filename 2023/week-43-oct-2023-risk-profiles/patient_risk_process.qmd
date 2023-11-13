@@ -1,0 +1,105 @@
+---
+title: "RPharma Risk Profiles"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(tidymodels)
+# Set up
+data_raw <- tidytuesdayR::tt_load('2023-10-24')$patient_risk_profiles
+```
+
+## Cleaning
+
+```{r}
+# Thanks to https://github.com/daviddehoog/tidytuesday/blob/main/2023-10-22_patient_risk_profiles/cleaning.md for figuring most of this out.
+
+data <- data_raw %>%
+  mutate(across(starts_with("age group: "), na_if, 0),
+         sex = if_else(`Sex = FEMALE` == 1, "Female", "Male")) %>%
+  pivot_longer(
+    cols = starts_with("age group: "),
+    names_prefix = "age group: ",
+    names_to = "age_group",
+    values_drop_na = TRUE
+  ) %>%
+  mutate(
+    age_group = str_replace_all(age_group, "\\s", "") %>%
+      as.factor() %>%
+      fct_collapse(
+        `0 - 9` = c("0-4", "5-9"),
+        `10 - 19` = c("10-14", "15-19"),
+        `20 - 29` = c("20-24", "25-29"),
+        `30 - 39` = c("30-34", "35-39"),
+        `40 - 49` = c("40-44", "45-49"),
+        `50 - 59` = c("50-54", "55-59"),
+        `60 - 69` = c("60-64", "65-69"),
+        `70 - 79` = c("70-74", "75-79"),
+        `80 - 89` = c("80-84", "85-89"),
+        `over 90` = c("90-94")
+      )
+  ) %>%
+  select(personId, sex, age_group, everything(),-starts_with("Sex = ")) %>%
+  janitor::clean_names()
+```
+
+## Exploratory data analysis
+
+```{r}
+
+# How are patients distributed?
+
+data %>% 
+  group_by(age_group, sex) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(age_group, count)) + 
+  geom_col() +
+  facet_wrap(~sex)
+
+
+data %>%
+  summarize(across(ends_with("in_prior_year"), ~ sum(.x))) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "in_prior_year",
+    names_pattern = "(.*)_in_prior_year",
+    values_to = "count"
+    ) %>% 
+  mutate(percentage = count / nrow(data) * 100) %>% 
+  arrange(desc(count))
+
+data %>% 
+  summarize(across(starts_with("predicted_risk_of_"), ~ sum(.x))) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "predicted_risk_of",
+    names_pattern = "predicted_risk_of_(.*)",
+    values_to = "count"
+    ) %>% 
+  mutate(percentage = count / nrow(data) * 100) %>% 
+  arrange(desc(count))
+```
+
+```{r}
+
+dementia <- data_raw %>% 
+  select(contains("Dementia")) %>% 
+  cbind(data_raw %>% 
+          select(!contains("Dementia"))) %>% 
+  janitor::clean_names()
+
+set.seed(24102023)
+split <- initial_split(dementia,prop = 0.8)
+train <- training(split)
+test <- testing(split)
+folds <- vfold_cv(train)
+```
+
+```{r}
+library(embed)
+```

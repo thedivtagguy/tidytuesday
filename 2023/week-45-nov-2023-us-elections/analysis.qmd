@@ -1,0 +1,393 @@
+---
+title: "Analysis"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## US House Elections
+
+```{r}
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(urbnmapr)
+library(sf)
+library(gridExtra)
+library(ggpattern)
+library(tilegramsR)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+gg_record(
+  dir = file.path(getwd(), "us-elections"), 
+  device = "png", 
+  width = 8,     
+  height = 10,   
+  units = "in",  
+  dpi = 300    
+)
+
+data <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-11-07/house.csv')
+```
+
+### Categorizing states
+
+This week a *lot* of time went into trying to understand how the US election system works. I wanted to make a make of average patterns for districts over time till I realized very late that the districts keep changing and I couldn't consolidate it in one map, or show it by state since the nuance of patterns is lost at that level (attempt attached).
+
+```{r}
+
+state_categories <- data %>%
+  filter(party %in% c("DEMOCRAT", "REPUBLICAN")) %>%
+  group_by(year, state, party, state_po) %>%
+  summarise(candidatevotes = sum(candidatevotes),
+            .groups = 'drop') %>%
+  group_by(year, state, state_po) %>%
+  slice_max(order_by = candidatevotes, n = 1) %>%
+  ungroup() %>%
+  count(state, party, state_po) %>%
+  pivot_wider(
+    names_from = party,
+    values_from = n,
+    values_fill = list(n = 0)
+  ) %>%
+  rowwise() %>%
+  mutate(across(c(DEMOCRAT, REPUBLICAN), ~ .x / sum(c_across(
+    DEMOCRAT:REPUBLICAN
+  ), na.rm = TRUE) * 100)) %>%
+  ungroup() %>%
+  mutate(
+    margin = abs(DEMOCRAT - REPUBLICAN),
+    dominant_party = case_when(
+      DEMOCRAT > REPUBLICAN ~ "DEMOCRAT",
+      REPUBLICAN > DEMOCRAT ~ "REPUBLICAN",
+      TRUE ~ "TOSS UP"
+    ),
+    category = case_when(
+      margin >= 20 ~ if_else(
+        dominant_party == "DEMOCRAT",
+        "Strongly Democrat",
+        "Strongly Republican"
+      ),
+      margin >= 10 &
+        margin < 20 ~ if_else(
+          dominant_party == "DEMOCRAT",
+          "Mildly Democrat",
+          "Mildly Republican"
+        ),
+      margin < 10 ~ "Competitive State",
+      TRUE ~ "Uncategorized"
+    )
+  ) 
+
+```
+
+## Tilegram
+
+```{r}
+sf_object <- st_as_sf(sf_WSJ) %>%
+  left_join(state_categories, by = c("id" = "state_po"))
+
+
+category_colors <- 
+  c(
+    "Strongly Democrat" = "#004A80",
+    "Strongly Republican" = "#991200",
+    "Mildly Democrat" = "#0072BC",
+    "Mildly Republican" = "#C21E15",
+    "Competitive State" = "#CCCCCC"
+    
+  )
+
+ggplot(data = sf_object) + 
+  geom_sf(aes(fill = category), color = "black") +
+  scale_fill_manual(values = category_colors) +  # Set the fill colors
+  geom_sf_text(aes(label = id), size = 2.5, check_overlap = TRUE, color = "white") +
+  theme_void()
+```
+
+The problem with this is that the House elections are determined in individual congressional districts, and therefore aggregating this at *state* level loses a lot of nuance. Aggregating data to the state level might oversimplify or misrepresent the political landscape.
+
+## Composition
+
+First, I want to make a dataframe with the presidential tenures.
+
+```{r}
+
+year_periods <-
+  c(
+   #  "1970-1974",
+    "1975-1977",
+    "1977-1981",
+    "1981-1989",
+    "1989-1993",
+    "1993-2001",
+    "2001-2009",
+    "2009-2017",
+    "2017-2021",
+    "2021-2023"
+  )
+presidents <-
+  c(
+    # "Richard Nixon",
+    "Ford",
+    "Carter",
+    "Reagan",
+    "H. W. Bush",
+    "Clinton",
+    "W. Bush",
+    "Obama",
+    "Trump",
+    "Biden"
+  )
+parties <-
+  c(
+    # "Republican",
+    "Republican",
+    "Democrat",
+    "Republican",
+    "Republican",
+    "Democrat",
+    "Republican",
+    "Democrat",
+    "Republican",
+    "Democrat"
+  )
+
+
+presidents_df_long <-
+  data.frame(period = year_periods,
+             president = presidents,
+             prez_party = parties) %>%
+  separate(period,
+           into = c("Start_Year", "End_Year"),
+           sep = "-") %>%
+  mutate(Start_Year = as.integer(Start_Year),
+         End_Year = as.integer(ifelse(
+           End_Year == "present", format(Sys.Date(), "%Y"), End_Year
+         ))) %>% 
+  rowwise() %>%
+  mutate(year = list(seq(Start_Year, End_Year))) %>%
+  unnest(year) %>%
+  select(year, president, prez_party)
+
+segment_gap_size <- 0.1
+
+presidents_df <-
+  data.frame(period = year_periods,
+             president = presidents,
+             prez_party = parties) %>%
+  separate(period,
+           into = c("Start_Year", "End_Year"),
+           sep = "-") %>%
+  mutate(Start_Year = as.integer(Start_Year),
+         End_Year = as.integer(ifelse(
+           End_Year == "present", format(Sys.Date(), "%Y"), End_Year
+         ))) %>% 
+  arrange(Start_Year) %>%
+  mutate(
+    Start_Year = Start_Year + segment_gap_size,
+    End_Year = End_Year - segment_gap_size,
+    president = str_to_upper(president)
+  )
+
+```
+
+And now to calculate the 'advantage' dataframe. That is quite simple. We'll count the number of winning candidates from each state grouped by the party they belong to, and summing for each year should give us the House composition for that year. The 'advantage' then is defined as the gains or loss of seats for each party every election.
+
+You'll notice there's a ugly function called `interpolate at zero`. This helps us interpolate data so that we introduce a point at the `0` intercept, so that ggplot does not continue the line color beyond the intercept till the next point. We want it to change color *right* after it crosses the intercept.
+
+![](images/2023_11_12_23_00_11.759608.png)
+
+```{r}
+interpolate_at_zero <- function(df) {
+  # Identify where the sign of 'advantage' changes
+  sign_change <- which(diff(sign(df$advantage)) != 0)
+  
+  # Interpolate at these points
+  interpolated <- map_df(sign_change, ~{
+    slice <- df[.x:(.x + 1), ]
+    # Find the year where zero crossing occurs
+    zero_cross_year <- approx(slice$advantage, slice$year, xout = 0)$y
+    # And also include the next majority since we'll use the party name to color the points and lines
+    next_majority <- slice$majority[2] 
+    tibble(year = zero_cross_year, majority = next_majority, advantage = 0, prez_party = majority)
+  })
+  
+  # Bind the interpolated rows and sort
+  bind_rows(df, interpolated) %>% 
+    arrange(year)
+}
+
+
+advantage_df <- data %>%
+  filter(party %in% c("DEMOCRAT", "REPUBLICAN")) %>%
+  group_by(year, state, district, state_po) %>%
+  slice_max(order_by = candidatevotes, n = 1) %>%
+  ungroup() %>%
+  select(year, state, state_po, party, candidate) %>%
+  group_by(year, party) %>%
+  count(party) %>%
+  pivot_wider(names_from = party, values_from = n) %>%
+  mutate(
+    majority = ifelse(DEMOCRAT < REPUBLICAN, "Democrat", "Republican"),
+    advantage = REPUBLICAN - DEMOCRAT,
+    year = as.integer(year)
+  ) %>%
+  select(year, majority, advantage) %>%
+  left_join(presidents_df_long, by = "year") %>% 
+  group_by(year) %>%  
+  interpolate_at_zero() %>%
+  mutate(year = as.integer(year),
+         majority = str_to_sentence(str_to_lower(majority))) %>% 
+  ungroup() 
+
+```
+
+## Making the chart
+
+```{r}
+prez_chart <-  ggplot() +
+  geom_segment(
+    data = presidents_df,
+    aes(
+      x = Start_Year,
+      y = 330,
+      xend = End_Year,
+      yend = 330,
+      colour = prez_party
+    ),
+    linewidth = 1.5,
+    show.legend = FALSE
+  ) +
+    geom_text(
+    data = presidents_df,
+    aes(
+      x = (Start_Year + End_Year) / 2 + 0.1,  
+      y = 400,                         
+      label = president,
+    ),
+     family = "Source Sans 3", 
+     color = "#ADADAD",
+     size = 3.8,
+    hjust = 0,  # Center the text horizontally
+    vjust = 1,     # Adjust vertical position of text,
+   show.legend = FALSE
+  ) +
+  scale_y_continuous(
+    limits = c(300, 1500),
+    position = "left"
+  ) +
+  scale_color_manual(values = c("#64B6EC", "#FF8972")) +
+  theme_void() +
+  theme(plot.margin = margin(t = 0, r = 0, b = 0, l = 0, "points")) +
+  coord_flip()
+
+
+prez_chart 
+
+advantage_df %>%
+  ggplot(aes(
+    x = year,
+    y = advantage,
+    color = majority,
+    fill = majority
+  )) +
+  geom_line(aes(group = 1), show.legend = FALSE) +
+  geom_hline(yintercept = 0, aes(linewidth = 0.5, alpha = 0.8)) +
+  geom_point(
+    shape = 21,
+    data = . %>% filter(advantage != 0),
+    size = 2,
+    stroke = 1,
+    show.legend = FALSE
+  ) +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    plot.margin = margin(15, 0, 15, 0),
+    panel.grid.major.x = element_line(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.border = element_blank(),
+    axis.title = element_text(
+      colour = "#ADADAD",
+      family = "DecimaMonoPro",
+      size = 12,
+      face = "bold",
+    ),
+    # axis.title.y = element_text(margin = unit(c(20, 20, 20,20), "mm")),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y.right = element_line(),
+    axis.text = element_text(
+      colour = "#ADADAD",
+      family = "DecimaMonoPro",
+      size = 12,
+      face = "bold"
+    ),
+    plot.title = element_text(
+      size = 24,
+      hjust = 0,
+      lineheight = 1,
+      face = "bold",
+      family = "Source Sans 3",
+      margin = margin(b = 10)
+    ),
+    plot.subtitle = element_text(
+      hjust = 0,
+      lineheight = 1.1,
+      size = 14,
+      family = "Source Sans 3",
+      margin = margin(b = 20)
+    ),
+    plot.caption = element_text(
+      hjust = 0,
+      colour = "#ADADAD",
+      family = "Source Sans 3",
+      size = 11,
+      margin = margin(t = 20)
+    )
+  ) +
+  scale_color_manual(values = c("#FF330F", "#2FA3DC")) +
+  scale_fill_manual(values = c("#FF8972", "#64B6EC")) +
+  scale_y_continuous(
+    breaks = c(-300,-200,-100, 0, 100, 200, 300),
+    labels = function(x) {
+      ifelse(x == -300, paste0(abs(x), " seats"), abs(x))
+    },
+    limits = c(-300, 300),
+    position = "right"
+  ) +
+  scale_x_continuous(breaks = seq(1976, 2023, by = 4)) +
+  labs(
+    x = "",
+    y = str_to_upper("  ◄ More Democrats | More Republicans ►"),
+    title = str_wrap(
+      "Party Advantage in the U.S. House of Representatives, 1976-Present",
+      width = 50
+    ),
+    subtitle = str_wrap(
+      "Recent trends in the U.S. House show a close margin between Democrats and Republicans, resulting in fewer dramatic swings in party dominance.",
+      width = 75
+    ),
+    caption = "Source: MIT Election Data and Science Lab, tidytuesday project \nggplot re-creation of an original graphic by FiveThirtyEight\n\nGraphic: Aman Bhargava | Twitter: @thedivtagguy | 🔗 aman.bh"
+  ) +
+  prez_chart +
+  plot_layout(widths = c(8, 1))
+
+
+```
+
+```{r}
+gg_playback(
+  name = file.path(file.path(getwd(), "us-election-plot.gif")),
+  first_image_duration = 5,
+  last_image_duration = 15,
+  frame_duration = .4,
+  image_resize = 800
+)
+```
