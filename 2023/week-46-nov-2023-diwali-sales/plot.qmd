@@ -1,0 +1,379 @@
+---
+title: "Plot"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Diwali Sales Final Plot
+
+```{r}
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+library(clipr)
+library(emo)
+library(forcats)
+library(tidytext)
+library(tidylo)
+library(gt)
+library(gtExtras)
+
+gg_record(
+  dir = file.path(getwd(), "final-plot-process"), 
+  device = "png", 
+  units = "in",  
+  dpi = 300    
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2023, "_", 46))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Unfortunately this week, not all of the output is made in R. I would have liked to, but couldn't find the time to solve some of the layout issues I was having. As a result, the table is made with `gT` but the finished layout is done in Figma.
+
+## Prepping the data
+
+```{r}
+# Extract the category part from the product_category string
+extract_category <- function(category) {
+  str_split(category, pattern = "___", simplify = TRUE)[, 1]
+}
+
+# Mapping function for categories to emojis
+category_to_emoji <- function(category) {
+  clean_category <- extract_category(category)
+  switch(
+    clean_category,
+    "Beauty" = emo::ji("lipstick"),
+    "Clothing & Apparel" = emo::ji("shirt"),
+    "Electronics & Gadgets" = emo::ji("iphone"),
+    "Food" = emo::ji("pizza"),
+    "Footwear & Shoes" = emo::ji("athletic_shoe"),
+    "Games & Toys" = emo::ji("video_game"),
+    "Household items" = emo::ji("bulb"),
+    "Sports Products" = emo::ji("basketball"),
+    ""
+  ) 
+}
+
+state_abbr <- function(state) {
+  switch(
+    as.character(state), 
+    "Andhra Pradesh" = "AP",
+    "Maharashtra" = "MH",
+    "Delhi" = "DL",
+    "Karnataka" = "KA",
+    "Madhya Pradesh" = "MP",
+    "Uttar Pradesh" = "UP",
+    NA  
+  )
+}
+
+data <- tidytuesdayR::tt_load(2023, week = 46)$diwali_sales_data %>%
+  janitor::clean_names() %>%
+  select(
+    gender,
+    age_group,
+    age,
+    marital_status,
+    state,
+    zone,
+    occupation,
+    product_category,
+    amount
+  ) %>%
+  drop_na() %>%
+  filter(fct_lump(state, 6) != "Other",
+         fct_lump(product_category, 7) != "Other") %>%
+  count(state, product_category) %>%
+  complete(state, product_category, fill = list(n = 0)) %>%
+  bind_log_odds(state, product_category, n) %>%
+  mutate(state = fct_reorder(state,-n, sum)) %>%
+  mutate(product_category = reorder_within(product_category, log_odds_weighted, state)) %>%
+  mutate(
+    emoji = sapply(product_category, category_to_emoji),
+    category = paste(emoji, sapply(product_category, extract_category)),
+    state_code = sapply(state, state_abbr),
+    state_name = paste(state, '<span style="display: block; font-style:italic; color:#c3c3c3;">', as.character(state_code), '</span>', sep = "")
+  ) %>%
+  group_by(state) %>%
+  mutate(perc = n / sum(n) * 100,
+         inner_square_size = sqrt(perc / 100))
+
+x_labels <- paste0(2 ^ abs(seq(-6, 9, 3)), "x")
+x_labels <- ifelse(x_labels == "1x", "Same", x_labels)
+
+```
+
+## Creating the Table
+
+```{r}
+
+ data %>%
+  ungroup() %>%
+    arrange(state, desc(log_odds_weighted)) %>%
+  select(
+    state,
+    category,
+    n,
+    perc,
+    log_odds_weighted,
+    inner_square_size,
+    product_category,
+    emoji
+  ) %>%
+  gt(groupname_col = 'state') %>%
+  row_group_order(
+    groups = c(
+      "Andhra Pradesh",
+      "Madhya Pradesh",
+      "Delhi",
+      "Karnataka",
+      "Maharashtra",
+      "Uttar Pradesh"
+    )
+  ) %>%
+  tab_header(
+    title = html(
+      '<span style="width: 50%;">What sells best in Diwali across different states in India?</span>'
+    ),
+    subtitle = html(
+      '<p style="width: 80%;">Footwear in Delhi, electronics in Andhra Pradesh; some types of products outrank others in their odds of topping sales during Diwali shopping season</p>'
+    )
+  ) %>%
+  tab_source_note(
+    source_note = gt::html(
+      "Data shared on Kaggle by Saad Haroon, tidytuesday project <br> <span style='font-size: 10px;'>Graphic: Aman Bhargava | 🔗 aman.bh  | @thedivtagguy</span>"
+    )
+  ) %>%
+  gt_duplicate_column(log_odds_weighted, dupe_name = "point_plot") %>%
+  tab_options(row_group.as_column = TRUE) %>%
+  fmt_number(columns = c(perc), decimals = 1) %>%
+  gt_plt_log(
+    column = c(point_plot),
+    width = 40,
+    palette = c('#4361EE', '#F0F7EE', '#C5283D')
+  ) %>%
+  cols_label(category = "Type of product",
+             point_plot = "Odds of a sale") %>%
+  cols_hide(columns = c(
+    inner_square_size,
+    n,
+    product_category,
+    emoji,
+    perc,
+    log_odds_weighted
+  )) %>%
+  gt_theme_538() 
+ 
+ # unfortunately because of some bug in how gt_group works with row_group.as_column, I was unable to save it in one go as a two column table. From here, I just saved the html file and used puppeteer to take a screenshot.
+
+```
+
+## Creating the dot plot
+
+gtExtras has a nice `gt_plt_point` chart function which inserts SVG charts into table columns. In the first pass, [I tried making my own function to do this](https://gt.albert-rapp.de/fancy_stuff#add-arbitrary-plots-to-your-table) but I couldn't get it to work in the way I wanted on time. So instead, I looked through the source code for the `gt_plt_point` function and adapted it (with very small changes, this is almost the function in its entirety) to work with a fixed scale, my required intercepts and axis labels.
+
+```{r}
+
+add_log_plot <- function(data,
+                         palette,
+                         add_label,
+                         width,
+                         vals_range,
+                         accuracy) {
+  if (data %in% c("NA", "NULL", NA, NULL)) {
+    return("<div></div>")
+  } else {
+    df_in <- dplyr::tibble(x = data,
+                           y = 1,
+                           color = palette)
+    
+    val_breaks <-
+      seq(from = vals_range[1],
+          to = vals_range[2],
+          length.out = 7)
+    break_labs <-
+      ifelse(2 ^ abs(val_breaks) == 1, "Same", paste0(2 ^ abs(val_breaks), "x"))
+    
+    out_pt_plt <- ggplot(df_in) +
+      geom_vline(xintercept = val_breaks,
+             color = "#d9d9d9",
+             linewidth = 0.25) +
+  geom_vline(xintercept = 0,
+             color = "#000000",
+             linewidth = 0.45) +
+      geom_hline(
+        yintercept = 1,
+        color = "lightgrey",
+        linewidth = 0.25,
+        linetype = "dotted"
+      ) +
+      geom_point(
+        aes(
+          x = .data$x,
+          y = .data$y,
+          fill = I(.data$color)
+        ),
+        color = "black",
+        size = 3,
+        stroke = 0.3,
+        shape = 21
+      ) +
+      theme_void() +
+      theme(plot.margin = margin(0, 4, 0, 8, unit = "pt")) +
+      coord_cartesian(xlim = vals_range,
+                      ylim = c(0.6, 1.2),
+                      clip = "off")
+    
+    if (isTRUE(add_label)) {
+      middle_index <-
+        ceiling(length(val_breaks) / 2)  # Calculate middle index
+      last_label <- break_labs[1]
+       if (last_label != "Same") {
+    last_label <- paste("1/", last_label, sep = "")
+  }
+
+      
+      out_pt_plt <- out_pt_plt +
+        geom_text(
+          aes(x = val_breaks[1], y = .61, label = last_label),
+          hjust = 0.5,
+          vjust = 0,
+          size = 2.5,
+          family = "mono",
+          color = "black"
+        ) +
+        geom_text(
+          aes(x = val_breaks[length(val_breaks)], y = .61, label = break_labs[length(break_labs)]),
+          hjust = 0.5,
+          vjust = 0,
+          size = 2.5,
+          family = "mono",
+          color = "black"
+        )
+    } else {
+      out_pt_plt <- out_pt_plt
+    }
+
+    out_name <- file.path(tempfile(
+      pattern = "file",
+      tmpdir = tempdir(),
+      fileext = ".svg"
+    ))
+
+    ggsave(
+      out_name,
+      out_pt_plt,
+      height = 5,
+      width = width,
+      dpi = 25.4,
+      units = "mm",
+      device = "svg"
+    )
+
+    img_plot <- readLines(out_name) %>%
+      paste0(collapse = "") %>%
+      gt::html()
+
+    on.exit(file.remove(out_name), add = TRUE)
+
+    img_plot
+  }
+}
+
+
+gt_plt_log <- function(gt_object,
+                       column,
+                       palette = c("#0091AD", "#EAEBED", "#AF3E4D"),
+                       width = 25,
+                       scale = 1,
+                       range = c(-9, 9),
+                       accuracy = 1) {
+  
+  val_range <- range
+  
+  gt_object %>%
+    text_transform(
+      locations = cells_body({
+        {
+          column
+        }
+      }),
+      fn = function(x) {
+        x <- as.double(x) * scale
+        n_vals <- 1:length(x)
+        
+        col_pal <- scales::col_quantile(
+          palette = palette,
+          domain = val_range,
+          reverse = TRUE,
+          alpha = TRUE,
+          n = 5
+        )(x)
+        
+        add_label <- n_vals %in% c(min(n_vals), max(n_vals))
+        
+        mapply(add_log_plot,
+               x,
+               col_pal,
+               add_label,
+               width,
+               list(val_range),
+               accuracy,
+               SIMPLIFY = FALSE)
+      }
+    )
+}
+
+```
+
+# Abandoned Graveyard
+
+## Creating proportional squares
+
+```{r}
+
+create_square <- function(data, category) {
+  data %>%
+  filter(product_category == category) %>%
+  ggplot() +
+  geom_rect(aes(
+    xmin = 0,
+    xmax = 1,
+    ymin = 0,
+    ymax = 1
+  ), fill = "#CED0CE") +
+  geom_rect(aes(
+    xmin = 1 - inner_square_size,
+    xmax = 1,
+    ymin = 0,
+    ymax = inner_square_size
+  ),
+  fill = "#582C4D") +
+  coord_fixed() +
+  theme_void() +
+  theme(
+    plot.margin = margin(0, unit = 'pt'),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) 
+}
+
+```

@@ -14,14 +14,29 @@ This is the notebook for analysis of the data of week {{week}} ({{year}}) for th
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
 library(tidyverse)
 library(tidytuesdayR)
+library(hrbrthemes)
 library(scales)
 library(lubridate)
 library(ggrepel)
 library(patchwork)
 library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
 
 # Set theme
 theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+  width = 8,     
+  height = 10,   
+  units = "in",  
+  dpi = 300    
+)
 
 # Define default path for saving plots
 plot_path <- here::here("output", paste0("tidytuesday_", {{year}}, "_", {{week}}))

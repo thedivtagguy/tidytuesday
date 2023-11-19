@@ -1,0 +1,584 @@
+---
+title: "TidyTuesday 2023-46 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2023-46
+
+This is the notebook for analysis of the data of week 46 (2023) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+library(clipr)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+  height = 15,
+  width = 15,     
+  units = "in",  
+  dpi = 300    
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2023, "_", 46))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+data <- tidytuesdayR::tt_load(2023, week = 46)$diwali_sales_data %>%
+  janitor::clean_names() %>%
+  select(
+    gender,
+    age_group,
+    age,
+    marital_status,
+    state,
+    zone,
+    occupation,
+    product_category,
+    amount
+  ) %>% 
+  drop_na()
+
+glimpse(data)
+
+```
+
+## Data exploration and initial plots
+
+```{r}
+# What is the data like?
+
+data %>%
+  mutate(gender = factor(gender)) %>% 
+  ggplot(aes(gender, amount, fill = gender)) + 
+  geom_boxplot(show.legend = F)
+
+```
+
+Some insights
+
+1.  The spending amount doesn't appear to depend on age group.
+2.  Slightly depends on
+
+```{r}
+data_processed <- data %>% 
+  group_by(state, zone) %>% 
+  summarise(median = median(amount, na.rm = TRUE),
+            P25th = quantile(amount, probs = 0.25, na.rm = TRUE),
+            P75th = quantile(amount, probs = 0.75, na.rm = TRUE)) 
+```
+
+## Questions
+
+1.  How does what I buy vary with the state I am in?
+
+```{r}
+library(tidylo)
+
+data %>% 
+  # mutate(product_category = fct_lump(product_category, 7)) %>%
+  group_by(gender, product_category) %>% 
+  count() %>% 
+  ungroup() %>% 
+  bind_log_odds(gender, product_category, n) %>% 
+  group_by(gender)  %>%  
+  # slice_max(log_odds_weighted, n = 5) |> 
+  mutate(product_category = reorder(product_category, log_odds_weighted)) |> 
+  ggplot(aes(log_odds_weighted, reorder(product_category, log_odds_weighted), fill = gender)) +
+  geom_col(show.legend = FALSE) +
+  # facet_wrap(vars(zone), scales = "free") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "Weighted log odds (empirical Bayes)", y = NULL)
+
+```
+
+2.  What is the median amount people in each state spend?
+
+```{r}
+
+data %>% 
+  group_by(state, zone) %>% 
+  summarise(median = median(amount, na.rm = TRUE),
+            P25th = quantile(amount, probs = 0.25, na.rm = TRUE),
+            P75th = quantile(amount, probs = 0.75, na.rm = TRUE)) %>% 
+  ggplot(aes(x = reorder(state, median), y = median)) + 
+  geom_point() + 
+  geom_errorbar(aes(ymin = P25th, ymax = P75th)) +
+  expand_limits(y = 0) + 
+  coord_flip()
+
+# What about by occupation?
+data %>% 
+  group_by(occupation) %>% 
+  summarise(median = median(amount, na.rm = TRUE),
+            P25th = quantile(amount, probs = 0.25, na.rm = TRUE),
+            P75th = quantile(amount, probs = 0.75, na.rm = TRUE)) %>% 
+  ggplot(aes(x = reorder(occupation, median), y = median)) + 
+  geom_point() + 
+  geom_errorbar(aes(ymin = P25th, ymax = P75th)) +
+  expand_limits(y = 0) + 
+  coord_flip()
+```
+
+3.  What is the sample size for each state, who is over and under represented?
+
+```{r}
+# Number of observations for state
+data %>% 
+  group_by(state) %>% 
+  count() %>% 
+  arrange(desc(n)) %>% 
+  ggplot(aes(n, media))
+
+# Number of observations for categories
+data %>% 
+  group_by(product_category) %>%
+  count() %>% 
+  arrange(desc(n))
+
+# And how is this spread across states
+data %>% 
+  group_by(product_category, state) %>% 
+  count() %>% 
+  arrange(state, -n)
+```
+
+## What are the highest and lowest spending professions?
+
+```{r}
+
+data %>%
+  mutate(product_category = fct_lump(product_category, 5)) %>% 
+  group_by(occupation, product_category) %>% 
+  mutate( count = n(),
+    median_spending = median(amount, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(perc_people = count/sum(count)*100)
+
+
+```
+
+## Depending on the occupation, which gender is spending more?
+
+```{r}
+data %>%
+  select(gender, product_category, amount) %>% 
+  mutate(product_category = fct_lump(product_category, 5)) %>%
+  group_by(gender, product_category) %>%
+  summarise(count = n(),
+            median = median(amount, na.rm = TRUE),
+            .groups = "drop") 
+  
+
+```
+
+## What are the strongest predictors?
+
+```{r}
+library(broom)
+
+# Assuming 'data' is your dataframe
+data <- data %>%
+  mutate(across(where(is.character), as.factor)) %>%
+  mutate(across(where(is.factor), as.numeric))
+
+# Fit the linear model
+model <- lm(amount ~ ., data = data)
+
+# Get the summary of the model
+model_summary <- summary(model)
+
+# Extracting the coefficients and sorting them by absolute value
+tidy(model) %>% 
+  select(term, estimate) %>% 
+  arrange(estimate)
+```
+
+## Is being \_\_\_\_\_\_\_ cheaper?
+
+```{r}
+data %>% 
+  group_by(marital_status) %>% 
+  summarise(P25th = quantile(amount, p = 0.25),
+    median = median(amount),
+            P75th = quantile(amount, p = 0.75)) %>% 
+  ggplot(aes(reorder(marital_status, median), median)) + 
+  geom_col() + 
+  coord_flip()
+```
+
+## What is India spending on?
+
+```{r}
+data %>%
+  mutate(product_category = fct_lump(product_category, 8)) %>% 
+  group_by(product_category) %>%
+  summarize(
+    median_amount = median(amount, na.rm = TRUE),
+    share_of_people = n() / nrow(.) * 100
+  ) %>%
+  ungroup() %>% 
+  arrange(-share_of_people)
+
+
+data %>%
+ # mutate(product_category = fct_lump(product_category, 5)) %>% 
+  group_by(product_category, amount) %>%
+  # Calculate the share of people for each amount in each category
+  mutate(share_of_people = n() / nrow(data) * 100) %>%
+  # Ungroup
+  ungroup() %>%
+  # Create a scatter plot
+  ggplot(aes(x = amount, y = share_of_people, fill = product_category)) +
+    geom_bin2d(bins = 30) 
+```
+
+## Final plot
+
+```{r}
+library(emo)
+library(forcats)
+library(tidytext)
+library(tidylo)
+
+# Extract the category part from the product_category string
+extract_category <- function(category) {
+  str_split(category, pattern = "___", simplify = TRUE)[, 1]
+}
+
+# Updated mapping function for categories to emojis
+category_to_emoji <- function(category) {
+  clean_category <- extract_category(category)
+  switch(
+    clean_category,
+    "Beauty" = emo::ji("lipstick"),
+    "Clothing & Apparel" = emo::ji("shirt"),
+    "Electronics & Gadgets" = emo::ji("iphone"),
+    "Food" = emo::ji("pizza"),
+    "Footwear & Shoes" = emo::ji("athletic_shoe"),
+    "Games & Toys" = emo::ji("video_game"),
+    "Household items" = emo::ji("bulb"),
+    "Sports Products" = emo::ji("basketball"),
+    ""
+  ) # Return empty string for categories without a corresponding emoji
+}
+
+log_odds <- data %>%
+  filter(fct_lump(state, 6) != "Other",
+         fct_lump(product_category, 7) != "Other") %>%
+  count(state, product_category) %>%
+  complete(state, product_category, fill = list(n = 0)) %>%
+  bind_log_odds(state, product_category, n) %>%
+  mutate(state = fct_reorder(state,-n, sum)) %>%
+  mutate(
+    product_category = reorder_within(product_category, log_odds_weighted, state),
+    emoji = sapply(product_category, category_to_emoji)
+  )
+data_delhi <- log_odds %>% filter(state == "Delhi")
+data_rest <- log_odds %>% filter(state != "Delhi")
+
+x_labels <- paste0(2 ^ abs(seq(-6, 9, 3)), "x")
+x_labels <- ifelse(x_labels == "1x", "Same", x_labels)
+
+
+
+style_config <- list(
+  circle_size = 12,
+  circle_fill = "#F7F9F9",
+  circle_stroke_color = "#D0DCDC",
+  positive_fill = "#1985A1",
+  negative_fill = "#B15E6C",
+  text_size = 6,
+  axis_y_tick_size = 6,
+  axis_x_tick_size = 6,
+  axis_lines_color = "#FFFFFF"
+)
+
+
+
+
+plot_theme <- function() {
+  theme_ft_rc() +
+    theme(
+      legend.position = "none",
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      panel.grid.minor.x = element_blank()
+      
+    )
+}
+
+
+plot_delhi <- data_delhi %>%
+  ggplot(aes(log_odds_weighted, product_category, fill = log_odds_weighted > 0)) +
+  geom_segment(
+    aes(
+      x = 0,
+      y = product_category,
+      xend = log_odds_weighted,
+      yend = product_category,
+      color = log_odds_weighted > 0
+    ),
+    linewidth = 2
+  ) +
+  geom_point(size = 12,
+             color = circle_fill,
+             stroke = 2) +
+  geom_text(aes(label = emoji, x = log_odds_weighted),
+            size = 6,
+            na.rm = TRUE) +
+  scale_y_reordered() +
+  scale_x_continuous(breaks = log(2 ^ seq(-6, 9, 3)),
+                     labels = x_labels) +
+  facet_grid(~ state) +
+  plot_theme() +
+  labs(x = "",
+       y = "")
+
+
+
+without_ka_ap <- data_rest %>%
+  filter(!state %in% c("Karnataka", "Andhra Pradesh")) %>%
+  ggplot(aes(log_odds_weighted, product_category, fill = log_odds_weighted > 0)) +
+  geom_segment(
+    aes(
+      x = 0,
+      y = product_category,
+      xend = log_odds_weighted,
+      yend = product_category,
+      color = log_odds_weighted > 0
+    ),
+    linewidth = 2
+  ) +
+  geom_point(size = 12,
+             color = circle_fill,
+             stroke = 2) +
+  geom_text(aes(label = emoji, x = log_odds_weighted),
+            size = 6,
+            na.rm = TRUE) +
+  scale_y_reordered() +
+  scale_x_continuous(breaks = log(2 ^ seq(-6, 9, 3)),
+                     labels = x_labels) +
+  facet_wrap( ~ state, scales = "free_y", ncol = 1) +
+  plot_theme() +
+  labs(x = "",
+       y = "")
+
+with_ka_ap <-
+  data_rest %>%
+  filter(state %in% c("Karnataka", "Andhra Pradesh")) %>%
+  ggplot(aes(log_odds_weighted, product_category, fill = log_odds_weighted > 0)) +
+  geom_segment(
+    aes(
+      x = 0,
+      y = product_category,
+      xend = log_odds_weighted,
+      yend = product_category,
+      color = log_odds_weighted > 0
+    ),
+    linewidth = 2
+  ) +
+  geom_point(size = 12,
+             color = circle_fill,
+             stroke = 2) +
+  geom_text(aes(label = emoji, x = log_odds_weighted),
+            size = 6,
+            na.rm = TRUE) +
+  scale_y_reordered() +
+  scale_x_continuous(breaks = log(2 ^ seq(-6, 9, 3)),
+                     labels = x_labels) +
+  facet_wrap(~ state, scales = "free") +
+  plot_theme() +
+  labs(x = "",
+       y = "")
+
+without_ka_ap +
+  plot_delhi +
+  with_ka_ap +
+  plot_layout(design =
+                "ABB#
+                 ABB#
+                 ACC#")
+
+```
+
+```{r}
+style_config <- list(
+  circle_size = 15,
+  circle_fill = "#F7F9F9",
+  circle_stroke_color = "#D0DCDC",
+  positive_fill = "#1985A1",
+  negative_fill = "#B15E6C",
+  text_size = 9,
+  axis_y_tick_size = 10,
+  axis_x_tick_size = 6,
+  axis_lines_color = "#FFFFFF",
+  line_width = 2,
+  point_stroke_width = 2,
+  text_color = "#000000",
+  panel_background_color = "#F0F0F0",
+  plot_title_size = 14,
+  axis_title_size = 12,
+  axis_text_color = "#FFFFFF",
+  legend_title_size = 10,
+  legend_text_size = 8,
+  facet_text_size = 10
+)
+
+
+plot_theme <- function(style_config) {
+  theme_ft_rc() +
+    theme(
+      legend.position = "none",
+      plot.margin = margin(c(0)),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      panel.grid.minor.x = element_blank(),
+     # plot.background = element_rect(fill = style_config$panel_background_color),
+      text = element_text(color = style_config$text_color, size = style_config$text_size),
+      axis.title = element_text(size = style_config$axis_title_size),
+      axis.text = element_text(size = style_config$axis_text_size, color = style_config$axis_text_color),
+      legend.title = element_text(size = style_config$legend_title_size),
+      legend.text = element_text(size = style_config$legend_text_size)
+    )
+}
+
+
+plot_data <-
+  function(data,
+           facet_params,
+           style_config,
+           state_filter = NULL,
+           hide_y_axis_labels = TRUE) {
+    if (!is.null(state_filter)) {
+      data <- data %>% filter(state %in% state_filter)
+    }
+    
+    p <- data %>%
+      ggplot(aes(log_odds_weighted, product_category)) +
+      geom_segment(
+        aes(
+          x = 0,
+          y = product_category,
+          xend = log_odds_weighted,
+          yend = product_category,
+          color = log_odds_weighted > 0
+        ),
+        size = style_config$line_width
+      ) +
+      geom_text(
+        aes(label = emoji, x = log_odds_weighted),
+        size = style_config$text_size,
+        color = style_config$text_color,
+        na.rm = TRUE
+      ) +
+      scale_color_manual(values = c(style_config$negative_fill, style_config$positive_fill)) +
+      scale_fill_manual(values = c(style_config$negative_fill, style_config$positive_fill)) +
+      scale_y_reordered() +
+      scale_x_continuous(breaks = log(2 ^ seq(-6, 9, 3)), labels = x_labels) +
+      facet_params +
+      plot_theme(style_config)
+    
+    if (hide_y_axis_labels) {
+      p <-
+        p + theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+    }
+    
+    p + labs(x = "", y = "")
+  }
+
+
+plot_delhi <- plot_data(data_delhi, facet_grid(~ state), style_config, hide_y_axis_labels = FALSE)
+without_ka_ap <- plot_data(
+  data_rest,
+  facet_wrap(~ state, scales = "free_y", ncol = 1),
+  style_config,
+  c("Madhya Pradesh", "Maharashtra", "Uttar Pradesh")
+)
+
+with_ka_ap <- plot_data(
+  data_rest,
+  facet_wrap(~ state, scales = "free"),
+  style_config,
+  c("Karnataka", "Andhra Pradesh")
+)
+
+
+plot_delhi + without_ka_ap + with_ka_ap +
+  plot_layout(design =
+                "AAB
+                 AAB
+                 CCB",
+              heights = c(1, 1.2,1))
+
+```
+
+# Scrapbook
+
+```{r}
+
+# Breakdown of gender in the dataset, by numbers
+data %>%
+  mutate(product_category = fct_lump(product_category, 5)) %>% 
+  group_by(occupation, gender) %>% 
+  summarise(
+    count = n(),
+    .groups = "drop"
+  ) %>% 
+  ggplot(aes(x = reorder(occupation, count), count, fill = gender)) + 
+  geom_col() + 
+  coord_flip() + 
+  labs(
+    title = "What is the proportion of women and men in each profession?"
+  )
+
+
+# Attempted Bubble chart
+data %>%
+  mutate(product_category = fct_lump(product_category, 5)) %>% 
+  group_by(occupation, product_category) %>% 
+  summarise(
+    count = n(),
+    median_spending = median(amount, na.rm = T),
+    .groups = "drop"
+  ) %>% 
+  mutate(perc_people = count/sum(count)*100) %>% 
+  arrange(-perc_people, -median_spending) %>% 
+ggplot(aes(x = median_spending, y = perc_people, size = count*count, color = occupation)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(name = "Number of People") +
+  labs(title = "Bubble Chart: Spending by Occupation and Product Category",
+       x = "Median Spending",
+       y = "Percentage of people") +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
