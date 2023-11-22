@@ -1,0 +1,317 @@
+---
+title: "TidyTuesday 2023-47 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2023-47
+
+This is the notebook for analysis of the data of week 47 (2023) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+library(tidytext)
+library(broom)
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+  dpi = 300    
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2023, "_", 47))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2023, week = 47)$rladies_chapters
+
+
+names(tuesdata)
+glimpse(tuesdata[[1]])
+
+```
+
+## Data exploration and initial plots
+
+```{r}
+# How many events have happened each year?
+tuesdata %>%
+  ggplot(aes(x = year)) +
+  geom_histogram(
+    binwidth = 1,
+    fill = "#69b3a2",
+    color = "#e9ecef",
+    alpha = 0.9
+  )
+```
+
+## Questions
+
+### What are the most common words?
+
+```{r}
+titles <- tuesdata %>%
+  distinct(title, .keep_all = TRUE) %>%
+  unnest_tokens(word, title, drop = FALSE) %>%
+  distinct(id, word, .keep_all = TRUE) %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(str_detect(word, "[^\\d]")) %>%
+  group_by(word) %>%
+  mutate(word_total = n()) %>%
+  ungroup() %>%
+  count(word, sort = T)
+
+titles %>% 
+  head(25) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col() +
+  scale_y_continuous(labels = comma_format()) +
+  coord_flip() +
+  labs(title = "Most common words in R ladies titles",
+       y = "# of uses")
+
+```
+
+### Can we extract locations?
+
+```{r}
+# This is the easy way BUT not the suggested one.
+locations <- tuesdata %>%
+  separate(chapter, into = c("chapter", "place"), sep = "-", extra = "merge") %>% 
+  select(-id, chapter) %>% 
+  geocode(place, method = "osm") %>%
+  rename(latitude = lat, longitude = long)
+
+# How many did we not get and what are they?
+locations %>% filter(is.na(latitude)) %>% 
+  group_by(place, chapter) %>% 
+  summarise(count = n())
+
+# ldnont is London, Ontario and rladiesnyc was not separated by -
+# No worries, we can add it in manually
+locations <- locations %>%
+  filter(is.na(latitude)) %>%
+  select(-latitude, -longitude) %>% 
+  mutate(
+    place = case_when(
+      place == "ldnont" ~ "London, Ontario",
+      chapter == "rladiesnyc" ~ "New York City",
+      TRUE ~ place
+    )
+  ) %>%
+  geocode(place, method = "osm") %>% 
+  rename(latitude = lat, longitude = long) %>% 
+  bind_rows(locations) %>% 
+  drop_na()
+```
+
+This is *okay* but not perfect and prone to errors. For example, `rladies-tc` refers to Twin Cities and trusting Nominatim to geocode that just based on `tc` is optimistic. Instead, we can use the fact that the Meetup.com links for each chapter specify the location if it is applicable. We can scrape that into a new column and THEN run geocoding on it.
+
+```{r}
+library(rvest)
+library(future)
+library(furrr)
+
+# Set up parallel processing
+plan(multisession)
+
+# Function to extract location text with error handling
+extract_location <- function(chapter) {
+  url <- paste0("https://www.meetup.com/", chapter)
+  
+  # Try to read the HTML, if it fails, return NA
+  tryCatch({
+    page <- read_html(url)
+    location_text <-
+      page %>% html_node("#city-link div.text-sm") %>% html_text()
+    return(location_text)
+  }, error = function(e) {
+    message("Error with chapter: ", chapter, ". Error: ", e$message)
+    return(NA)
+  })
+}
+
+# Extract distinct chapters
+distinct_chapters <- distinct(tuesdata, chapter)
+
+cities <- tibble(
+  chapter = distinct_chapters$chapter,
+  chapter_city = future_map_chr(distinct_chapters$chapter, extract_location)
+)
+
+# What didn't make it?
+cities %>%
+  filter(is.na(chapter_city))
+
+cities <- cities %>%
+  mutate(chapter_city = if_else(
+    is.na(chapter_city),
+    case_when(
+      chapter == "rladies-toronto" ~ "Toronto",
+      chapter == "rladies-wageningen" ~ "Wageningen, Netherlands",
+      chapter == "rladies-loughborough" ~ "Loughborough, UK",
+      chapter == "rladies-rabat" ~ "Rabat, Morocco",
+      chapter == "rladies-cincinnati" ~ "Cincinnati, Ohio",
+      chapter == "rladies-la-plata" ~ "La Plata, Argentina",
+      chapter == "rladies-tiruchirappalli" ~ "Tiruchirappalli",
+      chapter == "rladies-leuven" ~ "Leuven, Belgium",
+      chapter == "rladies-louisville" ~ "Louisville, Kentucky"
+    ),
+    chapter_city
+  ))
+```
+
+*Now* let us geocode this to perfection.
+
+```{r}
+library(tidygeocoder)
+
+geocoded <- cities %>%
+  mutate(chapter_city = str_replace(chapter_city, ",\\s*\\d+$", "")) %>%
+  geocode(chapter_city, method = "osm") %>%
+  rename(latitude = lat, longitude = long)
+
+# And now join it into the data
+
+data <- tuesdata %>% 
+  left_join(., geocoded, by = "chapter")
+```
+
+### Summary stats
+
+```{r}
+# Most active chapters
+data %>% 
+  count(chapter, sort = T) %>% 
+  head(25)
+
+# Chapter, online or offine?
+data %>% 
+  group_by(chapter, location) %>% 
+  summarise(count = n()) %>% 
+  arrange(-count, location)
+
+```
+
+### Can we use word embeddings to classify titles or find similar topics?
+
+```{r}
+library(httr)
+library(jsonlite)
+
+
+
+# Function to split the titles into chunks
+split_into_chunks <- function(titles, chunk_size) {
+  split(titles, ceiling(seq_along(titles) / chunk_size))
+}
+
+# Split data$title into chunks (adjust chunk_size as needed)
+chunk_size <- 1000 # Example size, adjust based on your needs
+title_chunks <- split_into_chunks(data$title, chunk_size)
+
+# Function to get embeddings for a chunk
+get_embeddings_for_chunk <- function(chunk) {
+  embeddings_url <- "https://api.openai.com/v1/embeddings"
+  auth <-
+    add_headers(Authorization = paste("Bearer", Sys.getenv("OPENAI_API_KEY")))
+  body <- list(model = "text-embedding-ada-002", input = chunk)
+  
+  resp <- POST(embeddings_url, auth, body = body, encode = "json")
+  embeddings <- content(resp, as = "text", encoding = "UTF-8") %>%
+    fromJSON(flatten = TRUE) %>%
+    pluck("data", "embedding")
+  
+  return(embeddings)
+}
+
+# Iterate over chunks and collect embeddings
+all_embeddings <- lapply(title_chunks, get_embeddings_for_chunk)
+embeddings <- do.call(c, all_embeddings)
+
+title_embeddings <-
+  data %>%
+  mutate(embeddings = embeddings)
+
+embeddings_mat <- matrix(unlist(title_embeddings$embeddings),
+                         ncol = 1536,
+                         byrow = TRUE)
+
+embeddings_similarity <-
+  embeddings_mat / sqrt(rowSums(embeddings_mat * embeddings_mat))
+embeddings_similarity <-
+  embeddings_similarity %*% t(embeddings_similarity)
+
+enframe(embeddings_similarity[88, ], name = "title", value = "similarity") %>%
+  arrange(-similarity)
+
+data %>%
+  slice(c(433, 2438, 985, 2436)) %>%
+  select(title, chapter)
+```
+
+```{r}
+similarity_threshold <- 0.84
+
+get_similar_indices <- function(row_index, similarity_matrix) {
+  similarities <- similarity_matrix[row_index, ]
+  indices <- seq_along(similarities)
+  
+  tibble(indices, similarities) %>%
+    filter(similarities >= similarity_threshold, indices != row_index) %>%
+    arrange(desc(similarities)) %>%
+    with(setNames(similarities, indices))
+}
+
+data_with_similarity <- data %>%
+  ungroup() %>% 
+  mutate(rowId = row_number()) %>%
+  mutate(similar = map(rowId, ~ get_similar_indices(.x, embeddings_similarity))) %>% group_by(chapter) %>%
+  mutate(total_events = n())
+
+```
+
+## Output Files
+
+We want to export this
+
+```{r}
+output <- data_with_similarity %>%
+  select(rowId,
+         chapter,
+         chapter_city,
+         title,
+         year,
+         latitude,
+         longitude,
+         total_events,
+         similar)
+```
