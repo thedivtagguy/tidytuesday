@@ -1,4 +1,5 @@
 <script>
-  import "../lib/styles.css"
+	import '../lib/styles.css';
 </script>
-<slot/>
+
+<main class="py-10"><slot /></main>

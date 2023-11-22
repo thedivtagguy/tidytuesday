@@ -3,9 +3,10 @@
 	import { spring } from 'svelte/motion';
 	import { geoOrthographic, geoCentroid } from 'd3-geo';
 	import { feature } from 'topojson-client';
-	import { Chart, Svg, GeoPath, Graticule, Tooltip, Zoom } from 'layerchart';
+	import { Chart, Svg, GeoPath, Graticule, Tooltip, Zoom, GeoPoint } from 'layerchart';
+	import { cls } from 'svelte-ux';
 	import data from './countries-110m.json';
-	import { Button, scrollIntoView, cls, sortFunc } from 'svelte-ux';
+	import meetupData from './meetup-data.json';
 
 	const countries = feature(data, data.objects.countries);
 
@@ -17,12 +18,12 @@
 	const loftedProjection = geoOrthographic()
 		.translate(translate)
 		.scale(249.5 * 1.3);
-	let sensitivity = 75;
 
+	let sensitivity = 75;
 	let zoom;
 	let scale = 0;
-
 	let selectedFeature;
+
 	$: if (selectedFeature) {
 		const centroid = geoCentroid(selectedFeature);
 		$yaw = -centroid[0];
@@ -30,30 +31,7 @@
 	}
 </script>
 
-<div class="h-[600px] grid grid-cols-[224px,1fr] relative">
-	<div class="absolute top-0 right-0 z-10 flex items-center gap-3">
-		{#if selectedFeature}
-			<span class="text-sm px-2 py-1 font-semibold text-blue-500 bg-blue-50 rounded-full">
-				{selectedFeature?.properties.name ?? ''}
-			</span>
-		{/if}
-	</div>
-
-	<div class="overflow-auto scrollbar-none">
-		{#each countries.features.sort(sortFunc('properties.name')) as country}
-			{@const isSelected = selectedFeature === country}
-			<div use:scrollIntoView={{ condition: isSelected }}>
-				<Button
-					variant={isSelected ? 'fill-light' : 'default'}
-					color={isSelected ? 'red' : 'default'}
-					fullWidth
-					on:click={() => (selectedFeature = country)}
-				>
-					{country.properties.name}
-				</Button>
-			</div>
-		{/each}
-	</div>
+<div class="h-[700px] grid relative">
 	<Chart
 		geo={{
 			projection: geoOrthographic,
@@ -87,19 +65,32 @@
 					loftedProjection.rotate([yaw, pitch]);
 				}}
 			>
-				<GeoPath geojson={{ type: 'Sphere' }} class="fill-blue-300" on:click={() => ($yaw = 0)} />
-				<Graticule class="stroke-black/20" />
+				<GeoPath geojson={{ type: 'Sphere' }} class="fill-gray-300 " on:click={() => ($yaw = 0)} />
+				<Graticule class="stroke-black/10" />
 				{#each countries.features as country}
 					<GeoPath
 						geojson={country}
 						class={cls(
-							'fill-white cursor-pointer',
+							'fill-gray-400 stroke-slate-100 cursor-pointer',
 							selectedFeature === country ? 'fill-red-400' : 'hover:fill-gray-200'
 						)}
 						on:click={(e) => (selectedFeature = country)}
 						{tooltip}
 					/>
 				{/each}
+				<g class="points pointer-events-none">
+					{#each meetupData as meetup}
+						<GeoPoint lat={meetup.latitude} long={meetup.longitude}>
+							<circle r="2" class="fill-white stroke-red-500" />
+							<!-- <Text
+                y="-6"
+                value={capital.description}
+                textAnchor="middle"
+                class="text-[8px] stroke-white [stroke-width:2px]"
+              /> -->
+						</GeoPoint>
+					{/each}
+				</g>
 			</Zoom>
 		</Svg>
 
