@@ -81,7 +81,7 @@
 				<g class="points pointer-events-none">
 					{#each meetupData as meetup}
 						<GeoPoint lat={meetup.latitude} long={meetup.longitude}>
-							<circle r="2" class="fill-white stroke-red-500" />
+							<circle r="5" class="fill-white stroke-red-500" />
 							<!-- <Text
                 y="-6"
                 value={capital.description}
