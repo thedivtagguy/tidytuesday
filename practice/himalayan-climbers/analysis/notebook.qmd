@@ -1,0 +1,206 @@
+---
+title: "TidyTuesday 2020-39 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2020-39
+
+This is the notebook for analysis of the data of week 39 (2020) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2020, "_", 39))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2020, week = 39)
+
+names(tuesdata)
+
+peaks <- tuesdata$peaks
+
+peaks %>% 
+  arrange(desc(height_metres)) %>% 
+  head(40) %>% 
+  mutate(peak_name = fct_reorder(peak_name, height_metres)) %>% 
+  ggplot(aes(height_metres, peak_name, fill = climbing_status)) + 
+  geom_col()
+
+na_reasons <- c("Unknown", "Attempt rumoured", "Did not attempt climb", "Did not reach base camp")
+
+expeditions <- tuesdata$expeditions %>% 
+    mutate(
+    success = case_when(str_detect(termination_reason, "Success") ~ "Success",
+                        termination_reason %in% na_reasons ~ "Other",
+                        TRUE ~ "Failure")
+  ) %>% 
+    mutate(days_to_highpoint = as.integer(highpoint_date - basecamp_date))
+```
+
+1.  Fraction of successful climb per year per mountain
+2.  Length of climbs distributions vs height vs time
+3.  Rate of death over time per mountain (by all members or hired).
+4.  Death rate by mountain and age
+5.  Death causes and rate of injury
+6.  Correlation between frequency of expeditions and death rate
+
+```{r}
+expeditions %>% 
+  filter(!is.na(days_to_highpoint), !is.na(peak_name)) %>% 
+  filter(success == "Success") %>% 
+  mutate(
+    peak_name = fct_lump(peak_name, 10),
+    peak_name = fct_reorder(peak_name, days_to_highpoint)) %>% 
+  ggplot(aes(days_to_highpoint, peak_name)) + 
+  geom_boxplot() + 
+  labs(
+    x = "Days from basecamp to highpoint",
+    y = "",
+    title = "How long does it take to get to the high point?",
+    subtitle = "Successful climbs only"
+  )
+
+```
+
+### Everest
+
+```{r}
+expeditions %>% 
+  filter(peak_name == "Everest") %>% 
+  ggplot(aes(days_to_highpoint, fill = success)) + 
+  geom_histogram()
+```
+
+### Summarizing peaks
+
+```{r}
+summarise_expeditions <- function(tbl) {
+  return(
+    tbl %>%
+      summarise(
+        n_climbs = n(),
+        pct_success = mean(success == "Success"),
+        across(members:hired_staff_deaths, sum),
+        first_climb = min(year)
+      ) %>%
+      mutate(
+        pct_death = member_deaths / members,
+        pct_hired_staff_deaths = hired_staff_deaths / hired_staff
+      )
+  )
+}
+peaks_summarised <- expeditions %>% 
+  group_by(peak_name, peak_id) %>% 
+  summarise_expeditions() %>% 
+  ungroup() %>% 
+  arrange(desc(n_climbs)) %>% 
+ 
+  inner_join(peaks %>% select(peak_id, height_metres), by = "peak_id")
+```
+
+### What are the deadliest mountains? (Empirical bayes)
+
+```{r}
+library(ebbr)
+
+peaks_eb <- peaks_summarised %>% 
+  filter(members >= 50) %>% 
+  arrange(desc(pct_death)) %>% 
+  add_ebb_estimate(member_deaths, members)
+
+peaks_eb %>% 
+  ggplot(aes(pct_death, .fitted)) + 
+  geom_point(aes(color = members, size = members), alpha = 0.8) + 
+  geom_abline(color = "lightblue") + 
+  scale_x_continuous(labels = percent) + 
+  scale_y_continuous(labels = percent) +
+  scale_color_continuous(trans = "log10") +
+  scale_size_continuous(trans = "log10", guide = FALSE) +
+  labs(
+    x = "Death rate (raw)",
+    y = "Death rate empirical bayes adjusted"
+  )
+
+
+peaks_eb %>% 
+  filter(members >= 200) %>% 
+  arrange(desc(.fitted)) %>% 
+  mutate(peak_name = fct_reorder(peak_name, .fitted)) %>% 
+  ggplot(aes(.fitted, peak_name)) +
+  geom_point(aes(size = members)) + 
+  geom_errorbarh(aes(xmin = .low, xmax = .high), height = 0.2) + 
+  expand_limits(x = 0) + 
+  scale_x_continuous(labels = percent) + 
+  labs(
+    x = "Death rate (empirical bayes adjusted + 95% confidence interval",
+    y = "",
+    title = "How deadly is each mountain in the himalayas?",
+    subtitle = "Climbed by at least 200 people"
+  )
+```
+
+### Death probability by member (glm)
+
+```{r}
+
+library(broom)
+members <- tuesdata$members
+everest <- members %>%
+  filter(peak_name == "Everest")
+
+everest %>% 
+  group_by(age = 10 * (age %/% 10)) %>% 
+  summarise(n_climbers = n(),
+            pct_death = mean(died))
+
+model <- everest %>%
+  mutate(leader = expedition_role == "Leader") %>%
+  glm(died ~ year + age + sex + leader + hired + oxygen_used,
+      data = .,
+      family = "binomial") %>%
+  tidy(conf.int = T, exponentiate = T) %>%
+  mutate(p.value = format.pval(p.value))
+
+model %>%
+  filter(term != "(Intercept)") %>% 
+  mutate(term = reorder(term, estimate)) %>% 
+  ggplot(aes(estimate, term)) + 
+  geom_point() + 
+  geom_errorbar(aes(xmin = conf.low, xmax = conf.high))
+  
+```
