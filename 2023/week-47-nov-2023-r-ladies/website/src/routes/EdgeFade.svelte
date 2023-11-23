@@ -1,26 +1,20 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import { scaleLinear } from 'd3-scale';
 	import { geoDistance } from 'd3-geo';
+	import { scaleLinear } from 'd3';
 
-	import { GeoContext } from 'layerchart';
+	export let latitude: number;
+	export let longitude: number;
+	export let geo: any;
 
-	export let link: { source: [number, number]; target: [number, number] };
+	$: fade = scaleLinear().domain([-0.1, 0]).range([0, 1]);
+	$: clamper = scaleLinear().domain([0, 1]).range([0, 1]).clamp(true);
+	let opacity = 1;
 
-	const geo = geoContext();
-	const { width, height } = getContext('LayerCake');
-
-	const fade = scaleLinear().domain([-0.1, 0]).range([0, 0.1]);
-	const clamper = scaleLinear().domain([0, 1]).range([0, 1]).clamp(true);
-
-	// $: center = $geo.invert([$width / 2, $height / 2]);
-	$: center = $geo.invert($geo.translate());
-	$: source = link.source;
-	$: target = link.target;
-	$: startDistance = 1.57 - geoDistance(source, center);
-	$: endDistance = 1.57 - geoDistance(target, center);
-	$: distance = startDistance < endDistance ? startDistance : endDistance;
-	$: opacity = clamper(fade(distance));
+	$: {
+		const center = geo.invert(geo.translate());
+		const distance = 1.57 - geoDistance([longitude, latitude], center);
+		opacity = clamper(fade(distance));
+	}
 </script>
 
 <g {opacity}>

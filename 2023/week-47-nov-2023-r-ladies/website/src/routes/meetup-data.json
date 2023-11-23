@@ -1,1 +1,1465 @@
-[{"chapter":"rladies-st-louis","chapter_city":"Saint Louis, MO","latitude":38.628,"longitude":-90.191,"total_events":41},{"chapter":"rladies-coventry","chapter_city":"Coventry","latitude":52.4082,"longitude":-1.5105,"total_events":15},{"chapter":"rladies-baltimore","chapter_city":"Baltimore, MD","latitude":39.2909,"longitude":-76.6108,"total_events":34},{"chapter":"rladies-philly","chapter_city":"Philadelphia, PA","latitude":39.9527,"longitude":-75.1635,"total_events":83},{"chapter":"rladies-kathmandu","chapter_city":"Kathmandu","latitude":27.7083,"longitude":85.3206,"total_events":6},{"chapter":"rladies-taipei","chapter_city":"Taipei","latitude":25.0375,"longitude":121.5637,"total_events":65},{"chapter":"rladies-montreal","chapter_city":"Montréal, QC","latitude":45.5032,"longitude":-73.5698,"total_events":88},{"chapter":"rladies-abuja","chapter_city":"Abuja","latitude":9.0643,"longitude":7.4893,"total_events":17},{"chapter":"rladies-sao-paulo","chapter_city":"São Paulo","latitude":-1.2043,"longitude":-47.1584,"total_events":26},{"chapter":"rladies-sancristobal","chapter_city":"San Cristóbal de las Casas","latitude":16.6835,"longitude":-92.6155,"total_events":3},{"chapter":"rladies-xalapa","chapter_city":"Xalapa","latitude":19.5408,"longitude":-96.9146,"total_events":29},{"chapter":"rladies-ljubljana","chapter_city":"Ljubljana","latitude":46.05,"longitude":14.5069,"total_events":3},{"chapter":"rladies-salvador","chapter_city":"Salvador","latitude":13.8,"longitude":-88.9141,"total_events":8},{"chapter":"rladies-zurich","chapter_city":"Zürich","latitude":47.3744,"longitude":8.541,"total_events":10},{"chapter":"rladies-rome","chapter_city":"Roma, RM","latitude":41.8933,"longitude":12.4829,"total_events":6},{"chapter":"rladiesnyc","chapter_city":"New York, NY","latitude":40.7127,"longitude":-74.006,"total_events":2},{"chapter":"rladies-ribeirao-preto","chapter_city":"Ribeirão Preto","latitude":-21.1776,"longitude":-47.8101,"total_events":9},{"chapter":"rladies-milagro","chapter_city":"Milagro","latitude":42.2418,"longitude":-1.7628,"total_events":15},{"chapter":"rladies-paris","chapter_city":"Paris","latitude":48.8535,"longitude":2.3484,"total_events":25},{"chapter":"rladies-dc","chapter_city":"Washington, DC","latitude":38.895,"longitude":-77.0365,"total_events":134},{"chapter":"rladies-lima","chapter_city":"Lima","latitude":-12.0621,"longitude":-77.0365,"total_events":24},{"chapter":"rladies-cuernavaca","chapter_city":"Cuernavaca","latitude":18.9218,"longitude":-99.2342,"total_events":30},{"chapter":"rladies-santa-barbara","chapter_city":"Santa Barbara, CA","latitude":34.4221,"longitude":-119.7027,"total_events":22},{"chapter":"rladies-goiania","chapter_city":"Goiania","latitude":-16.6809,"longitude":-49.2533,"total_events":35},{"chapter":"rladies-wellington","chapter_city":"Wellington","latitude":-41.2888,"longitude":174.7772,"total_events":1},{"chapter":"rladies-vancouver","chapter_city":"Vancouver, BC","latitude":49.2609,"longitude":-123.114,"total_events":46},{"chapter":"rladies-strasbourg","chapter_city":"Strasbourg","latitude":48.5846,"longitude":7.7507,"total_events":14},{"chapter":"rladies-budapest","chapter_city":"Budapest","latitude":47.4979,"longitude":19.0402,"total_events":36},{"chapter":"rladies-cologne","chapter_city":"Cologne","latitude":43.7218,"longitude":0.9775,"total_events":9},{"chapter":"rladies-bergen","chapter_city":"Bergen","latitude":60.3943,"longitude":5.3259,"total_events":32},{"chapter":"rladies-seattle","chapter_city":"Seattle, WA","latitude":47.6038,"longitude":-122.3301,"total_events":52},{"chapter":"rladies-ottawa","chapter_city":"Ottawa, ON","latitude":45.4209,"longitude":-75.6901,"total_events":8},{"chapter":"rladies-villahermosa","chapter_city":"Villahermosa","latitude":18.0018,"longitude":-92.933,"total_events":4},{"chapter":"rladies-newyork","chapter_city":"New York, NY","latitude":40.7127,"longitude":-74.006,"total_events":91},{"chapter":"rladies-cdmx","chapter_city":"México City","latitude":19.4326,"longitude":-99.1332,"total_events":28},{"chapter":"rladies-guadalajara","chapter_city":"Guadalajara","latitude":20.672,"longitude":-103.3384,"total_events":15},{"chapter":"rladies-ciudad-obregon","chapter_city":"Ciudad Obregón","latitude":27.4847,"longitude":-109.9338,"total_events":2},{"chapter":"rladies-queretaro","chapter_city":"Querétaro","latitude":20.5928,"longitude":-100.3902,"total_events":20},{"chapter":"rladies-morelia","chapter_city":"Morelia","latitude":19.7027,"longitude":-101.1924,"total_events":11},{"chapter":"rladies-comitan","chapter_city":"Comitan","latitude":16.2441,"longitude":-92.1349,"total_events":5},{"chapter":"rladies-chicago","chapter_city":"Chicago, IL","latitude":41.8756,"longitude":-87.6244,"total_events":48},{"chapter":"rladies-mendoza","chapter_city":"Mendoza","latitude":-34.7871,"longitude":-68.4382,"total_events":18},{"chapter":"rladies-manchester","chapter_city":"Manchester","latitude":53.4795,"longitude":-2.2451,"total_events":24},{"chapter":"rladies-bariloche","chapter_city":"San Carlos de Bariloche","latitude":-41.1334,"longitude":-71.3098,"total_events":58},{"chapter":"rladies-lagos","chapter_city":"Lagos","latitude":6.4551,"longitude":3.3942,"total_events":7},{"chapter":"rladies-buenos-aires","chapter_city":"Buenos Aires","latitude":-34.6076,"longitude":-58.4371,"total_events":40},{"chapter":"rladies-jakarta","chapter_city":"Jakarta","latitude":-6.1752,"longitude":106.827,"total_events":14},{"chapter":"rladies-medellin","chapter_city":"Medellín","latitude":6.2697,"longitude":-75.6025,"total_events":21},{"chapter":"rladies-rtp","chapter_city":"Durham, NC","latitude":35.9967,"longitude":-78.9018,"total_events":74},{"chapter":"rladies-remote","chapter_city":"San Francisco, CA","latitude":37.779,"longitude":-122.4199,"total_events":18},{"chapter":"rladies-santa-rosa","chapter_city":"Santa Rosa","latitude":38.4405,"longitude":-122.7141,"total_events":20},{"chapter":"rladies-tc","chapter_city":"Minneapolis, MN","latitude":44.9773,"longitude":-93.2655,"total_events":52},{"chapter":"rladies-urmia","chapter_city":"Orumiyeh","latitude":37.5483,"longitude":45.0667,"total_events":25},{"chapter":"rladies-barcelona","chapter_city":"Barcelona","latitude":41.3829,"longitude":2.1774,"total_events":26},{"chapter":"rladies-irvine","chapter_city":"Irvine, CA","latitude":33.6857,"longitude":-117.826,"total_events":30},{"chapter":"rladies-utrecht","chapter_city":"Utrecht","latitude":52.081,"longitude":5.1277,"total_events":12},{"chapter":"rladies-stillwater","chapter_city":"Stillwater, OK","latitude":36.1156,"longitude":-97.0586,"total_events":7},{"chapter":"rladies-vienna","chapter_city":"Vienna","latitude":48.2084,"longitude":16.3725,"total_events":20},{"chapter":"rladies-melbourne","chapter_city":"Melbourne","latitude":-37.8142,"longitude":144.9632,"total_events":81},{"chapter":"rladies-montevideo","chapter_city":"Montevideo","latitude":-34.9059,"longitude":-56.1913,"total_events":17},{"chapter":"rladies-helsinki","chapter_city":"Helsinki","latitude":60.1675,"longitude":24.9427,"total_events":16},{"chapter":"rladies-quito","chapter_city":"Quito","latitude":-0.2202,"longitude":-78.5123,"total_events":11},{"chapter":"rladies-guayaquil","chapter_city":"Guayaquil","latitude":-2.1901,"longitude":-79.8869,"total_events":89},{"chapter":"rladies-glasgow","chapter_city":"Glasgow, V2","latitude":55.8612,"longitude":-4.2502,"total_events":4},{"chapter":"rladies-den-bosch","chapter_city":"Den Bosch","latitude":51.6889,"longitude":5.3031,"total_events":11},{"chapter":"rladies-bogor","chapter_city":"Bogor","latitude":-6.5963,"longitude":106.7972,"total_events":16},{"chapter":"rladies-talca","chapter_city":"Talca","latitude":-35.4265,"longitude":-71.666,"total_events":20},{"chapter":"rladies-valparaiso","chapter_city":"Valparaíso","latitude":-33.0458,"longitude":-71.6197,"total_events":36},{"chapter":"rladies-concepcion","chapter_city":"Concepción","latitude":-36.8271,"longitude":-73.0502,"total_events":51},{"chapter":"rladies-scl","chapter_city":"Santiago","latitude":9.8695,"longitude":-83.7981,"total_events":58},{"chapter":"rladies-gaborone","chapter_city":"Gaborone","latitude":-24.6581,"longitude":25.9088,"total_events":16},{"chapter":"rladies-tunis","chapter_city":"Tunis","latitude":36.8002,"longitude":10.1858,"total_events":51},{"chapter":"rladies-london","chapter_city":"London","latitude":51.5074,"longitude":-0.1278,"total_events":61},{"chapter":"rladies-san-diego","chapter_city":"San Diego, CA","latitude":32.7174,"longitude":-117.1628,"total_events":40},{"chapter":"rladies-dammam","chapter_city":"Dammam","latitude":26.4368,"longitude":50.104,"total_events":10},{"chapter":"rladies-brisbane","chapter_city":"Brisbane","latitude":-27.469,"longitude":153.0235,"total_events":30},{"chapter":"rladies-jujuy","chapter_city":"Jujuy","latitude":-23.3161,"longitude":-65.7595,"total_events":2},{"chapter":"rladies-johannesburg","chapter_city":"Johannesburg","latitude":-26.205,"longitude":28.0497,"total_events":40},{"chapter":"rladies-canberra","chapter_city":"Canberra","latitude":-35.2976,"longitude":149.1013,"total_events":18},{"chapter":"rladies-chennai","chapter_city":"Chennai","latitude":13.0837,"longitude":80.2702,"total_events":10},{"chapter":"rladies-porto-alegre","chapter_city":"Porto Alegre","latitude":-30.0325,"longitude":-51.2304,"total_events":9},{"chapter":"rladies-gainesville","chapter_city":"Gainesville, FL","latitude":29.652,"longitude":-82.325,"total_events":38},{"chapter":"rladies-barranquilla","chapter_city":"Barranquilla","latitude":11.0102,"longitude":-74.8232,"total_events":27},{"chapter":"rladies-galapagos-islands","chapter_city":"Puerto Ayora","latitude":-0.7472,"longitude":-90.3134,"total_events":34},{"chapter":"rladies-freiburg","chapter_city":"Freiburg","latitude":47.9961,"longitude":7.8494,"total_events":66},{"chapter":"rladies-fayetteville","chapter_city":"Fayetteville, AR","latitude":36.0626,"longitude":-94.1574,"total_events":12},{"chapter":"rladies-belgrade","chapter_city":"Belgrade","latitude":44.8178,"longitude":20.4569,"total_events":28},{"chapter":"rladies-rabat-ma","chapter_city":"Rabat","latitude":34.0224,"longitude":-6.834,"total_events":1},{"chapter":"rladies-nairobi","chapter_city":"Nairobi","latitude":-1.3026,"longitude":36.8288,"total_events":17},{"chapter":"rladies-boulder","chapter_city":"Boulder, CO","latitude":40.015,"longitude":-105.2705,"total_events":25},{"chapter":"rladies-sydney","chapter_city":"Sydney","latitude":-33.7685,"longitude":150.9569,"total_events":53},{"chapter":"rladies-bangalore","chapter_city":"Bangalore","latitude":12.9768,"longitude":77.5901,"total_events":15},{"chapter":"rladies-puebla","chapter_city":"Puebla","latitude":18.8333,"longitude":-98,"total_events":14},{"chapter":"rladies-miami","chapter_city":"Miami, FL","latitude":25.7742,"longitude":-80.1936,"total_events":40},{"chapter":"rladies-resistencia-corrientes","chapter_city":"Corrientes","latitude":-28.9911,"longitude":-57.8126,"total_events":13},{"chapter":"rladies-east-lansing","chapter_city":"East Lansing, MI","latitude":42.732,"longitude":-84.4722,"total_events":41},{"chapter":"rladies-auckland","chapter_city":"Auckland","latitude":-36.8521,"longitude":174.7632,"total_events":30},{"chapter":"rladies-bari","chapter_city":"Bari, BA","latitude":41.1258,"longitude":16.862,"total_events":29},{"chapter":"rladies-milan","chapter_city":"Milano, MI","latitude":45.4642,"longitude":9.1896,"total_events":38},{"chapter":"rladies-athens-ga","chapter_city":"Athens, GA","latitude":33.9598,"longitude":-83.3764,"total_events":9},{"chapter":"rladies-madrid","chapter_city":"Madrid","latitude":40.4167,"longitude":-3.7036,"total_events":51},{"chapter":"rladies-bucharest","chapter_city":"Bucharest","latitude":44.4361,"longitude":26.1027,"total_events":23},{"chapter":"rladies-new-orleans","chapter_city":"New Orleans, LA","latitude":29.976,"longitude":-90.0782,"total_events":2},{"chapter":"rladies-ushuaia","chapter_city":"Ushuaia","latitude":-54.8061,"longitude":-68.3185,"total_events":4},{"chapter":"rladies-banda-aceh","chapter_city":"Banda Aceh","latitude":5.5528,"longitude":95.3193,"total_events":4},{"chapter":"rladies-natal","chapter_city":"Natal","latitude":-5.8054,"longitude":-35.2081,"total_events":13},{"chapter":"rladies-colombo","chapter_city":"Colombo","latitude":6.9389,"longitude":79.8542,"total_events":6},{"chapter":"rladies-columbus","chapter_city":"Columbus, OH","latitude":39.9623,"longitude":-83.0007,"total_events":52},{"chapter":"rladies-brasilia","chapter_city":"Brasília","latitude":-10.3333,"longitude":-53.2,"total_events":3},{"chapter":"rladies-reading","chapter_city":"Reading","latitude":51.4564,"longitude":-0.9701,"total_events":2},{"chapter":"rladies-bilbao","chapter_city":"Bilbao","latitude":43.263,"longitude":-2.935,"total_events":5},{"chapter":"rladies-la-paz","chapter_city":"La Paz","latitude":-16.4955,"longitude":-68.1336,"total_events":34},{"chapter":"rladies-thessaloniki","chapter_city":"Thessaloníki","latitude":40.6403,"longitude":22.9353,"total_events":1},{"chapter":"rladies-riverside","chapter_city":"Riverside, CA","latitude":33.722,"longitude":-116.0372,"total_events":11},{"chapter":"rladies-rio","chapter_city":"Rio de Janeiro","latitude":-22.911,"longitude":-43.2094,"total_events":12},{"chapter":"rladies-darwin","chapter_city":"Darwin","latitude":-12.4604,"longitude":130.841,"total_events":2},{"chapter":"rladies-amsterdam","chapter_city":"Amsterdam","latitude":52.3731,"longitude":4.8925,"total_events":31},{"chapter":"rladies-san-francisco","chapter_city":"San Francisco, CA","latitude":37.779,"longitude":-122.4199,"total_events":64},{"chapter":"rladies-masqat","chapter_city":"Muscat","latitude":23.6151,"longitude":58.5912,"total_events":3},{"chapter":"rladies-cotonou","chapter_city":"Cotonou","latitude":6.3677,"longitude":2.4253,"total_events":3},{"chapter":"rladies-san-jose","chapter_city":"San Jose","latitude":37.3362,"longitude":-121.8906,"total_events":26},{"chapter":"rladies-calgary","chapter_city":"Calgary, AB","latitude":51.0456,"longitude":-114.0575,"total_events":8},{"chapter":"rladies-boston","chapter_city":"Boston, MA","latitude":42.3554,"longitude":-71.0605,"total_events":44},{"chapter":"rladies-dallas","chapter_city":"Dallas, TX","latitude":32.7763,"longitude":-96.7969,"total_events":38},{"chapter":"rladies-denver","chapter_city":"Denver, CO","latitude":39.7392,"longitude":-104.9849,"total_events":7},{"chapter":"rladies-mid-mo","chapter_city":"Columbia, MO","latitude":38.9519,"longitude":-92.3337,"total_events":16},{"chapter":"rladies-tbilisi","chapter_city":"Tbilisi","latitude":41.6935,"longitude":44.8014,"total_events":76},{"chapter":"rladies-ames","chapter_city":"Ames, IA","latitude":42.0268,"longitude":-93.617,"total_events":86},{"chapter":"rladies-eskisehir","chapter_city":"Eskisehir","latitude":39.7744,"longitude":30.5191,"total_events":19},{"chapter":"rladies-aarhus","chapter_city":"Aarhus","latitude":56.1496,"longitude":10.2134,"total_events":1},{"chapter":"rladies-lavras","chapter_city":"Lavras","latitude":-21.2426,"longitude":-44.9992,"total_events":4},{"chapter":"rladies-gottingen","chapter_city":"Göttingen","latitude":51.5328,"longitude":9.9352,"total_events":2},{"chapter":"rladies-belo-horizonte","chapter_city":"Belo Horizonte","latitude":-19.9226,"longitude":-43.9451,"total_events":18},{"chapter":"rladies-edinburgh","chapter_city":"Edinburgh, U8","latitude":55.9533,"longitude":-3.1884,"total_events":19},{"chapter":"rladies-pune","chapter_city":"Pune","latitude":18.5214,"longitude":73.8545,"total_events":8},{"chapter":"rladies-bogota","chapter_city":"Bogotá","latitude":4.653,"longitude":-74.0836,"total_events":9},{"chapter":"rladies-vitoria","chapter_city":"Vitória","latitude":-36.5986,"longitude":144.678,"total_events":4},{"chapter":"rladies-montpellier","chapter_city":"Montpellier","latitude":43.6112,"longitude":3.8767,"total_events":9},{"chapter":"rladies-ankara","chapter_city":"Ankara","latitude":39.716,"longitude":32.706,"total_events":16},{"chapter":"rladies-addis-ababa","chapter_city":"Addis Abeba","latitude":9.0358,"longitude":38.7524,"total_events":26},{"chapter":"rladies-istanbul","chapter_city":"Istanbul","latitude":41.0766,"longitude":29.0525,"total_events":36},{"chapter":"rladies-monterrey","chapter_city":"Monterrey","latitude":25.6802,"longitude":-100.3153,"total_events":8},{"chapter":"rladies-oxford-ohio","chapter_city":"Oxford, OH","latitude":39.5103,"longitude":-84.7421,"total_events":4},{"chapter":"rladies-mumbai","chapter_city":"Mumbai","latitude":19.0785,"longitude":72.8782,"total_events":2},{"chapter":"rladies-dublin","chapter_city":"Dublin","latitude":53.3494,"longitude":-6.2606,"total_events":25},{"chapter":"rladies-rotterdam","chapter_city":"Rotterdam","latitude":51.9244,"longitude":4.4778,"total_events":16},{"chapter":"rladies-cusco","chapter_city":"Cusco","latitude":-13.5171,"longitude":-71.9785,"total_events":2},{"chapter":"rladies-lexington-park","chapter_city":"Lexington Park, MD","latitude":38.2642,"longitude":-76.4534,"total_events":3},{"chapter":"rladies-fortaleza","chapter_city":"Fortaleza","latitude":-3.7305,"longitude":-38.5218,"total_events":2},{"chapter":"rladies-cordoba","chapter_city":"Córdoba","latitude":37.8846,"longitude":-4.776,"total_events":3},{"chapter":"rladies-curitiba","chapter_city":"Curitiba","latitude":-25.4296,"longitude":-49.2713,"total_events":3},{"chapter":"rladies-algiers","chapter_city":"al-Jaza´ir","latitude":13.0667,"longitude":33.9667,"total_events":3},{"chapter":"rladies-aguascalientes","chapter_city":"Aguascalientes","latitude":22,"longitude":-102.5,"total_events":5},{"chapter":"rladies-waltham","chapter_city":"Waltham, MA","latitude":42.3756,"longitude":-71.2358,"total_events":1},{"chapter":"rladies-berlin","chapter_city":"Berlin","latitude":52.517,"longitude":13.3889,"total_events":28},{"chapter":"rladies-goteborg","chapter_city":"Göteborg","latitude":57.7072,"longitude":11.967,"total_events":5},{"chapter":"rladies-cape-town","chapter_city":"Cape Town","latitude":-33.929,"longitude":18.4174,"total_events":30},{"chapter":"rladies-niteroi","chapter_city":"Niterói","latitude":-22.8884,"longitude":-43.1147,"total_events":10},{"chapter":"rladies-general-pico","chapter_city":"General Pico","latitude":-35.6591,"longitude":-63.7576,"total_events":5},{"chapter":"rladies-tijuana","chapter_city":"Tijuana","latitude":32.5317,"longitude":-117.0195,"total_events":2},{"chapter":"rladies-tampa","chapter_city":"Tampa, FL","latitude":27.9478,"longitude":-82.4584,"total_events":35},{"chapter":"rladies-new-delhi","chapter_city":"Delhi","latitude":28.6274,"longitude":77.1717,"total_events":10},{"chapter":"rladies-oslo","chapter_city":"Oslo","latitude":59.9133,"longitude":10.739,"total_events":11},{"chapter":"rladies-nijmegen","chapter_city":"Nijmegen","latitude":51.8426,"longitude":5.839,"total_events":12},{"chapter":"rladies-toronto","chapter_city":"Toronto","latitude":43.6535,"longitude":-79.3839,"total_events":6},{"chapter":"rladies-cambridge","chapter_city":"Cambridge, C3","latitude":52.2055,"longitude":0.1187,"total_events":2},{"chapter":"rladies-la","chapter_city":"Los Angeles, CA","latitude":34.0537,"longitude":-118.2428,"total_events":32},{"chapter":"rladies-santa-fe","chapter_city":"Santa Fe","latitude":-30.3155,"longitude":-61.1645,"total_events":14},{"chapter":"rladies-asuncion","chapter_city":"Asunción","latitude":-25.28,"longitude":-57.6344,"total_events":1},{"chapter":"rladies-beijing","chapter_city":"Beijing","latitude":39.9057,"longitude":116.3913,"total_events":3},{"chapter":"rladies-charlottesville","chapter_city":"Charlottesville, VA","latitude":38.0293,"longitude":-78.4767,"total_events":20},{"chapter":"rladies-newcastle","chapter_city":"Newcastle Upon Tyne","latitude":54.9738,"longitude":-1.6132,"total_events":10},{"chapter":"rladies-lancaster","chapter_city":"Lancaster, H2","latitude":40.789,"longitude":-96.6999,"total_events":9},{"chapter":"rladies-novi-sad","chapter_city":"Novi Sad","latitude":45.2551,"longitude":19.8452,"total_events":7},{"chapter":"rladies-copenhagen","chapter_city":"Copenhagen","latitude":55.6867,"longitude":12.5701,"total_events":11},{"chapter":"rladies-el-paso","chapter_city":"El Paso, TX","latitude":31.7551,"longitude":-106.4882,"total_events":4},{"chapter":"rladies-nashville","chapter_city":"Nashville, TN","latitude":36.1623,"longitude":-86.7743,"total_events":18},{"chapter":"rladies-ldnont","chapter_city":"London, ON","latitude":42.9832,"longitude":-81.2434,"total_events":28},{"chapter":"rladies-frankfurt","chapter_city":"Frankfurt","latitude":50.1106,"longitude":8.6821,"total_events":10},{"chapter":"rladies-florianopolis","chapter_city":"Florianópolis","latitude":-27.5973,"longitude":-48.5496,"total_events":8},{"chapter":"rladies-kansas-city","chapter_city":"Kansas City, MO","latitude":39.1001,"longitude":-94.5781,"total_events":5},{"chapter":"rladies-kyiv","chapter_city":"Kyiv","latitude":50.45,"longitude":30.5241,"total_events":15},{"chapter":"rladies-austin","chapter_city":"Austin, TX","latitude":30.2711,"longitude":-97.7437,"total_events":46},{"chapter":"rladies-perth","chapter_city":"Perth","latitude":-31.9559,"longitude":115.8606,"total_events":12},{"chapter":"rladies-lausanne","chapter_city":"Lausanne","latitude":46.5218,"longitude":6.6327,"total_events":12},{"chapter":"rladies-highland-park","chapter_city":"Highland Park, NJ","latitude":40.4959,"longitude":-74.4243,"total_events":5},{"chapter":"rladies-stockholm","chapter_city":"Stockholm","latitude":59.3251,"longitude":18.0711,"total_events":7},{"chapter":"rladies-buffalo","chapter_city":"Buffalo, NY","latitude":42.8867,"longitude":-78.8784,"total_events":6},{"chapter":"rladies-atlanta","chapter_city":"Atlanta, GA","latitude":33.749,"longitude":-84.3903,"total_events":6},{"chapter":"rladies-christchurch","chapter_city":"Christchurch","latitude":-43.531,"longitude":172.6364,"total_events":7},{"chapter":"rladies-pasadena","chapter_city":"Pasadena, CA","latitude":34.1477,"longitude":-118.1442,"total_events":5},{"chapter":"rladies-lyon","chapter_city":"Lyon","latitude":45.7578,"longitude":4.832,"total_events":4},{"chapter":"rladies-lviv","chapter_city":"L'viv","latitude":1.3154,"longitude":103.8404,"total_events":4},{"chapter":"rladies-iowa-city","chapter_city":"Iowa City, IA","latitude":41.6613,"longitude":-91.5299,"total_events":5},{"chapter":"rladies-podgorica","chapter_city":"Podgorica","latitude":42.4415,"longitude":19.2621,"total_events":1},{"chapter":"rladies-adelaide","chapter_city":"Adelaide","latitude":-34.9282,"longitude":138.5999,"total_events":9},{"chapter":"rladies-recife","chapter_city":"Recife","latitude":-8.0585,"longitude":-34.8848,"total_events":1},{"chapter":"rladies-pdx","chapter_city":"Portland, OR","latitude":45.5202,"longitude":-122.6742,"total_events":19},{"chapter":"rladies-orlando","chapter_city":"Orlando, FL","latitude":28.5421,"longitude":-81.379,"total_events":17},{"chapter":"rladies-des-moines","chapter_city":"Des Moines, IA","latitude":41.591,"longitude":-93.6047,"total_events":4},{"chapter":"rladies-brussels","chapter_city":"Brussels","latitude":50.855,"longitude":4.3512,"total_events":10},{"chapter":"rladies-wageningen","chapter_city":"Wageningen, Netherlands","latitude":51.9686,"longitude":5.6683,"total_events":2},{"chapter":"rladies-loughborough","chapter_city":"Loughborough, UK","latitude":52.7724,"longitude":-1.2078,"total_events":4},{"chapter":"rladies-louisville","chapter_city":"Louisville, Kentucky","latitude":38.2542,"longitude":-85.7594,"total_events":4},{"chapter":"rladies-rabat","chapter_city":"Rabat, Morocco","latitude":34.0224,"longitude":-6.834,"total_events":2},{"chapter":"rladies-cincinnati","chapter_city":"Cincinnati, Ohio","latitude":39.1015,"longitude":-84.5125,"total_events":1},{"chapter":"rladies-la-plata","chapter_city":"La Plata, Argentina","latitude":-34.9207,"longitude":-57.9538,"total_events":2},{"chapter":"rladies-tiruchirappalli","chapter_city":"Tiruchirappalli","latitude":10.805,"longitude":78.687,"total_events":1},{"chapter":"rladies-leuven","chapter_city":"Leuven, Belgium","latitude":50.8792,"longitude":4.7012,"total_events":1}]
+[
+	{
+		"chapter": "rladies-st-louis",
+		"chapter_city": "Saint Louis, MO",
+		"latitude": 38.628,
+		"longitude": -90.191,
+		"total_events": 41
+	},
+	{
+		"chapter": "rladies-coventry",
+		"chapter_city": "Coventry",
+		"latitude": 52.4082,
+		"longitude": -1.5105,
+		"total_events": 15
+	},
+	{
+		"chapter": "rladies-baltimore",
+		"chapter_city": "Baltimore, MD",
+		"latitude": 39.2909,
+		"longitude": -76.6108,
+		"total_events": 34
+	},
+	{
+		"chapter": "rladies-philly",
+		"chapter_city": "Philadelphia, PA",
+		"latitude": 39.9527,
+		"longitude": -75.1635,
+		"total_events": 83
+	},
+	{
+		"chapter": "rladies-kathmandu",
+		"chapter_city": "Kathmandu",
+		"latitude": 27.7083,
+		"longitude": 85.3206,
+		"total_events": 6
+	},
+	{
+		"chapter": "rladies-taipei",
+		"chapter_city": "Taipei",
+		"latitude": 25.0375,
+		"longitude": 121.5637,
+		"total_events": 65
+	},
+	{
+		"chapter": "rladies-montreal",
+		"chapter_city": "Montréal, QC",
+		"latitude": 45.5032,
+		"longitude": -73.5698,
+		"total_events": 88
+	},
+	{
+		"chapter": "rladies-abuja",
+		"chapter_city": "Abuja",
+		"latitude": 9.0643,
+		"longitude": 7.4893,
+		"total_events": 17
+	},
+	{
+		"chapter": "rladies-sao-paulo",
+		"chapter_city": "São Paulo",
+		"latitude": -1.2043,
+		"longitude": -47.1584,
+		"total_events": 26
+	},
+	{
+		"chapter": "rladies-sancristobal",
+		"chapter_city": "San Cristóbal de las Casas",
+		"latitude": 16.6835,
+		"longitude": -92.6155,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-xalapa",
+		"chapter_city": "Xalapa",
+		"latitude": 19.5408,
+		"longitude": -96.9146,
+		"total_events": 29
+	},
+	{
+		"chapter": "rladies-ljubljana",
+		"chapter_city": "Ljubljana",
+		"latitude": 46.05,
+		"longitude": 14.5069,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-salvador",
+		"chapter_city": "Salvador",
+		"latitude": 13.8,
+		"longitude": -88.9141,
+		"total_events": 8
+	},
+	{
+		"chapter": "rladies-zurich",
+		"chapter_city": "Zürich",
+		"latitude": 47.3744,
+		"longitude": 8.541,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-rome",
+		"chapter_city": "Roma, RM",
+		"latitude": 41.8933,
+		"longitude": 12.4829,
+		"total_events": 6
+	},
+	{
+		"chapter": "rladiesnyc",
+		"chapter_city": "New York, NY",
+		"latitude": 40.7127,
+		"longitude": -74.006,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-ribeirao-preto",
+		"chapter_city": "Ribeirão Preto",
+		"latitude": -21.1776,
+		"longitude": -47.8101,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-milagro",
+		"chapter_city": "Milagro",
+		"latitude": 42.2418,
+		"longitude": -1.7628,
+		"total_events": 15
+	},
+	{
+		"chapter": "rladies-paris",
+		"chapter_city": "Paris",
+		"latitude": 48.8535,
+		"longitude": 2.3484,
+		"total_events": 25
+	},
+	{
+		"chapter": "rladies-dc",
+		"chapter_city": "Washington, DC",
+		"latitude": 38.895,
+		"longitude": -77.0365,
+		"total_events": 134
+	},
+	{
+		"chapter": "rladies-lima",
+		"chapter_city": "Lima",
+		"latitude": -12.0621,
+		"longitude": -77.0365,
+		"total_events": 24
+	},
+	{
+		"chapter": "rladies-cuernavaca",
+		"chapter_city": "Cuernavaca",
+		"latitude": 18.9218,
+		"longitude": -99.2342,
+		"total_events": 30
+	},
+	{
+		"chapter": "rladies-santa-barbara",
+		"chapter_city": "Santa Barbara, CA",
+		"latitude": 34.4221,
+		"longitude": -119.7027,
+		"total_events": 22
+	},
+	{
+		"chapter": "rladies-goiania",
+		"chapter_city": "Goiania",
+		"latitude": -16.6809,
+		"longitude": -49.2533,
+		"total_events": 35
+	},
+	{
+		"chapter": "rladies-wellington",
+		"chapter_city": "Wellington",
+		"latitude": -41.2888,
+		"longitude": 174.7772,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-vancouver",
+		"chapter_city": "Vancouver, BC",
+		"latitude": 49.2609,
+		"longitude": -123.114,
+		"total_events": 46
+	},
+	{
+		"chapter": "rladies-strasbourg",
+		"chapter_city": "Strasbourg",
+		"latitude": 48.5846,
+		"longitude": 7.7507,
+		"total_events": 14
+	},
+	{
+		"chapter": "rladies-budapest",
+		"chapter_city": "Budapest",
+		"latitude": 47.4979,
+		"longitude": 19.0402,
+		"total_events": 36
+	},
+	{
+		"chapter": "rladies-cologne",
+		"chapter_city": "Cologne",
+		"latitude": 43.7218,
+		"longitude": 0.9775,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-bergen",
+		"chapter_city": "Bergen",
+		"latitude": 60.3943,
+		"longitude": 5.3259,
+		"total_events": 32
+	},
+	{
+		"chapter": "rladies-seattle",
+		"chapter_city": "Seattle, WA",
+		"latitude": 47.6038,
+		"longitude": -122.3301,
+		"total_events": 52
+	},
+	{
+		"chapter": "rladies-ottawa",
+		"chapter_city": "Ottawa, ON",
+		"latitude": 45.4209,
+		"longitude": -75.6901,
+		"total_events": 8
+	},
+	{
+		"chapter": "rladies-villahermosa",
+		"chapter_city": "Villahermosa",
+		"latitude": 18.0018,
+		"longitude": -92.933,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-newyork",
+		"chapter_city": "New York, NY",
+		"latitude": 40.7127,
+		"longitude": -74.006,
+		"total_events": 91
+	},
+	{
+		"chapter": "rladies-cdmx",
+		"chapter_city": "México City",
+		"latitude": 19.4326,
+		"longitude": -99.1332,
+		"total_events": 28
+	},
+	{
+		"chapter": "rladies-guadalajara",
+		"chapter_city": "Guadalajara",
+		"latitude": 20.672,
+		"longitude": -103.3384,
+		"total_events": 15
+	},
+	{
+		"chapter": "rladies-ciudad-obregon",
+		"chapter_city": "Ciudad Obregón",
+		"latitude": 27.4847,
+		"longitude": -109.9338,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-queretaro",
+		"chapter_city": "Querétaro",
+		"latitude": 20.5928,
+		"longitude": -100.3902,
+		"total_events": 20
+	},
+	{
+		"chapter": "rladies-morelia",
+		"chapter_city": "Morelia",
+		"latitude": 19.7027,
+		"longitude": -101.1924,
+		"total_events": 11
+	},
+	{
+		"chapter": "rladies-comitan",
+		"chapter_city": "Comitan",
+		"latitude": 16.2441,
+		"longitude": -92.1349,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-chicago",
+		"chapter_city": "Chicago, IL",
+		"latitude": 41.8756,
+		"longitude": -87.6244,
+		"total_events": 48
+	},
+	{
+		"chapter": "rladies-mendoza",
+		"chapter_city": "Mendoza",
+		"latitude": -34.7871,
+		"longitude": -68.4382,
+		"total_events": 18
+	},
+	{
+		"chapter": "rladies-manchester",
+		"chapter_city": "Manchester",
+		"latitude": 53.4795,
+		"longitude": -2.2451,
+		"total_events": 24
+	},
+	{
+		"chapter": "rladies-bariloche",
+		"chapter_city": "San Carlos de Bariloche",
+		"latitude": -41.1334,
+		"longitude": -71.3098,
+		"total_events": 58
+	},
+	{
+		"chapter": "rladies-lagos",
+		"chapter_city": "Lagos",
+		"latitude": 6.4551,
+		"longitude": 3.3942,
+		"total_events": 7
+	},
+	{
+		"chapter": "rladies-buenos-aires",
+		"chapter_city": "Buenos Aires",
+		"latitude": -34.6076,
+		"longitude": -58.4371,
+		"total_events": 40
+	},
+	{
+		"chapter": "rladies-jakarta",
+		"chapter_city": "Jakarta",
+		"latitude": -6.1752,
+		"longitude": 106.827,
+		"total_events": 14
+	},
+	{
+		"chapter": "rladies-medellin",
+		"chapter_city": "Medellín",
+		"latitude": 6.2697,
+		"longitude": -75.6025,
+		"total_events": 21
+	},
+	{
+		"chapter": "rladies-rtp",
+		"chapter_city": "Durham, NC",
+		"latitude": 35.9967,
+		"longitude": -78.9018,
+		"total_events": 74
+	},
+	{
+		"chapter": "rladies-remote",
+		"chapter_city": "San Francisco, CA",
+		"latitude": 37.779,
+		"longitude": -122.4199,
+		"total_events": 18
+	},
+	{
+		"chapter": "rladies-santa-rosa",
+		"chapter_city": "Santa Rosa",
+		"latitude": 38.4405,
+		"longitude": -122.7141,
+		"total_events": 20
+	},
+	{
+		"chapter": "rladies-tc",
+		"chapter_city": "Minneapolis, MN",
+		"latitude": 44.9773,
+		"longitude": -93.2655,
+		"total_events": 52
+	},
+	{
+		"chapter": "rladies-urmia",
+		"chapter_city": "Orumiyeh",
+		"latitude": 37.5483,
+		"longitude": 45.0667,
+		"total_events": 25
+	},
+	{
+		"chapter": "rladies-barcelona",
+		"chapter_city": "Barcelona",
+		"latitude": 41.3829,
+		"longitude": 2.1774,
+		"total_events": 26
+	},
+	{
+		"chapter": "rladies-irvine",
+		"chapter_city": "Irvine, CA",
+		"latitude": 33.6857,
+		"longitude": -117.826,
+		"total_events": 30
+	},
+	{
+		"chapter": "rladies-utrecht",
+		"chapter_city": "Utrecht",
+		"latitude": 52.081,
+		"longitude": 5.1277,
+		"total_events": 12
+	},
+	{
+		"chapter": "rladies-stillwater",
+		"chapter_city": "Stillwater, OK",
+		"latitude": 36.1156,
+		"longitude": -97.0586,
+		"total_events": 7
+	},
+	{
+		"chapter": "rladies-vienna",
+		"chapter_city": "Vienna",
+		"latitude": 48.2084,
+		"longitude": 16.3725,
+		"total_events": 20
+	},
+	{
+		"chapter": "rladies-melbourne",
+		"chapter_city": "Melbourne",
+		"latitude": -37.8142,
+		"longitude": 144.9632,
+		"total_events": 81
+	},
+	{
+		"chapter": "rladies-montevideo",
+		"chapter_city": "Montevideo",
+		"latitude": -34.9059,
+		"longitude": -56.1913,
+		"total_events": 17
+	},
+	{
+		"chapter": "rladies-helsinki",
+		"chapter_city": "Helsinki",
+		"latitude": 60.1675,
+		"longitude": 24.9427,
+		"total_events": 16
+	},
+	{
+		"chapter": "rladies-quito",
+		"chapter_city": "Quito",
+		"latitude": -0.2202,
+		"longitude": -78.5123,
+		"total_events": 11
+	},
+	{
+		"chapter": "rladies-guayaquil",
+		"chapter_city": "Guayaquil",
+		"latitude": -2.1901,
+		"longitude": -79.8869,
+		"total_events": 89
+	},
+	{
+		"chapter": "rladies-glasgow",
+		"chapter_city": "Glasgow, V2",
+		"latitude": 55.8612,
+		"longitude": -4.2502,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-den-bosch",
+		"chapter_city": "Den Bosch",
+		"latitude": 51.6889,
+		"longitude": 5.3031,
+		"total_events": 11
+	},
+	{
+		"chapter": "rladies-bogor",
+		"chapter_city": "Bogor",
+		"latitude": -6.5963,
+		"longitude": 106.7972,
+		"total_events": 16
+	},
+	{
+		"chapter": "rladies-talca",
+		"chapter_city": "Talca",
+		"latitude": -35.4265,
+		"longitude": -71.666,
+		"total_events": 20
+	},
+	{
+		"chapter": "rladies-valparaiso",
+		"chapter_city": "Valparaíso",
+		"latitude": -33.0458,
+		"longitude": -71.6197,
+		"total_events": 36
+	},
+	{
+		"chapter": "rladies-concepcion",
+		"chapter_city": "Concepción",
+		"latitude": -36.8271,
+		"longitude": -73.0502,
+		"total_events": 51
+	},
+	{
+		"chapter": "rladies-scl",
+		"chapter_city": "Santiago",
+		"latitude": 9.8695,
+		"longitude": -83.7981,
+		"total_events": 58
+	},
+	{
+		"chapter": "rladies-gaborone",
+		"chapter_city": "Gaborone",
+		"latitude": -24.6581,
+		"longitude": 25.9088,
+		"total_events": 16
+	},
+	{
+		"chapter": "rladies-tunis",
+		"chapter_city": "Tunis",
+		"latitude": 36.8002,
+		"longitude": 10.1858,
+		"total_events": 51
+	},
+	{
+		"chapter": "rladies-london",
+		"chapter_city": "London",
+		"latitude": 51.5074,
+		"longitude": -0.1278,
+		"total_events": 61
+	},
+	{
+		"chapter": "rladies-san-diego",
+		"chapter_city": "San Diego, CA",
+		"latitude": 32.7174,
+		"longitude": -117.1628,
+		"total_events": 40
+	},
+	{
+		"chapter": "rladies-dammam",
+		"chapter_city": "Dammam",
+		"latitude": 26.4368,
+		"longitude": 50.104,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-brisbane",
+		"chapter_city": "Brisbane",
+		"latitude": -27.469,
+		"longitude": 153.0235,
+		"total_events": 30
+	},
+	{
+		"chapter": "rladies-jujuy",
+		"chapter_city": "Jujuy",
+		"latitude": -23.3161,
+		"longitude": -65.7595,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-johannesburg",
+		"chapter_city": "Johannesburg",
+		"latitude": -26.205,
+		"longitude": 28.0497,
+		"total_events": 40
+	},
+	{
+		"chapter": "rladies-canberra",
+		"chapter_city": "Canberra",
+		"latitude": -35.2976,
+		"longitude": 149.1013,
+		"total_events": 18
+	},
+	{
+		"chapter": "rladies-chennai",
+		"chapter_city": "Chennai",
+		"latitude": 13.0837,
+		"longitude": 80.2702,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-porto-alegre",
+		"chapter_city": "Porto Alegre",
+		"latitude": -30.0325,
+		"longitude": -51.2304,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-gainesville",
+		"chapter_city": "Gainesville, FL",
+		"latitude": 29.652,
+		"longitude": -82.325,
+		"total_events": 38
+	},
+	{
+		"chapter": "rladies-barranquilla",
+		"chapter_city": "Barranquilla",
+		"latitude": 11.0102,
+		"longitude": -74.8232,
+		"total_events": 27
+	},
+	{
+		"chapter": "rladies-galapagos-islands",
+		"chapter_city": "Puerto Ayora",
+		"latitude": -0.7472,
+		"longitude": -90.3134,
+		"total_events": 34
+	},
+	{
+		"chapter": "rladies-freiburg",
+		"chapter_city": "Freiburg",
+		"latitude": 47.9961,
+		"longitude": 7.8494,
+		"total_events": 66
+	},
+	{
+		"chapter": "rladies-fayetteville",
+		"chapter_city": "Fayetteville, AR",
+		"latitude": 36.0626,
+		"longitude": -94.1574,
+		"total_events": 12
+	},
+	{
+		"chapter": "rladies-belgrade",
+		"chapter_city": "Belgrade",
+		"latitude": 44.8178,
+		"longitude": 20.4569,
+		"total_events": 28
+	},
+	{
+		"chapter": "rladies-rabat-ma",
+		"chapter_city": "Rabat",
+		"latitude": 34.0224,
+		"longitude": -6.834,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-nairobi",
+		"chapter_city": "Nairobi",
+		"latitude": -1.3026,
+		"longitude": 36.8288,
+		"total_events": 17
+	},
+	{
+		"chapter": "rladies-boulder",
+		"chapter_city": "Boulder, CO",
+		"latitude": 40.015,
+		"longitude": -105.2705,
+		"total_events": 25
+	},
+	{
+		"chapter": "rladies-sydney",
+		"chapter_city": "Sydney",
+		"latitude": -33.7685,
+		"longitude": 150.9569,
+		"total_events": 53
+	},
+	{
+		"chapter": "rladies-bangalore",
+		"chapter_city": "Bangalore",
+		"latitude": 12.9768,
+		"longitude": 77.5901,
+		"total_events": 15
+	},
+	{
+		"chapter": "rladies-puebla",
+		"chapter_city": "Puebla",
+		"latitude": 18.8333,
+		"longitude": -98,
+		"total_events": 14
+	},
+	{
+		"chapter": "rladies-miami",
+		"chapter_city": "Miami, FL",
+		"latitude": 25.7742,
+		"longitude": -80.1936,
+		"total_events": 40
+	},
+	{
+		"chapter": "rladies-resistencia-corrientes",
+		"chapter_city": "Corrientes",
+		"latitude": -28.9911,
+		"longitude": -57.8126,
+		"total_events": 13
+	},
+	{
+		"chapter": "rladies-east-lansing",
+		"chapter_city": "East Lansing, MI",
+		"latitude": 42.732,
+		"longitude": -84.4722,
+		"total_events": 41
+	},
+	{
+		"chapter": "rladies-auckland",
+		"chapter_city": "Auckland",
+		"latitude": -36.8521,
+		"longitude": 174.7632,
+		"total_events": 30
+	},
+	{
+		"chapter": "rladies-bari",
+		"chapter_city": "Bari, BA",
+		"latitude": 41.1258,
+		"longitude": 16.862,
+		"total_events": 29
+	},
+	{
+		"chapter": "rladies-milan",
+		"chapter_city": "Milano, MI",
+		"latitude": 45.4642,
+		"longitude": 9.1896,
+		"total_events": 38
+	},
+	{
+		"chapter": "rladies-athens-ga",
+		"chapter_city": "Athens, GA",
+		"latitude": 33.9598,
+		"longitude": -83.3764,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-madrid",
+		"chapter_city": "Madrid",
+		"latitude": 40.4167,
+		"longitude": -3.7036,
+		"total_events": 51
+	},
+	{
+		"chapter": "rladies-bucharest",
+		"chapter_city": "Bucharest",
+		"latitude": 44.4361,
+		"longitude": 26.1027,
+		"total_events": 23
+	},
+	{
+		"chapter": "rladies-new-orleans",
+		"chapter_city": "New Orleans, LA",
+		"latitude": 29.976,
+		"longitude": -90.0782,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-ushuaia",
+		"chapter_city": "Ushuaia",
+		"latitude": -54.8061,
+		"longitude": -68.3185,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-banda-aceh",
+		"chapter_city": "Banda Aceh",
+		"latitude": 5.5528,
+		"longitude": 95.3193,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-natal",
+		"chapter_city": "Natal",
+		"latitude": -5.8054,
+		"longitude": -35.2081,
+		"total_events": 13
+	},
+	{
+		"chapter": "rladies-colombo",
+		"chapter_city": "Colombo",
+		"latitude": 6.9389,
+		"longitude": 79.8542,
+		"total_events": 6
+	},
+	{
+		"chapter": "rladies-columbus",
+		"chapter_city": "Columbus, OH",
+		"latitude": 39.9623,
+		"longitude": -83.0007,
+		"total_events": 52
+	},
+	{
+		"chapter": "rladies-brasilia",
+		"chapter_city": "Brasília",
+		"latitude": -10.3333,
+		"longitude": -53.2,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-reading",
+		"chapter_city": "Reading",
+		"latitude": 51.4564,
+		"longitude": -0.9701,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-bilbao",
+		"chapter_city": "Bilbao",
+		"latitude": 43.263,
+		"longitude": -2.935,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-la-paz",
+		"chapter_city": "La Paz",
+		"latitude": -16.4955,
+		"longitude": -68.1336,
+		"total_events": 34
+	},
+	{
+		"chapter": "rladies-thessaloniki",
+		"chapter_city": "Thessaloníki",
+		"latitude": 40.6403,
+		"longitude": 22.9353,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-riverside",
+		"chapter_city": "Riverside, CA",
+		"latitude": 33.722,
+		"longitude": -116.0372,
+		"total_events": 11
+	},
+	{
+		"chapter": "rladies-rio",
+		"chapter_city": "Rio de Janeiro",
+		"latitude": -22.911,
+		"longitude": -43.2094,
+		"total_events": 12
+	},
+	{
+		"chapter": "rladies-darwin",
+		"chapter_city": "Darwin",
+		"latitude": -12.4604,
+		"longitude": 130.841,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-amsterdam",
+		"chapter_city": "Amsterdam",
+		"latitude": 52.3731,
+		"longitude": 4.8925,
+		"total_events": 31
+	},
+	{
+		"chapter": "rladies-san-francisco",
+		"chapter_city": "San Francisco, CA",
+		"latitude": 37.779,
+		"longitude": -122.4199,
+		"total_events": 64
+	},
+	{
+		"chapter": "rladies-masqat",
+		"chapter_city": "Muscat",
+		"latitude": 23.6151,
+		"longitude": 58.5912,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-cotonou",
+		"chapter_city": "Cotonou",
+		"latitude": 6.3677,
+		"longitude": 2.4253,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-san-jose",
+		"chapter_city": "San Jose",
+		"latitude": 37.3362,
+		"longitude": -121.8906,
+		"total_events": 26
+	},
+	{
+		"chapter": "rladies-calgary",
+		"chapter_city": "Calgary, AB",
+		"latitude": 51.0456,
+		"longitude": -114.0575,
+		"total_events": 8
+	},
+	{
+		"chapter": "rladies-boston",
+		"chapter_city": "Boston, MA",
+		"latitude": 42.3554,
+		"longitude": -71.0605,
+		"total_events": 44
+	},
+	{
+		"chapter": "rladies-dallas",
+		"chapter_city": "Dallas, TX",
+		"latitude": 32.7763,
+		"longitude": -96.7969,
+		"total_events": 38
+	},
+	{
+		"chapter": "rladies-denver",
+		"chapter_city": "Denver, CO",
+		"latitude": 39.7392,
+		"longitude": -104.9849,
+		"total_events": 7
+	},
+	{
+		"chapter": "rladies-mid-mo",
+		"chapter_city": "Columbia, MO",
+		"latitude": 38.9519,
+		"longitude": -92.3337,
+		"total_events": 16
+	},
+	{
+		"chapter": "rladies-tbilisi",
+		"chapter_city": "Tbilisi",
+		"latitude": 41.6935,
+		"longitude": 44.8014,
+		"total_events": 76
+	},
+	{
+		"chapter": "rladies-ames",
+		"chapter_city": "Ames, IA",
+		"latitude": 42.0268,
+		"longitude": -93.617,
+		"total_events": 86
+	},
+	{
+		"chapter": "rladies-eskisehir",
+		"chapter_city": "Eskisehir",
+		"latitude": 39.7744,
+		"longitude": 30.5191,
+		"total_events": 19
+	},
+	{
+		"chapter": "rladies-aarhus",
+		"chapter_city": "Aarhus",
+		"latitude": 56.1496,
+		"longitude": 10.2134,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-lavras",
+		"chapter_city": "Lavras",
+		"latitude": -21.2426,
+		"longitude": -44.9992,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-gottingen",
+		"chapter_city": "Göttingen",
+		"latitude": 51.5328,
+		"longitude": 9.9352,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-belo-horizonte",
+		"chapter_city": "Belo Horizonte",
+		"latitude": -19.9226,
+		"longitude": -43.9451,
+		"total_events": 18
+	},
+	{
+		"chapter": "rladies-edinburgh",
+		"chapter_city": "Edinburgh, U8",
+		"latitude": 55.9533,
+		"longitude": -3.1884,
+		"total_events": 19
+	},
+	{
+		"chapter": "rladies-pune",
+		"chapter_city": "Pune",
+		"latitude": 18.5214,
+		"longitude": 73.8545,
+		"total_events": 8
+	},
+	{
+		"chapter": "rladies-bogota",
+		"chapter_city": "Bogotá",
+		"latitude": 4.653,
+		"longitude": -74.0836,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-vitoria",
+		"chapter_city": "Vitória",
+		"latitude": -36.5986,
+		"longitude": 144.678,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-montpellier",
+		"chapter_city": "Montpellier",
+		"latitude": 43.6112,
+		"longitude": 3.8767,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-ankara",
+		"chapter_city": "Ankara",
+		"latitude": 39.716,
+		"longitude": 32.706,
+		"total_events": 16
+	},
+	{
+		"chapter": "rladies-addis-ababa",
+		"chapter_city": "Addis Abeba",
+		"latitude": 9.0358,
+		"longitude": 38.7524,
+		"total_events": 26
+	},
+	{
+		"chapter": "rladies-istanbul",
+		"chapter_city": "Istanbul",
+		"latitude": 41.0766,
+		"longitude": 29.0525,
+		"total_events": 36
+	},
+	{
+		"chapter": "rladies-monterrey",
+		"chapter_city": "Monterrey",
+		"latitude": 25.6802,
+		"longitude": -100.3153,
+		"total_events": 8
+	},
+	{
+		"chapter": "rladies-oxford-ohio",
+		"chapter_city": "Oxford, OH",
+		"latitude": 39.5103,
+		"longitude": -84.7421,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-mumbai",
+		"chapter_city": "Mumbai",
+		"latitude": 19.0785,
+		"longitude": 72.8782,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-dublin",
+		"chapter_city": "Dublin",
+		"latitude": 53.3494,
+		"longitude": -6.2606,
+		"total_events": 25
+	},
+	{
+		"chapter": "rladies-rotterdam",
+		"chapter_city": "Rotterdam",
+		"latitude": 51.9244,
+		"longitude": 4.4778,
+		"total_events": 16
+	},
+	{
+		"chapter": "rladies-cusco",
+		"chapter_city": "Cusco",
+		"latitude": -13.5171,
+		"longitude": -71.9785,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-lexington-park",
+		"chapter_city": "Lexington Park, MD",
+		"latitude": 38.2642,
+		"longitude": -76.4534,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-fortaleza",
+		"chapter_city": "Fortaleza",
+		"latitude": -3.7305,
+		"longitude": -38.5218,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-cordoba",
+		"chapter_city": "Córdoba",
+		"latitude": 37.8846,
+		"longitude": -4.776,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-curitiba",
+		"chapter_city": "Curitiba",
+		"latitude": -25.4296,
+		"longitude": -49.2713,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-algiers",
+		"chapter_city": "al-Jaza´ir",
+		"latitude": 13.0667,
+		"longitude": 33.9667,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-aguascalientes",
+		"chapter_city": "Aguascalientes",
+		"latitude": 22,
+		"longitude": -102.5,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-waltham",
+		"chapter_city": "Waltham, MA",
+		"latitude": 42.3756,
+		"longitude": -71.2358,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-berlin",
+		"chapter_city": "Berlin",
+		"latitude": 52.517,
+		"longitude": 13.3889,
+		"total_events": 28
+	},
+	{
+		"chapter": "rladies-goteborg",
+		"chapter_city": "Göteborg",
+		"latitude": 57.7072,
+		"longitude": 11.967,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-cape-town",
+		"chapter_city": "Cape Town",
+		"latitude": -33.929,
+		"longitude": 18.4174,
+		"total_events": 30
+	},
+	{
+		"chapter": "rladies-niteroi",
+		"chapter_city": "Niterói",
+		"latitude": -22.8884,
+		"longitude": -43.1147,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-general-pico",
+		"chapter_city": "General Pico",
+		"latitude": -35.6591,
+		"longitude": -63.7576,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-tijuana",
+		"chapter_city": "Tijuana",
+		"latitude": 32.5317,
+		"longitude": -117.0195,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-tampa",
+		"chapter_city": "Tampa, FL",
+		"latitude": 27.9478,
+		"longitude": -82.4584,
+		"total_events": 35
+	},
+	{
+		"chapter": "rladies-new-delhi",
+		"chapter_city": "Delhi",
+		"latitude": 28.6274,
+		"longitude": 77.1717,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-oslo",
+		"chapter_city": "Oslo",
+		"latitude": 59.9133,
+		"longitude": 10.739,
+		"total_events": 11
+	},
+	{
+		"chapter": "rladies-nijmegen",
+		"chapter_city": "Nijmegen",
+		"latitude": 51.8426,
+		"longitude": 5.839,
+		"total_events": 12
+	},
+	{
+		"chapter": "rladies-toronto",
+		"chapter_city": "Toronto",
+		"latitude": 43.6535,
+		"longitude": -79.3839,
+		"total_events": 6
+	},
+	{
+		"chapter": "rladies-cambridge",
+		"chapter_city": "Cambridge, C3",
+		"latitude": 52.2055,
+		"longitude": 0.1187,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-la",
+		"chapter_city": "Los Angeles, CA",
+		"latitude": 34.0537,
+		"longitude": -118.2428,
+		"total_events": 32
+	},
+	{
+		"chapter": "rladies-santa-fe",
+		"chapter_city": "Santa Fe",
+		"latitude": -30.3155,
+		"longitude": -61.1645,
+		"total_events": 14
+	},
+	{
+		"chapter": "rladies-asuncion",
+		"chapter_city": "Asunción",
+		"latitude": -25.28,
+		"longitude": -57.6344,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-beijing",
+		"chapter_city": "Beijing",
+		"latitude": 39.9057,
+		"longitude": 116.3913,
+		"total_events": 3
+	},
+	{
+		"chapter": "rladies-charlottesville",
+		"chapter_city": "Charlottesville, VA",
+		"latitude": 38.0293,
+		"longitude": -78.4767,
+		"total_events": 20
+	},
+	{
+		"chapter": "rladies-newcastle",
+		"chapter_city": "Newcastle Upon Tyne",
+		"latitude": 54.9738,
+		"longitude": -1.6132,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-lancaster",
+		"chapter_city": "Lancaster, H2",
+		"latitude": 40.789,
+		"longitude": -96.6999,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-novi-sad",
+		"chapter_city": "Novi Sad",
+		"latitude": 45.2551,
+		"longitude": 19.8452,
+		"total_events": 7
+	},
+	{
+		"chapter": "rladies-copenhagen",
+		"chapter_city": "Copenhagen",
+		"latitude": 55.6867,
+		"longitude": 12.5701,
+		"total_events": 11
+	},
+	{
+		"chapter": "rladies-el-paso",
+		"chapter_city": "El Paso, TX",
+		"latitude": 31.7551,
+		"longitude": -106.4882,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-nashville",
+		"chapter_city": "Nashville, TN",
+		"latitude": 36.1623,
+		"longitude": -86.7743,
+		"total_events": 18
+	},
+	{
+		"chapter": "rladies-ldnont",
+		"chapter_city": "London, ON",
+		"latitude": 42.9832,
+		"longitude": -81.2434,
+		"total_events": 28
+	},
+	{
+		"chapter": "rladies-frankfurt",
+		"chapter_city": "Frankfurt",
+		"latitude": 50.1106,
+		"longitude": 8.6821,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-florianopolis",
+		"chapter_city": "Florianópolis",
+		"latitude": -27.5973,
+		"longitude": -48.5496,
+		"total_events": 8
+	},
+	{
+		"chapter": "rladies-kansas-city",
+		"chapter_city": "Kansas City, MO",
+		"latitude": 39.1001,
+		"longitude": -94.5781,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-kyiv",
+		"chapter_city": "Kyiv",
+		"latitude": 50.45,
+		"longitude": 30.5241,
+		"total_events": 15
+	},
+	{
+		"chapter": "rladies-austin",
+		"chapter_city": "Austin, TX",
+		"latitude": 30.2711,
+		"longitude": -97.7437,
+		"total_events": 46
+	},
+	{
+		"chapter": "rladies-perth",
+		"chapter_city": "Perth",
+		"latitude": -31.9559,
+		"longitude": 115.8606,
+		"total_events": 12
+	},
+	{
+		"chapter": "rladies-lausanne",
+		"chapter_city": "Lausanne",
+		"latitude": 46.5218,
+		"longitude": 6.6327,
+		"total_events": 12
+	},
+	{
+		"chapter": "rladies-highland-park",
+		"chapter_city": "Highland Park, NJ",
+		"latitude": 40.4959,
+		"longitude": -74.4243,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-stockholm",
+		"chapter_city": "Stockholm",
+		"latitude": 59.3251,
+		"longitude": 18.0711,
+		"total_events": 7
+	},
+	{
+		"chapter": "rladies-buffalo",
+		"chapter_city": "Buffalo, NY",
+		"latitude": 42.8867,
+		"longitude": -78.8784,
+		"total_events": 6
+	},
+	{
+		"chapter": "rladies-atlanta",
+		"chapter_city": "Atlanta, GA",
+		"latitude": 33.749,
+		"longitude": -84.3903,
+		"total_events": 6
+	},
+	{
+		"chapter": "rladies-christchurch",
+		"chapter_city": "Christchurch",
+		"latitude": -43.531,
+		"longitude": 172.6364,
+		"total_events": 7
+	},
+	{
+		"chapter": "rladies-pasadena",
+		"chapter_city": "Pasadena, CA",
+		"latitude": 34.1477,
+		"longitude": -118.1442,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-lyon",
+		"chapter_city": "Lyon",
+		"latitude": 45.7578,
+		"longitude": 4.832,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-lviv",
+		"chapter_city": "L'viv",
+		"latitude": 1.3154,
+		"longitude": 103.8404,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-iowa-city",
+		"chapter_city": "Iowa City, IA",
+		"latitude": 41.6613,
+		"longitude": -91.5299,
+		"total_events": 5
+	},
+	{
+		"chapter": "rladies-podgorica",
+		"chapter_city": "Podgorica",
+		"latitude": 42.4415,
+		"longitude": 19.2621,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-adelaide",
+		"chapter_city": "Adelaide",
+		"latitude": -34.9282,
+		"longitude": 138.5999,
+		"total_events": 9
+	},
+	{
+		"chapter": "rladies-recife",
+		"chapter_city": "Recife",
+		"latitude": -8.0585,
+		"longitude": -34.8848,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-pdx",
+		"chapter_city": "Portland, OR",
+		"latitude": 45.5202,
+		"longitude": -122.6742,
+		"total_events": 19
+	},
+	{
+		"chapter": "rladies-orlando",
+		"chapter_city": "Orlando, FL",
+		"latitude": 28.5421,
+		"longitude": -81.379,
+		"total_events": 17
+	},
+	{
+		"chapter": "rladies-des-moines",
+		"chapter_city": "Des Moines, IA",
+		"latitude": 41.591,
+		"longitude": -93.6047,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-brussels",
+		"chapter_city": "Brussels",
+		"latitude": 50.855,
+		"longitude": 4.3512,
+		"total_events": 10
+	},
+	{
+		"chapter": "rladies-wageningen",
+		"chapter_city": "Wageningen, Netherlands",
+		"latitude": 51.9686,
+		"longitude": 5.6683,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-loughborough",
+		"chapter_city": "Loughborough, UK",
+		"latitude": 52.7724,
+		"longitude": -1.2078,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-louisville",
+		"chapter_city": "Louisville, Kentucky",
+		"latitude": 38.2542,
+		"longitude": -85.7594,
+		"total_events": 4
+	},
+	{
+		"chapter": "rladies-rabat",
+		"chapter_city": "Rabat, Morocco",
+		"latitude": 34.0224,
+		"longitude": -6.834,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-cincinnati",
+		"chapter_city": "Cincinnati, Ohio",
+		"latitude": 39.1015,
+		"longitude": -84.5125,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-la-plata",
+		"chapter_city": "La Plata, Argentina",
+		"latitude": -34.9207,
+		"longitude": -57.9538,
+		"total_events": 2
+	},
+	{
+		"chapter": "rladies-tiruchirappalli",
+		"chapter_city": "Tiruchirappalli",
+		"latitude": 10.805,
+		"longitude": 78.687,
+		"total_events": 1
+	},
+	{
+		"chapter": "rladies-leuven",
+		"chapter_city": "Leuven, Belgium",
+		"latitude": 50.8792,
+		"longitude": 4.7012,
+		"total_events": 1
+	}
+]
