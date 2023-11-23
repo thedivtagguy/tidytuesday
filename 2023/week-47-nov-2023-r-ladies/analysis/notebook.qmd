@@ -279,7 +279,7 @@ data %>%
 ```
 
 ```{r}
-similarity_threshold <- 0.84
+similarity_threshold <- 0.9
 
 get_similar_indices <- function(row_index, similarity_matrix) {
   similarities <- similarity_matrix[row_index, ]
@@ -305,13 +305,31 @@ We want to export this
 
 ```{r}
 output <- data_with_similarity %>%
-  select(rowId,
+  select(
+    # rowId,
          chapter,
          chapter_city,
-         title,
-         year,
+         # title,
+         # year,
          latitude,
          longitude,
          total_events,
-         similar)
+         # similar
+         ) %>% 
+  distinct()
+
+%>%
+  mutate(similar = lapply(similar, function(x) {
+    df <- tibble::as_tibble(t(x))
+    if (ncol(df) > 0) {
+      pivot_longer(df,
+                   everything(),
+                   names_to = "id",
+                   values_to = "value")
+    } else {
+      tibble(id = character(), value = numeric()) 
+    }
+  }))
+
+jsonlite::write_json(output, "website/src/routes/meetup-data.json")
 ```
