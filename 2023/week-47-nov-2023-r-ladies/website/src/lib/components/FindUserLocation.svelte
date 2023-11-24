@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { userLocation } from '$lib/stores';
+	import { userLocation } from '$lib/stores.ts';
 
 	enum ButtonState {
 		Initial = 'Find chapters near me',

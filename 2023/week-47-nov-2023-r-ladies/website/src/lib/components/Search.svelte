@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Typeahead from 'svelte-typeahead';
-	import type { MeetupData } from '$lib/types.ts';
+	import type { MeetupData } from '$lib/types';
 	import { selectedLocation } from '$lib/stores';
 	import rawData from '$lib/data/output.json';
 
@@ -20,19 +20,18 @@
 	<Typeahead
 		label="Search for your city"
 		data={searchItems}
+		value={$selectedLocation.chapter
+			? `${$selectedLocation.chapter_city} | ${$selectedLocation.chapter}`
+			: ''}
 		{extract}
 		limit={10}
 		on:select={({ detail }) => {
 			selectedLocation.set({
-				chapterId: +detail.original.id,
-				chapter: detail.original.text.split(' | ')[1]
+				...meetupData.find((d) => d.chapter_id === parseInt(detail.original.id))
 			});
 		}}
 		on:clear={() => {
-			selectedLocation.set({
-				chapterId: null,
-				chapter: null
-			});
+			selectedLocation.set({});
 		}}
 	/>
 </div>

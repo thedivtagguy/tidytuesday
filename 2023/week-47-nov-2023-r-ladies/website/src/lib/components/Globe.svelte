@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { cubicOut } from 'svelte/easing';
 	import { spring } from 'svelte/motion';
-	import { geoOrthographic, geoCentroid } from 'd3-geo';
+	import { geoOrthographic } from 'd3-geo';
 	import { feature } from 'topojson-client';
 	import { Chart, Svg, GeoPath, Graticule, Zoom, GeoPoint } from 'layerchart';
 	import { cls } from 'svelte-ux';
-	import { scaleSqrt, max } from 'd3';
+	import { scaleSqrt, max, select } from 'd3';
 	import data from '$lib/data/countries-110m.json';
-	import type { MeetupData, MeetupChapter } from '$lib/types.ts';
+	import type { MeetupData, MeetupChapter } from '$lib/types';
 	import rawData from '$lib/data/output.json';
 	import EdgeFade from './EdgeFade.svelte';
 	import { selectedLocation } from '$lib/stores';
@@ -32,14 +32,15 @@
 	let selectedFeature: MeetupChapter | undefined;
 	let hoverFeature: MeetupChapter | undefined;
 
-	$: if ($selectedLocation.chapterId) {
-		const location = getChapterLocation($selectedLocation.chapterId, meetupData);
+	$: if ($selectedLocation.chapter_id) {
+		const location = getChapterLocation($selectedLocation.chapter_id, meetupData);
 
 		if (location.latitude && location.longitude) {
 			$yaw = -location.longitude;
 			$pitch = -location.latitude;
 		}
-		selectedFeature = meetupData.find((d) => d.chapter_id === $selectedLocation.chapterId);
+		selectedFeature = meetupData.find((d) => d.chapter_id === $selectedLocation.chapter_id);
+		select(`.circle-${$selectedLocation.chapter_id}`).raise();
 	} else {
 		selectedFeature = undefined;
 	}
@@ -99,15 +100,15 @@
 			>
 				<GeoPath
 					geojson={{ type: 'Sphere' }}
-					class="fill-[#dadada] stroke-purple-50"
+					class="fill-[#dadada] stroke-purple-50 "
 					on:click={() => ($yaw = 0)}
 				/>
 
-				<Graticule class="stroke-black/5" />
+				<Graticule class="stroke-black/5 cursor-move " />
 				{#each countries.features as country}
 					<GeoPath
 						geojson={country}
-						class={cls('fill-[#f2f2f2] stroke-[#A5A5A5]/40 cursor-pointer')}
+						class={cls('fill-[#f2f2f2] stroke-[#A5A5A5]/40 cursor-move')}
 					/>
 				{/each}
 				<g class="points">
@@ -122,6 +123,14 @@
 									on:mouseout={() => (hoverFeature = undefined)}
 									on:focus={() => (hoverFeature = meetup)}
 									on:blur={() => (hoverFeature = undefined)}
+									on:click={() => {
+										selectedLocation.set(meetup);
+									}}
+									on:keydown={(e) => {
+										if (e.key === 'Enter') {
+											selectedLocation.set(meetup);
+										}
+									}}
 									role="button"
 									aria-label="Meetup"
 									tabindex="-1"
@@ -131,11 +140,11 @@
 										: selectedFeature === meetup
 										? 'fill-[#88398A] stroke-[#642965] animate-pulse transition-all duration-200'
 										: 'fill-[#575757]/20 stroke-[#e2e2e2]  transition-all duration-200'}
-									
+									circle-{meetup.chapter_id}
 									"
 								/>
 								<text
-									opacity={hoverFeature === meetup ? 1 : 0}
+									opacity={hoverFeature === meetup || $selectedLocation === meetup ? 1 : 0}
 									dy="-15"
 									dx="-40"
 									class="fill-[#642965] text-sm
