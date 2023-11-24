@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { cubicOut } from 'svelte/easing';
 	import { spring } from 'svelte/motion';
-	import { geoOrthographic, geoCentroid, geoDistance } from 'd3-geo';
+	import { geoOrthographic, geoCentroid } from 'd3-geo';
 	import { feature } from 'topojson-client';
 	import { Chart, Svg, GeoPath, Graticule, Zoom, GeoPoint } from 'layerchart';
 	import { cls } from 'svelte-ux';
-	import { scaleSqrt, max, scaleLinear } from 'd3';
+	import { scaleSqrt, max } from 'd3';
 	import data from '$lib/data/countries-110m.json';
-	import meetupData from '$lib/data/meetup-data.json';
+	import meetupData from '$lib/data/output.json';
 	import EdgeFade from './EdgeFade.svelte';
 	const countries = feature(data, data.objects.countries);
 
@@ -22,6 +22,7 @@
 	let scale = 0;
 
 	let selectedFeature: any;
+	let hoverFeature: any;
 
 	$: if (selectedFeature) {
 		const centroid = geoCentroid(selectedFeature);
@@ -95,14 +96,24 @@
 						class={cls('fill-[#f2f2f2] stroke-[#A5A5A5]/40 cursor-pointer')}
 					/>
 				{/each}
-				<g class="points pointer-events-none">
+				<g class="points">
 					{#each meetupData as meetup}
 						<EdgeFade latitude={meetup.latitude} longitude={meetup.longitude} geo={projection}>
 							<GeoPoint lat={meetup.latitude} long={meetup.longitude}>
 								<circle
 									r={rScale(meetup.total_events)}
+									on:mouseover={() => (hoverFeature = meetup)}
+									on:mouseout={() => (hoverFeature = null)}
 									class="fill-[#88398A]/50 stroke-[#642965]/40"
 								/>
+								<text
+									opacity={hoverFeature === meetup ? 1 : 0}
+									dy="-15"
+									dx="-40"
+									class="fill-[#642965] text-sm
+									uppercase font-medium pointer-events-none"
+									transform="translate(0, 5)">{meetup.chapter}</text
+								>
 							</GeoPoint>
 						</EdgeFade>
 					{/each}
