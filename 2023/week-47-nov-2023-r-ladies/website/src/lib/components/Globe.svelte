@@ -3,8 +3,8 @@
 	import { spring } from 'svelte/motion';
 	import { geoOrthographic, geoCentroid, geoDistance } from 'd3-geo';
 	import { feature } from 'topojson-client';
-	import { Chart, Svg, GeoPath, Graticule, Tooltip, Zoom, GeoPoint } from 'layerchart';
-	import { cls, sortFunc, Button, scrollIntoView } from 'svelte-ux';
+	import { Chart, Svg, GeoPath, Graticule, Zoom, GeoPoint } from 'layerchart';
+	import { cls } from 'svelte-ux';
 	import { scaleSqrt, max, scaleLinear } from 'd3';
 	import data from '$lib/data/countries-110m.json';
 	import meetupData from '$lib/data/meetup-data.json';
@@ -31,10 +31,10 @@
 
 	const rScale = scaleSqrt()
 		.domain([0, max(meetupData.map((d) => d.total_events))])
-		.range([5, 8]);
+		.range([4, 6]);
 </script>
 
-<div class="h-[700px] flex relative w-[900px]">
+<div class="h-[700px] flex relative">
 	<Chart
 		geo={{
 			projection: geoOrthographic,
@@ -46,8 +46,6 @@
 			},
 			_scale: scale
 		}}
-		tooltip={{ mode: 'manual' }}
-		let:tooltip
 		let:projection
 	>
 		<Svg>
@@ -94,27 +92,22 @@
 				{#each countries.features as country}
 					<GeoPath
 						geojson={country}
-						class={cls(
-							'fill-[#f2f2f2] stroke-[#A5A5A5]/40 cursor-pointer',
-							selectedFeature === country ? 'fill-red-400' : 'hover:fill-gray-200'
-						)}
-						{tooltip}
+						class={cls('fill-[#f2f2f2] stroke-[#A5A5A5]/40 cursor-pointer')}
 					/>
 				{/each}
 				<g class="points pointer-events-none">
 					{#each meetupData as meetup}
 						<EdgeFade latitude={meetup.latitude} longitude={meetup.longitude} geo={projection}>
 							<GeoPoint lat={meetup.latitude} long={meetup.longitude}>
-								<circle r={rScale(meetup.total_events)} class="fill-[#88398A] stroke-[#642965]" />
+								<circle
+									r={rScale(meetup.total_events)}
+									class="fill-[#88398A]/50 stroke-[#642965]/40"
+								/>
 							</GeoPoint>
 						</EdgeFade>
 					{/each}
 				</g>
 			</Zoom>
 		</Svg>
-
-		<Tooltip>
-			<div slot="header" let:data>{data.properties.name}</div>
-		</Tooltip>
 	</Chart>
 </div>

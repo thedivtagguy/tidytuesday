@@ -227,15 +227,13 @@ data %>%
 library(httr)
 library(jsonlite)
 
-
-
 # Function to split the titles into chunks
 split_into_chunks <- function(titles, chunk_size) {
   split(titles, ceiling(seq_along(titles) / chunk_size))
 }
 
-# Split data$title into chunks (adjust chunk_size as needed)
-chunk_size <- 1000 # Example size, adjust based on your needs
+# Split data$title into chunks 
+chunk_size <- 1000
 title_chunks <- split_into_chunks(data$title, chunk_size)
 
 # Function to get embeddings for a chunk
@@ -270,12 +268,12 @@ embeddings_similarity <-
 embeddings_similarity <-
   embeddings_similarity %*% t(embeddings_similarity)
 
-enframe(embeddings_similarity[88, ], name = "title", value = "similarity") %>%
-  arrange(-similarity)
-
-data %>%
-  slice(c(433, 2438, 985, 2436)) %>%
-  select(title, chapter)
+# enframe(embeddings_similarity[88, ], name = "title", value = "similarity") %>%
+#   arrange(-similarity)
+# 
+# data %>%
+#   slice(c(433, 2438, 985, 2436)) %>%
+#   select(title, chapter)
 ```
 
 ```{r}
@@ -291,11 +289,50 @@ get_similar_indices <- function(row_index, similarity_matrix) {
     with(setNames(similarities, indices))
 }
 
-data_with_similarity <- data %>%
+df_similarity <- data %>%
   ungroup() %>% 
-  mutate(rowId = row_number()) %>%
-  mutate(similar = map(rowId, ~ get_similar_indices(.x, embeddings_similarity))) %>% group_by(chapter) %>%
-  mutate(total_events = n())
+  mutate(eventId = row_number()) %>%
+  mutate(similarEvents = map(eventId, ~ get_similar_indices(.x, embeddings_similarity))) %>% group_by(chapter) %>%
+  mutate(total_events = n()) %>% 
+  ungroup()
+
+```
+
+## Looking for keywords
+
+```{r}
+library(tidytext)
+
+keywords <- data %>% 
+  unnest_tokens(word, title, token = "ngrams", n = 2) %>% 
+  anti_join(stop_words, by="word") %>% 
+  count(chapter, word, sort = T) %>% 
+  bind_tf_idf(word, chapter, n)
+
+# Boring. Not worth it. 
+
+```
+
+## Finding out which r-ladies chapters are closely alike
+
+```{r}
+
+chapter_similarity <- df_similarity %>%
+  unnest_longer(col = similarEvents) %>%
+  rename(similarity_score = similarEvents, similar_eventId = similarEvents_id) %>%
+  mutate(
+    chapter_id = as.integer(factor(chapter)),
+    similar_chapter = map_chr(similar_eventId, ~ df_similarity$chapter[df_similarity$eventId == .x]),
+    similar_chapter_id = as.integer(factor(similar_chapter))
+  ) %>%
+  group_by(chapter_id, similar_chapter_id, chapter) %>%
+  summarize(mean_similarity_score = mean(similarity_score, na.rm = TRUE)) %>%
+  ungroup() %>%
+  group_by(chapter_id, chapter) %>%
+  top_n(5, mean_similarity_score) %>%
+  ungroup() %>% 
+group_by(chapter_id, chapter) %>%
+  summarize(similar_chapters = toString(similar_chapter_id[similar_chapter_id != chapter_id]))
 
 ```
 
@@ -304,32 +341,37 @@ data_with_similarity <- data %>%
 We want to export this
 
 ```{r}
-output <- data_with_similarity %>%
+
+# Combine everything into one 
+combined <- data %>% 
+  ungroup() %>% 
+  left_join(chapter_similarity, by = "chapter") %>%
+  mutate(similar_chapters = str_split(similar_chapters, ",\\s*") %>%
+  map(~as.numeric(.x))) %>% 
   select(
-    # rowId,
-         chapter,
-         chapter_city,
-         # title,
-         # year,
-         latitude,
-         longitude,
-         total_events,
-         # similar
-         ) %>% 
-  distinct()
+    chapter_id, 
+    chapter, 
+    chapter_city, 
+    total_events,
+    location, 
+    latitude,
+    longitude,
+    similar_chapters,
+    title,
+    date
+  )
 
-%>%
-  mutate(similar = lapply(similar, function(x) {
-    df <- tibble::as_tibble(t(x))
-    if (ncol(df) > 0) {
-      pivot_longer(df,
-                   everything(),
-                   names_to = "id",
-                   values_to = "value")
-    } else {
-      tibble(id = character(), value = numeric()) 
-    }
-  }))
+json_data <- combined %>%
+  group_by(
+    chapter_id,
+    chapter,
+    chapter_city,
+    total_events,
+    latitude,
+    longitude,
+    similar_chapters
+  ) %>%
+  nest(meetups = c(title, location, date)) 
 
-jsonlite::write_json(output, "website/src/routes/meetup-data.json")
+jsonlite::write_json(json_data, "data/output.json")
 ```
