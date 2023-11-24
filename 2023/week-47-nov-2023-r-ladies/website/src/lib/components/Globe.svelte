@@ -7,32 +7,42 @@
 	import { cls } from 'svelte-ux';
 	import { scaleSqrt, max } from 'd3';
 	import data from '$lib/data/countries-110m.json';
-	import meetupData from '$lib/data/output.json';
+	import type { MeetupData, MeetupChapter } from '$lib/types.ts';
+	import rawData from '$lib/data/output.json';
 	import EdgeFade from './EdgeFade.svelte';
-	const countries = feature(data, data.objects.countries);
+	import { selectedLocation } from '$lib/stores';
+	import { getChapterLocation } from '$lib/utils';
 
+	const meetupData: MeetupData = rawData as MeetupData;
+
+	const countries: any = feature(data, data.objects.countries);
 	const springOptions = { stiffness: 0.04 };
 	const yaw = spring(0, springOptions);
 	const pitch = spring(0, springOptions);
 	const roll = spring(0, springOptions);
-
+	const rScale = scaleSqrt()
+		.domain([0, max(meetupData.map((d) => d.total_events))])
+		.range([4, 6]);
 	const projection = geoOrthographic().rotate([yaw, pitch, roll]).precision(0.1).clipAngle(90);
+
 	let sensitivity = 75;
 	let zoom;
 	let scale = 0;
 
-	let selectedFeature: any;
-	let hoverFeature: any;
+	let selectedFeature: MeetupChapter | undefined;
+	let hoverFeature: MeetupChapter | undefined;
 
-	$: if (selectedFeature) {
-		const centroid = geoCentroid(selectedFeature);
-		$yaw = -centroid[0];
-		$pitch = -centroid[1];
+	$: if ($selectedLocation.chapterId) {
+		const location = getChapterLocation($selectedLocation.chapterId, meetupData);
+
+		if (location.latitude && location.longitude) {
+			$yaw = -location.longitude;
+			$pitch = -location.latitude;
+		}
+		selectedFeature = meetupData.find((d) => d.chapter_id === $selectedLocation.chapterId);
+	} else {
+		selectedFeature = undefined;
 	}
-
-	const rScale = scaleSqrt()
-		.domain([0, max(meetupData.map((d) => d.total_events))])
-		.range([4, 6]);
 </script>
 
 <div class="h-[700px] flex relative">
@@ -44,20 +54,17 @@
 				yaw: $yaw,
 				pitch: $pitch,
 				roll: $roll
-			},
-			_scale: scale
+			}
 		}}
 		let:projection
 	>
 		<Svg>
 			<defs>
-				<!-- Define radial gradient -->
 				<radialGradient id="glowGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
 					<stop offset="0%" style="stop-color: white; stop-opacity: 1" />
 					<stop offset="100%" style="stop-color: blue; stop-opacity: 0" />
 				</radialGradient>
 
-				<!-- Define glow filter -->
 				<filter id="glow">
 					<feGaussianBlur stdDeviation="5.5" result="coloredBlur" />
 					<feMerge>
@@ -67,12 +74,19 @@
 				</filter>
 			</defs>
 
-			<!-- <circle r="480" cx={480} cy={580} fill="url(#glowGradient)" filter="url(#glow)" /> -->
-
+			<circle
+				cx="50%"
+				cy="50%"
+				r="70%"
+				fill="url(#glowGradient)"
+				filter="url(#glow)"
+				opacity="0.5"
+			/>
 			<Zoom
 				mode="manual"
 				bind:this={zoom}
 				scroll="none"
+				translateOnScale={false}
 				tweened={{ duration: 800, easing: cubicOut }}
 				let:zoomTo
 				let:reset={resetZoom}
@@ -101,10 +115,24 @@
 						<EdgeFade latitude={meetup.latitude} longitude={meetup.longitude} geo={projection}>
 							<GeoPoint lat={meetup.latitude} long={meetup.longitude}>
 								<circle
-									r={rScale(meetup.total_events)}
+									r={selectedFeature === meetup
+										? rScale(meetup.total_events) + 2
+										: rScale(meetup.total_events)}
 									on:mouseover={() => (hoverFeature = meetup)}
-									on:mouseout={() => (hoverFeature = null)}
-									class="fill-[#88398A]/50 stroke-[#642965]/40"
+									on:mouseout={() => (hoverFeature = undefined)}
+									on:focus={() => (hoverFeature = meetup)}
+									on:blur={() => (hoverFeature = undefined)}
+									role="button"
+									aria-label="Meetup"
+									tabindex="-1"
+									class="
+									{selectedFeature === undefined
+										? 'fill-[#88398A]/50 stroke-[#642965]/40  transition-all duration-200'
+										: selectedFeature === meetup
+										? 'fill-[#88398A] stroke-[#642965] animate-pulse transition-all duration-200'
+										: 'fill-[#575757]/20 stroke-[#e2e2e2]  transition-all duration-200'}
+									
+									"
 								/>
 								<text
 									opacity={hoverFeature === meetup ? 1 : 0}
