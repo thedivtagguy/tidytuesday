@@ -59,7 +59,7 @@
 	const extract = (item: { id: number; text: string }) => item.text;
 </script>
 
-<div class="search-container my-4 max-w-[450px] mx-auto shadow-2xl">
+<div class="search-container my-4 w-full min-w-[300px] max-w-[500px] mx-auto shadow-2xl">
 	<Typeahead
 		label="Search for your city"
 		value={$selectedChapter.chapter
