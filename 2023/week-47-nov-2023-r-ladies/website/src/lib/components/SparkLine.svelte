@@ -50,7 +50,7 @@
 </script>
 
 <div class="w-[125px] h-[25px]">
-	<Chart {data} x="date" xScale={scaleTime()} y="value" tooltip let:containerWidth>
+	<Chart {data} x="date" xScale={scaleTime()} y="value" tooltip let:containerHeight>
 		<Svg>
 			<LinearGradient
 				stops={ticks(0, 5, 2).reverse().map(frequencyColor.interpolator())}
@@ -60,20 +60,14 @@
 				<Spline class="stroke-2" stroke={url} curve={curveBumpX} />
 			</LinearGradient>
 			<Highlight points={{ r: 3, class: 'stroke-none' }} />
-			<!-- <Axis
-				placement="bottom"
-				ticks={4}
-				rule={false}
-				format={(d) =>
-					// year should be '12, '13, '14, etc.
-					timeFormat("'%y")(d)}
-			/> -->
 		</Svg>
 
-		<Tooltip class="text-xs" contained={false} y={-3} x={containerWidth + 8} variant="none" let:data
-			><div class="font-semibold">
-				{data.value}
-				{data.value === 1 ? 'meetup' : 'meetups'}
+		<Tooltip class="text-xs w-fit flex" contained={false} variant="none" y={-40} let:data
+			><div class="font-semibold w-full">
+				<span>
+					{data.value}
+					{data.value === 1 ? 'meetup' : 'meetups'}
+				</span>
 			</div>
 			<div class="whitespace-nowrap">
 				{formatDate(data.date)}

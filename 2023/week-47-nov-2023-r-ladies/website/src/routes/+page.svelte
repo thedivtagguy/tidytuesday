@@ -1,7 +1,5 @@
 <script lang="ts">
 	import Globe from '$lib/components/Globe.svelte';
-	import LocateUser from '$lib/components/FindUserLocation.svelte';
-	import ChapterTables from '$lib/components/ChaptersTable.svelte';
 	import Search from '$lib/components/Search.svelte';
 	import ChapterCard from '$lib/components/ChapterCard.svelte';
 </script>

@@ -4,9 +4,7 @@
 	import { selectedChapter } from '$lib/stores';
 	import { selectChapter } from '$lib/utils';
 	import rawData from '$lib/data/output.json';
-	import { min, max } from 'd3';
-	import { fade } from 'svelte/transition';
-	import Reload from '$lib/components/svg/Reload.svelte';
+	import PillSelect from './PillSelect.svelte';
 	export let searchType: 'location' | 'topic' = 'location';
 	export let chapterQuickSelect: boolean = true;
 
@@ -23,35 +21,6 @@
 			text: meetup.title
 		}))
 	);
-
-	const quickSelectOptions = Array.from(
-		{ length: 4 },
-		() =>
-			Math.floor(
-				Math.random() *
-					(max(meetupData, (d) => d.chapter_id) - min(meetupData, (d) => d.chapter_id) + 1)
-			) + min(meetupData, (d) => d.chapter_id)
-	);
-
-	let quickSelectData = quickSelectOptions.map((option) =>
-		meetupData.find((d) => d.chapter_id === option)
-	);
-
-	function reloadQuickSelect() {
-		let uniqueIds = new Set();
-		while (uniqueIds.size < 4) {
-			const randomId =
-				Math.floor(
-					Math.random() *
-						(max(meetupData, (d) => d.chapter_id) - min(meetupData, (d) => d.chapter_id) + 1)
-				) + min(meetupData, (d) => d.chapter_id);
-			uniqueIds.add(randomId);
-		}
-
-		quickSelectData = Array.from(uniqueIds).map((id) =>
-			meetupData.find((d) => d.chapter_id === id)
-		);
-	}
 
 	let searchIndex: { id: number; text: string }[] = [];
 	$: searchIndex = searchType === 'location' ? searchLocations : searchTopics;
@@ -72,25 +41,7 @@
 		data={searchIndex}
 	/>
 	{#if chapterQuickSelect}
-		<div class="flex justify-start pt-4 align-top">
-			<div class="flex gap-2 flex-wrap">
-				{#each quickSelectData as data, index (data.chapter_id)}
-					<button
-						in:fade={{ duration: 200, delay: index * 50 }}
-						class="button-style bg-slate-100 text-xs font-semibold tracking-wide uppercase px-2 py-1 rounded-lg"
-						on:click={() => selectChapter(data.chapter_id, meetupData)}
-					>
-						{data.chapter}
-					</button>
-				{/each}
-			</div>
-			<button
-				class="button-style bg-gray-500 text-white text-xs font-semibold tracking-wide uppercase px-2 py-1 rounded-lg h-6"
-				on:click={reloadQuickSelect}
-			>
-				<Reload />
-			</button>
-		</div>
+		<PillSelect {meetupData} />
 	{/if}
 </div>
 

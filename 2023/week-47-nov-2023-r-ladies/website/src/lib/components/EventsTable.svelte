@@ -10,7 +10,6 @@
 		.filter((d) => d.chapter_id === chapter_id)
 		.map((d) => d.meetups)
 		.flat();
-	$: console.log(meetups);
 </script>
 
 <div class="py-4">
@@ -31,8 +30,8 @@
 		>
 			<thead slot="headers">
 				<tr>
-					<th class="px-2 py-4 text-left">Topic</th>
-					<th class="px-2 py-4 text-left">Date</th>
+					<th class="px-2 text-sm font-medium py-2 text-left">Topic</th>
+					<th class="px-2 text-sm font-medium py-2 text-left">Held on</th>
 				</tr>
 			</thead><tbody slot="data" let:columns let:data let:getCellValue>
 				{#each data ?? [] as rowData, rowIndex}
