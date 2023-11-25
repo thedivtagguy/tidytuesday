@@ -6,7 +6,7 @@ export const userLocation = writable({
 	longitude: 0
 });
 
-export const selectedLocation = writable({
+export const selectedChapter = writable({
 	chapter_id: 0,
 	chapter: '',
 	chapter_city: '',

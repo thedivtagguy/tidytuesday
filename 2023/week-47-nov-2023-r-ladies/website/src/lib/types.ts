@@ -17,8 +17,8 @@ export type MeetupEvent = {
   
   export type MeetupData = MeetupChapter[];
 
-// selectedLocation type
-export type SelectedLocation = {
+// selectedChapter type
+export type selectedChapter = {
     chapterId: number;
     chapter: string;
 };
