@@ -53,7 +53,7 @@
 
 	function reloadQuickSelect() {
 		if (searchType === 'location') {
-			pillSelectData = generateRandomChapters().map((d) => d.chapter_id);
+			pillSelectData = generateRandomChapters();
 		} else {
 			pillSelectData = searchKeywords
 				.sort(() => Math.random() - Math.random())
@@ -69,18 +69,22 @@
 			selectKeyword(item, meetupData);
 		}
 	}
+
+	$: console.log(pillSelectData);
 </script>
 
-<div class="flex justify-start pt-4 align-top">
+<div class="flex justify-start pt-4 gap-2 align-top">
 	<div class="flex gap-2 flex-wrap">
-		{#each pillSelectData as data, index (searchType === 'location' ? data.chapter_id : data)}
-			<button
-				in:fade={{ duration: 200, delay: index * 100 }}
-				class="kbd text-sm tracking-wide title-case px-2 py-1 rounded-lg h-6 hover:bg-[#ab93a5] hover:text-white"
-				on:click={() => handleClick(data)}
-			>
-				{searchType === 'location' ? data.chapter : data}
-			</button>
+		{#each pillSelectData as data, index (`${index}-${$searchMode === 'topic' ? data : data.chapter_id}`)}
+			{#key `${index}-${$searchMode === 'topic' ? data : data.chapter_id}`}
+				<button
+					in:fade={{ duration: 200, delay: index * 100 }}
+					class="kbd text-sm tracking-wide title-case px-2 py-1 rounded-lg h-6 hover:bg-[#ab93a5] hover:text-white"
+					on:click={() => handleClick(data)}
+				>
+					{searchType === 'location' ? data.chapter : data}
+				</button>
+			{/key}
 		{/each}
 	</div>
 	{#if initialChapterIds.length === 0}

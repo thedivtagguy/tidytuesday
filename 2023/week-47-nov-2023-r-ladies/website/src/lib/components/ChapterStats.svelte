@@ -11,6 +11,8 @@
 	// Sort the meetups by date
 	meetups.sort((a, b) => new Date(a.date) - new Date(b.date));
 
+	meetups.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
 	$: total_events = meetups.length;
 	$: date_range =
 		formatDate(meetups[0].date) + ' - ' + formatDate(meetups[meetups.length - 1].date);
@@ -20,7 +22,7 @@
 	$: time_from_last_event = getHumanReadableTimeDifference(meetups);
 </script>
 
-<div class="stats m-0 p-0 w-min">
+<div class="stats m-0 pb-4 pt-0 w-min">
 	<div class="stat pl-1 pr-4">
 		<div class="stat-title">Total events</div>
 		<div class="stat-value">{total_events}</div>

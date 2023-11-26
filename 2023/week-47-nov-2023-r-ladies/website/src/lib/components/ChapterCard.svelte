@@ -6,7 +6,7 @@
 	import EventsTable from './EventsTable.svelte';
 	import { fade } from 'svelte/transition';
 	import { Collapse } from 'svelte-ux';
-	import { getHumanReadableTimeDifference } from '$lib/utils';
+	import Question from '$lib/components/svg/Question.svelte';
 	import MeetupButton from './MeetupButton.svelte';
 	import PillSelect from './PillSelect.svelte';
 
@@ -48,8 +48,19 @@
 			</Collapse>
 			<MeetupButton href={`https://www.meetup.com/${$selectedChapter.chapter}`} text="Join group" />
 			{#if $selectedChapter.similar_chapters.length > 0}
-				<div class="py-2 flex justify-start items-center gap-4">
-					<h3 class="text-sm text-gray-700">Similar chapters</h3>
+				<div class="py-2 mt-2 flex flex-col justify-start items-start">
+					<div
+						class="tooltip tooltip-bottom hover:cursor-pointer"
+						data-tip="Based on this chapter's events"
+					>
+						<h3
+							class=" flex justify-start items-center gap-1 text-left text-sm text-gray-700 w-full"
+						>
+							<span class="inline">
+								<Question />
+							</span>Similar chapters
+						</h3>
+					</div>
 					<PillSelect initialChapterIds={$selectedChapter.similar_chapters} />
 				</div>
 			{/if}
@@ -57,8 +68,10 @@
 	{/key}
 {:else}
 	<div
-		class="w-full mx-auto h-full min-h-[400px] flex items-center justify-center gap-4 py-8 px-6 rounded-md shadow-md"
+		class="prose w-full mx-auto h-full min-h-[400px] flex items-center justify-center gap-4 py-8 px-6 rounded-md shadow-md"
 	>
-		<h2 class="uppercase text-3xl font-semibold">Select a chapter to know more</h2>
+		<p class="text-base-300 uppercase font-bold border-[1px] border-base-300 px-4 py-2 rounded-lg">
+			Select a chapter to know more
+		</p>
 	</div>
 {/if}

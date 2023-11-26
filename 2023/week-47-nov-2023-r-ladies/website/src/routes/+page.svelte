@@ -2,7 +2,9 @@
 	import Globe from '$lib/components/Globe.svelte';
 	import Search from '$lib/components/Search.svelte';
 	import ChapterCard from '$lib/components/ChapterCard.svelte';
+	import TopicCard from '$lib/components/TopicCard.svelte';
 	import Logo from '$lib/images/logo2.png';
+	import { searchMode } from '$lib/stores';
 </script>
 
 <main class="flex md:flex-row flex-col justify-center items-center w-full">
@@ -19,15 +21,23 @@
 				</div>
 			</div>
 			<p class="max-w-md">
-				R-Ladies is an international initiative committed to fostering gender diversity in the R
-				community. Through local meetups, educational workshops, and mentorship programs, R-Ladies
-				provides a supportive environment for learning and collaboration. Since its founding in
-				2012, the initiative has grown to almost 200 chapters across the world. In most cases, it
-				doesn't matter where you live, you can join a meetup in your own city or country, or another
-				one that is convenient for you. It is one of the best ways to meet other R users and learn
-				from them.
+				R-Ladies is a global initiative enhancing gender diversity in the R community with local
+				meetups, workshops, and mentorship. Since 2012, it's expanded to nearly 200 chapters
+				worldwide. Offering both in-person and online events, R-Ladies allows participation
+				regardless of location, and is one of the best ways to meet fellow R enthusiasts and learn
+				together!
+
+				<br />
+				<br />
+
+				Explore this map to find a meetup near you, or search for topics that chapters have covered
+				in the past.
 			</p>
 		</div>
+		<a href="https://rladies.org/" target="_blank"
+			><button class="btn btn-wide bg-[#E3D2DE] rounded-md mt-4">Learn more on their website</button
+			></a
+		>
 	</section>
 	<section class="globe max-w-[800px] w-full px-4 relative">
 		<Globe />
@@ -36,6 +46,10 @@
 		</div>
 	</section>
 	<section class="flex flex-col justify-center px-8 w-full max-w-[500px]">
-		<ChapterCard />
+		{#if $searchMode === 'location'}
+			<ChapterCard />
+		{:else if $searchMode === 'topic'}
+			<TopicCard />
+		{/if}
 	</section>
 </main>

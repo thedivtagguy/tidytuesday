@@ -69,7 +69,7 @@
 			? $selectedKeyword
 			: ''}
 		{extract}
-		limit={10}
+		limit={5}
 		on:select={({ detail }) => handleSelect(detail)}
 		on:clear={() => {
 			if (searchType === 'location') {
@@ -79,6 +79,7 @@
 			}
 		}}
 		data={searchIndex}
+		showDropdownOnFocus={true}
 	/>
 	{#if chapterQuickSelect}
 		<PillSelect {meetupData} {searchKeywords} />
