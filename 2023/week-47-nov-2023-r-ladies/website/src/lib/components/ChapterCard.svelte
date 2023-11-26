@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CopyButton } from 'svelte-ux';
 	import { selectedChapter } from '$lib/stores';
 	import SparkHistogram from './SparkLine.svelte';
 	import Location from './svg/Location.svelte';
@@ -9,6 +10,7 @@
 	import Question from '$lib/components/svg/Question.svelte';
 	import MeetupButton from './MeetupButton.svelte';
 	import PillSelect from './PillSelect.svelte';
+	import { page } from '$app/stores';
 
 	function cleanChapterName(chapter: string) {
 		return chapter.replace('rladies-', '');
@@ -21,9 +23,19 @@
 			in:fade={{ duration: 500 }}
 			class="w-full mx-auto h-full py-8 px-6 rounded-md shadow-md transition-all duration-100"
 		>
-			<div class="flex items-center justify-between gap-4">
-				<div>
-					<span class="text-sm font-bold text-[#843F85]">R-Ladies/</span>
+			<div class="flex justify-end w-full items-center">
+				<span class="text-base-content font-medium text-xs">Share</span><CopyButton
+					value={$page.url.href}
+					color="#f2f2f2"
+					variant="fill"
+					size="sm"
+				/>
+			</div>
+			<div class="flex items-center justify-between gap-4 w-full">
+				<div class="w-full">
+					<div class="flex justify-between w-full">
+						<span class="text-sm font-bold text-[#843F85]">R-Ladies/</span>
+					</div>
 					<h2 class="uppercase text-3xl font-semibold">
 						{cleanChapterName($selectedChapter.chapter)}
 						<span class="block text-xs font-light text-gray-600 normal-case py-1"
@@ -46,7 +58,12 @@
 					<EventsTable chapter_id={$selectedChapter.chapter_id} />
 				</div>
 			</Collapse>
-			<MeetupButton href={`https://www.meetup.com/${$selectedChapter.chapter}`} text="Join group" />
+			<div class="flex justify-between items-center">
+				<MeetupButton
+					href={`https://www.meetup.com/${$selectedChapter.chapter}`}
+					text="Join group"
+				/>
+			</div>
 			{#if $selectedChapter.similar_chapters.length > 0}
 				<div class="py-2 mt-2 flex flex-col justify-start items-start">
 					<div
