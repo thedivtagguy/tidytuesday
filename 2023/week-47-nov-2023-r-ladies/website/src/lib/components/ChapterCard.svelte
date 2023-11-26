@@ -5,6 +5,7 @@
 	import EventsTable from './EventsTable.svelte';
 	import { fade } from 'svelte/transition';
 	import { Collapse } from 'svelte-ux';
+	import { getHumanReadableTimeDifference } from '$lib/utils';
 	import MeetupButton from './MeetupButton.svelte';
 	import PillSelect from './PillSelect.svelte';
 
@@ -32,6 +33,14 @@
 				<SparkHistogram chapter_id={$selectedChapter.chapter_id} />
 			</div>
 			<MeetupButton href={`https://www.meetup.com/${$selectedChapter.chapter}`} text="Join group" />
+			<div class="py-2">
+				<h3>
+					Last meetup was
+					<span class="font-semibold">
+						{getHumanReadableTimeDifference($selectedChapter.meetups)}
+					</span>
+				</h3>
+			</div>
 			<Collapse name="Explore past events">
 				<div>
 					<EventsTable chapter_id={$selectedChapter.chapter_id} />

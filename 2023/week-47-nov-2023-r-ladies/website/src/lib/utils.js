@@ -1,4 +1,5 @@
 import { selectedChapter } from '$lib/stores';
+import { goto } from '$app/navigation';
 /**
  * Given a chapter id and data, return the latitude and longitude of the chapter in the data
  * @param {number} chapterId
@@ -42,4 +43,47 @@ export function selectChapter(chapterId, meetupData) {
 	if (chapter) {
 		selectedChapter.set(chapter);
 	}
+
+	const chapterName = extractChapterName(chapter);
+	goto(`/?rladies=${encodeURIComponent(chapterName)}`);
+}
+
+/**
+ * Get the human readable time difference between now and the last meetup
+ * @param {object} meetups
+ * @returns {string}
+ */
+export function getHumanReadableTimeDifference(meetups) {
+	const last_meetup = meetups.sort((a, b) => new Date(b.date) - new Date(a.date))[0].date;
+	const lastMeetupDate = new Date(last_meetup);
+	const today = new Date();
+	const diffTime = Math.abs(today.getTime() - lastMeetupDate.getTime());
+
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	const diffMonths = Math.floor(diffDays / 30);
+	const diffYears = Math.floor(diffDays / 365);
+
+	if (diffYears > 0) {
+		return diffYears + (diffYears === 1 ? ' year' : ' years') + ' ago';
+	} else if (diffMonths > 0) {
+		return diffMonths + (diffMonths === 1 ? ' month' : ' months') + ' ago';
+	} else {
+		return diffDays + (diffDays === 1 ? ' day' : ' days') + ' ago';
+	}
+}
+
+/**
+ * Given a chapter, extract the chapter name
+ * @param {object} chapter
+ * @returns {string}
+ */
+export function extractChapterName(chapter, prefix = 'rladies-') {
+	if (!chapter || !chapter.chapter) {
+		return '';
+	}
+
+	const chapterPrefix = prefix.toLowerCase();
+	return chapter.chapter.startsWith(chapterPrefix)
+		? chapter.chapter.substring(chapterPrefix.length)
+		: chapter.chapter;
 }

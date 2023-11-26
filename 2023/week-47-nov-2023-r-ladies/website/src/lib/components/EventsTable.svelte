@@ -13,7 +13,7 @@
 </script>
 
 <div class="py-4">
-	<Paginate items={meetups} perPage={5} let:pageItems let:pagination>
+	<Paginate items={meetups} perPage={3} let:pageItems let:pagination>
 		<Table
 			data={pageItems}
 			columns={[

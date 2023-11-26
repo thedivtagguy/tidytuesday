@@ -2,7 +2,7 @@
 	import { selectChapter } from '$lib/utils';
 	import { min, max } from 'd3';
 	import Reload from '$lib/components/svg/Reload.svelte';
-	import type { MeetupData, MeetupChapter } from '$lib/types';
+	import type { MeetupChapter } from '$lib/types';
 	import meetupData from '$lib/data/output.json';
 	export let initialChapterIds: number[] = [];
 
