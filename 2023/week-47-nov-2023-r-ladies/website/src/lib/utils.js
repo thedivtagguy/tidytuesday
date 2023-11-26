@@ -45,7 +45,7 @@ export function selectChapter(chapterId, meetupData) {
 	}
 
 	const chapterName = extractChapterName(chapter);
-	goto(`/?rladies=${encodeURIComponent(chapterName)}`);
+	goto(`/?rladies=${encodeURIComponent(chapterName)}`, { noScroll: true });
 }
 
 /**
@@ -68,7 +68,7 @@ export function selectKeyword(keyword, meetupData) {
 	const chapters = getChaptersWithKeyword(keyword, meetupData);
 	keywordChapterList.set(chapters);
 	selectedKeyword.set(keyword);
-	goto(`/?topic=${encodeURIComponent(keyword)}`);
+	goto(`/?topic=${encodeURIComponent(keyword)}`, { noScroll: true });
 }
 
 /**

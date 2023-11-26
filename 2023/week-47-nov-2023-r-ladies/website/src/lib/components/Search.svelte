@@ -42,7 +42,7 @@
 	}
 </script>
 
-<div class="search-container my-4 w-full min-w-[300px] max-w-[500px] mx-auto shadow-2xl">
+<div class="search-container my-4 w-full max-w-[500px] mx-auto shadow-2xl">
 	<div class="prose flex justify-center gap-2 items-center">
 		<span class="text-accent-neutral uppercase font-bold text-sm">Topics</span>
 		<input
