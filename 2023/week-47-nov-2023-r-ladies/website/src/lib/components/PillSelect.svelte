@@ -69,8 +69,6 @@
 			selectKeyword(item, meetupData);
 		}
 	}
-
-	$: console.log(pillSelectData);
 </script>
 
 <div class="flex justify-start pt-4 gap-2 align-top">

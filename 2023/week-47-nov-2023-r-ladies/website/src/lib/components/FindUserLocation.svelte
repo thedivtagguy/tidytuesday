@@ -43,7 +43,7 @@
 		const response = await fetch(
 			`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
 		);
-		console.log(response);
+
 		if (response.ok) {
 			const data = await response.json();
 			city = data.address.city || data.address.town || data.address.village;
