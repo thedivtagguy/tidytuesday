@@ -58,47 +58,7 @@ glimpse(tuesdata[[1]])
 
 ```
 
-## Data exploration and initial plots
-
-```{r}
-# How many events have happened each year?
-tuesdata %>%
-  ggplot(aes(x = year)) +
-  geom_histogram(
-    binwidth = 1,
-    fill = "#69b3a2",
-    color = "#e9ecef",
-    alpha = 0.9
-  )
-```
-
 ## Questions
-
-### What are the most common words?
-
-```{r}
-titles <- tuesdata %>%
-  distinct(title, .keep_all = TRUE) %>%
-  unnest_tokens(word, title, drop = FALSE) %>%
-  distinct(id, word, .keep_all = TRUE) %>%
-  anti_join(stop_words, by = "word") %>%
-  filter(str_detect(word, "[^\\d]")) %>%
-  group_by(word) %>%
-  mutate(word_total = n()) %>%
-  ungroup() %>%
-  count(word, sort = T)
-
-titles %>% 
-  head(25) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(word, n)) +
-  geom_col() +
-  scale_y_continuous(labels = comma_format()) +
-  coord_flip() +
-  labs(title = "Most common words in R ladies titles",
-       y = "# of uses")
-
-```
 
 ### Can we extract locations?
 
@@ -205,22 +165,6 @@ data <- tuesdata %>%
   left_join(., geocoded, by = "chapter")
 ```
 
-### Summary stats
-
-```{r}
-# Most active chapters
-data %>% 
-  count(chapter, sort = T) %>% 
-  head(25)
-
-# Chapter, online or offine?
-data %>% 
-  group_by(chapter, location) %>% 
-  summarise(count = n()) %>% 
-  arrange(-count, location)
-
-```
-
 ### Can we use word embeddings to classify titles or find similar topics?
 
 ```{r}
@@ -276,6 +220,8 @@ embeddings_similarity <-
 #   select(title, chapter)
 ```
 
+We can keep viewing these one by one but what I'd like to do is collapse them into a single list for each chapter.
+
 ```{r}
 similarity_threshold <- 0.9
 
@@ -298,19 +244,82 @@ df_similarity <- data %>%
 
 ```
 
-## Looking for keywords
+## Using OpenAI API to return keywords
 
 ```{r}
-library(tidytext)
+library(httr)
+library(jsonlite)
 
-keywords <- data %>% 
-  unnest_tokens(word, title, token = "ngrams", n = 2) %>% 
-  anti_join(stop_words, by="word") %>% 
-  count(chapter, word, sort = T) %>% 
-  bind_tf_idf(word, chapter, n)
+collapsed_data <- data %>%
+  group_by(chapter) %>%
+  summarize(titles = paste(title, collapse = ", ")) %>%
+  ungroup()
 
-# Boring. Not worth it. 
+promptText <- "Review the provided list of event titles related to R programming and its community. Extract and list up to 15 unique, generalized keywords. Each keyword should be no more than three words long and represent broader themes, tools, or practices common in the R community. Avoid including specific dates, individual names, or unique events. Keywords should not be specific to a single event but should reflect recurring concepts or tools in the R community. Standardize terms for consistency and focus on categorizing the type of concept each keyword represents (e.g., programming tool, data analysis technique, community activity)."
 
+get_keywords <- safely(function(titles, progress) {
+  api_key <- Sys.getenv("OPENAI_API_KEY")
+  embeddings_url <- "https://api.openai.com/v1/chat/completions"
+  message_list <- list(
+    list(role = "system", content = "You are a helpful assistant designed to output JSON."),
+    list(
+      role = "user",
+      content = paste(promptText, titles)
+    )
+  )
+  
+  body <- list(
+    model = "gpt-3.5-turbo-1106",
+    response_format = list(type = "json_object"),
+    messages = message_list
+  )
+  
+  response <- POST(
+    url = embeddings_url,
+    add_headers(
+      `Content-Type` = "application/json",
+      Authorization = paste("Bearer", api_key)
+    ),
+    body = body,
+    encode = "json"
+  )
+  
+  response_content <- content(response, as = "text", encoding = "UTF-8") %>%
+    fromJSON(flatten = TRUE)
+  
+  json_string <- response_content$choices$message.content[1]
+
+   if (jsonlite::validate(json_string)) {
+    parsed_json <- fromJSON(json_string)
+    if (!is.null(parsed_json$keywords)) {
+      keywords_list <- parsed_json$keywords
+      keywords_string <- paste(keywords_list, collapse = ", ")
+    } else {
+      keywords_string <- NA
+    }
+  } else {
+    keywords_string <- NA
+  }
+  progress$tick()$print()
+  return(keywords_string)
+}, otherwise = NA_character_)
+
+
+progress_bar <- progress_estimated(length(collapsed_data$titles))
+
+keyword_data <- collapsed_data %>%
+  mutate(keywords = map(titles, ~get_keywords(.x, progress_bar)))
+
+keywords <- keyword_data %>% 
+  unnest_longer(keywords) %>% 
+  filter(keywords_id != "error")
+
+keywords %>% 
+  select(-titles) %>% 
+  separate_rows(keywords, sep = ",\\s*") %>% 
+  mutate(keywords = str_to_lower(keywords)) %>%
+  filter(!keywords %in% c('r programming', 'data analysis', 'r-ladies community', 'r-ladies')) %>% 
+  count(keywords, sort = T)
 ```
 
 ## Finding out which r-ladies chapters are closely alike

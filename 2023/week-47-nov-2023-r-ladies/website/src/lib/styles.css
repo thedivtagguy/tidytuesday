@@ -3,5 +3,21 @@
 @tailwind utilities;
 
 body {
-    background-color: #ffffff;
+    background-color: #FAE7F4;
+}
+
+p {
+    @apply text-[#8F6271];
+}
+
+.footer-text > p {
+    @apply text-[#ffffff];
+}
+
+.footer-text > p >a {
+    @apply text-[#ffffff] font-bold underline underline-offset-1 hover:text-[#e0e0e0] hover:decoration-wavy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    @apply text-[#693443];
 }

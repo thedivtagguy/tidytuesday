@@ -2,6 +2,7 @@
 	import { selectedChapter } from '$lib/stores';
 	import SparkHistogram from './SparkLine.svelte';
 	import Location from './svg/Location.svelte';
+	import ChapterStats from './ChapterStats.svelte';
 	import EventsTable from './EventsTable.svelte';
 	import { fade } from 'svelte/transition';
 	import { Collapse } from 'svelte-ux';
@@ -32,23 +33,23 @@
 				</div>
 				<SparkHistogram chapter_id={$selectedChapter.chapter_id} />
 			</div>
-			<MeetupButton href={`https://www.meetup.com/${$selectedChapter.chapter}`} text="Join group" />
-			<div class="py-2">
-				<h3>
-					Last meetup was
-					<span class="font-semibold">
-						{getHumanReadableTimeDifference($selectedChapter.meetups)}
-					</span>
-				</h3>
-			</div>
-			<Collapse name="Explore past events">
+			<ChapterStats meetups={$selectedChapter.meetups} />
+
+			<Collapse>
+				<div
+					slot="trigger"
+					class="border border-base-300 collapse collapse-arrow rounded-md flex-1 py-1 px-2"
+				>
+					Past events
+				</div>
 				<div>
 					<EventsTable chapter_id={$selectedChapter.chapter_id} />
 				</div>
 			</Collapse>
+			<MeetupButton href={`https://www.meetup.com/${$selectedChapter.chapter}`} text="Join group" />
 			{#if $selectedChapter.similar_chapters.length > 0}
-				<div class="py-2">
-					<h3>Similar chapters</h3>
+				<div class="py-2 flex justify-start items-center gap-4">
+					<h3 class="text-sm text-gray-700">Similar chapters</h3>
 					<PillSelect initialChapterIds={$selectedChapter.similar_chapters} />
 				</div>
 			{/if}

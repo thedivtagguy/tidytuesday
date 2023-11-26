@@ -11,6 +11,7 @@ export type MeetupEvent = {
     total_events: number;
     latitude: number;
     longitude: number;
+    keywords: string;
     similar_chapters: number[];
     meetups: MeetupEvent[];
   };

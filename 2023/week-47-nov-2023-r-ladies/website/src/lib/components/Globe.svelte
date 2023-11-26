@@ -80,7 +80,7 @@
 				<g>
 					<GeoPath
 						geojson={{ type: 'Sphere' }}
-						class="stroke-gray-100"
+						class="stroke-gray-400 stroke-[0.3px]"
 						on:click={() => ($yaw = 0)}
 					/>
 

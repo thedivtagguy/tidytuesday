@@ -1,0 +1,38 @@
+{
+  "id": "chatcmpl-8P3SRY4XGwSQsJEv7DPU1tvsopohy",
+  "object": "chat.completion",
+  "created": 1700982183,
+  "model": "gpt-3.5-turbo-1106",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": {
+          "keywords": [
+            "data analysis",
+            "programming tool",
+            "unsupervised learning",
+            "clustering",
+            "regression techniques",
+            "meetup community",
+            "R-Ladies",
+            "virtual event",
+            "Chennai",
+            "principal component analysis",
+            "dplyr package",
+            "classification trees",
+            "regression trees"
+          ]
+        }
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 256,
+    "completion_tokens": 83,
+    "total_tokens": 339
+  },
+  "system_fingerprint": "fp_eeff13170a"
+}

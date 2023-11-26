@@ -17,6 +17,7 @@
 	$: chapterData = meetupData.find((d) => d.chapter_id === chapter_id);
 
 	let data = [];
+
 	$: if (chapterData && chapterData.meetups) {
 		const counts = {};
 		let minDate = new Date(chapterData.meetups[0].date);

@@ -36,11 +36,11 @@
 			</thead><tbody slot="data" let:columns let:data let:getCellValue>
 				{#each data ?? [] as rowData, rowIndex}
 					<!-- Each alternate row is gray -->
-					<tr class={rowIndex % 2 === 0 ? 'bg-gray-50' : ''}>
+					<tr class={rowIndex % 2 === 0 ? 'bg-[#E3D2DE]' : ''}>
 						{#each columns as column}
 							{@const value = getCellValue(column, rowData, rowIndex)}
-							<td class="px-2 py-4 max-w-[12rem]">
-								<div class="text-sm text-gray-900">{value}</div>
+							<td class="px-2 py-2 max-w-[12rem]">
+								<div class="text-sm">{value}</div>
 							</td>
 						{/each}
 					</tr>{/each}

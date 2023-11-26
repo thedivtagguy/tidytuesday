@@ -1,4 +1,4 @@
-import { selectedChapter } from '$lib/stores';
+import { selectedChapter, keywordChapterList, selectedKeyword } from '$lib/stores';
 import { goto } from '$app/navigation';
 /**
  * Given a chapter id and data, return the latitude and longitude of the chapter in the data
@@ -46,6 +46,29 @@ export function selectChapter(chapterId, meetupData) {
 
 	const chapterName = extractChapterName(chapter);
 	goto(`/?rladies=${encodeURIComponent(chapterName)}`);
+}
+
+/**
+ *
+ * @param {string} keyword
+ * @param {import("./types").MeetupData} meetupData
+ * @returns
+ */
+export function getChaptersWithKeyword(keyword, meetupData) {
+	return meetupData.filter((d) => d.keywords.includes(keyword));
+}
+
+/**
+ *
+ * @param {string} keyword
+ * @param {import("./types").MeetupData} meetupData
+ * @returns {void}
+ */
+export function selectKeyword(keyword, meetupData) {
+	const chapters = getChaptersWithKeyword(keyword, meetupData);
+	keywordChapterList.set(chapters);
+	selectedKeyword.set(keyword);
+	goto(`/?topic=${encodeURIComponent(keyword)}`);
 }
 
 /**

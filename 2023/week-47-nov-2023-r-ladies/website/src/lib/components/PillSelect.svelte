@@ -1,21 +1,40 @@
 <script lang="ts">
-	import { selectChapter } from '$lib/utils';
 	import { min, max } from 'd3';
+	import { fade } from 'svelte/transition';
+	import { selectChapter, selectKeyword } from '$lib/utils';
 	import Reload from '$lib/components/svg/Reload.svelte';
 	import type { MeetupChapter } from '$lib/types';
 	import meetupData from '$lib/data/output.json';
+	import { searchMode } from '$lib/stores';
+
 	export let initialChapterIds: number[] = [];
+	export let searchKeywords: { id: number; text: string }[] = [];
+	$: searchType = $searchMode;
 
 	$: initialChapterIds = Array.from(new Set(initialChapterIds));
+	// Upto 4 items can be selected
+	$: if (initialChapterIds.length > 4) {
+		initialChapterIds = initialChapterIds.slice(0, 4);
+	}
 
-	let pillSelectData: MeetupChapter[];
+	let pillSelectData: MeetupChapter[] | string[];
 
-	$: pillSelectData =
-		initialChapterIds.length > 0
-			? initialChapterIds
-					.map((id) => meetupData.find((d) => d.chapter_id === id))
-					.filter((d) => d !== undefined)
-			: generateRandomChapters();
+	$: {
+		if (searchType === 'location') {
+			pillSelectData =
+				initialChapterIds.length > 0
+					? initialChapterIds
+							.map((id) => meetupData.find((d) => d.chapter_id === id))
+							.filter((d) => d)
+					: generateRandomChapters();
+		} else {
+			// get 4 random search keywords from the text property of the searchKeywords array{ id: 667, text: "data processing"
+			pillSelectData = searchKeywords
+				.sort(() => Math.random() - Math.random())
+				.slice(0, 4)
+				.map((d) => d.text);
+		}
+	}
 
 	function generateRandomChapters() {
 		let uniqueIds = new Set();
@@ -33,24 +52,40 @@
 	}
 
 	function reloadQuickSelect() {
-		pillSelectData = generateRandomChapters();
+		if (searchType === 'location') {
+			pillSelectData = generateRandomChapters().map((d) => d.chapter_id);
+		} else {
+			pillSelectData = searchKeywords
+				.sort(() => Math.random() - Math.random())
+				.slice(0, 4)
+				.map((d) => d.text);
+		}
+	}
+
+	function handleClick(item) {
+		if (searchType === 'location') {
+			selectChapter(item.chapter_id, meetupData);
+		} else {
+			selectKeyword(item, meetupData);
+		}
 	}
 </script>
 
 <div class="flex justify-start pt-4 align-top">
 	<div class="flex gap-2 flex-wrap">
-		{#each pillSelectData as data, index (data.chapter_id)}
+		{#each pillSelectData as data, index (searchType === 'location' ? data.chapter_id : data)}
 			<button
-				class="button-style bg-slate-100 text-xs font-semibold tracking-wide uppercase px-2 py-1 rounded-lg"
-				on:click={() => selectChapter(data.chapter_id, meetupData)}
+				in:fade={{ duration: 200, delay: index * 100 }}
+				class="kbd text-sm tracking-wide title-case px-2 py-1 rounded-lg h-6 hover:bg-[#ab93a5] hover:text-white"
+				on:click={() => handleClick(data)}
 			>
-				{data.chapter}
+				{searchType === 'location' ? data.chapter : data}
 			</button>
 		{/each}
 	</div>
 	{#if initialChapterIds.length === 0}
 		<button
-			class="button-style bg-gray-500 text-white text-xs font-semibold tracking-wide uppercase px-2 py-1 rounded-lg h-6"
+			class="kbd bg-[#b0a4ac] text-sm tracking-wide title-case px-2 py-1 rounded-lg h-6 hover:bg-[#ab93a5] text-white"
 			on:click={reloadQuickSelect}
 		>
 			<Reload />

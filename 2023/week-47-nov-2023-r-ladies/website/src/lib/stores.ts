@@ -16,3 +16,12 @@ export const selectedChapter = writable({
 	similar_chapters: [],
 	meetups: []
 });
+
+export const selectedKeyword = writable('');
+
+export const keywordChapterList = writable<MeetupChapter[]>([]);
+
+export const searchMode = writable(
+	// either 'location' or 'keyword'
+	'location' as 'location' | 'topic'
+);
