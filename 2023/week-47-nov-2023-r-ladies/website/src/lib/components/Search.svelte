@@ -40,19 +40,23 @@
 			selectKeyword(detail.original.text, meetupData);
 		}
 	}
-
-	$: console.log($searchMode);
 </script>
 
 <div class="search-container my-4 w-full min-w-[300px] max-w-[500px] mx-auto shadow-2xl">
 	<div class="prose flex justify-center gap-2 items-center">
 		<span class="text-accent-neutral uppercase font-bold text-sm">Topics</span>
-		<input type="radio" name="radio-1" class="radio" on:change={() => searchMode.set('topic')} />
 		<input
 			type="radio"
 			name="radio-1"
 			class="radio"
-			checked
+			checked={$searchMode === 'topic'}
+			on:change={() => searchMode.set('topic')}
+		/>
+		<input
+			type="radio"
+			name="radio-1"
+			class="radio"
+			checked={$searchMode === 'location'}
 			on:change={() => searchMode.set('location')}
 		/>
 		<span class="text-accent-neutral uppercase font-bold text-sm">Locations</span>

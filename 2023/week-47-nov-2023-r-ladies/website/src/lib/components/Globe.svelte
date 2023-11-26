@@ -10,9 +10,9 @@
 	import type { MeetupData, MeetupChapter } from '$lib/types';
 	import rawData from '$lib/data/output.json';
 	import EdgeFade from './EdgeFade.svelte';
-	import { selectedChapter } from '$lib/stores';
+	import { selectedChapter, searchMode, keywordChapterList } from '$lib/stores';
 	import { getChapterLocation, raiseElement, selectChapter } from '$lib/utils';
-	import ZoomControls from './ZoomControls.svelte';
+
 	const meetupData: MeetupData = rawData as MeetupData;
 	const countries: any = feature(data, data.objects.countries);
 	const springOptions = { stiffness: 0.04 };
@@ -29,6 +29,8 @@
 	let scale = 0;
 
 	let selectedFeature: MeetupChapter | undefined;
+	let keywordChapters: number[] = [];
+	let mode: 'location' | 'topic' = 'location';
 
 	$: if ($selectedChapter.chapter_id) {
 		const location = getChapterLocation($selectedChapter.chapter_id, meetupData);
@@ -40,6 +42,27 @@
 		}
 	} else {
 		selectedFeature = undefined;
+	}
+
+	$: if ($keywordChapterList) {
+		keywordChapters = $keywordChapterList.map((d) => d.chapter_id);
+		if (keywordChapters.length > 0) {
+			const location = getChapterLocation(keywordChapters[0], meetupData);
+			if (location.latitude && location.longitude) {
+				$yaw = -location.longitude;
+				$pitch = -location.latitude;
+			}
+		}
+	} else {
+		keywordChapters = [];
+	}
+
+	$: if ($searchMode === 'topic') {
+		mode = 'topic';
+		selectedFeature = undefined;
+	} else {
+		mode = 'location';
+		keywordChapters = [];
 	}
 </script>
 
@@ -107,20 +130,22 @@
 											: rScale(meetup.total_events)}
 										on:click={() => {
 											selectChapter(meetup.chapter_id, meetupData);
+											searchMode.set('location');
 										}}
 										on:keydown={(e) => {
 											if (e.key === 'Enter') {
 												selectChapter(meetup.chapter_id, meetupData);
+												searchMode.set('location');
 											}
 										}}
 										role="button"
 										aria-label="Meetup"
 										tabindex="-1"
-										class={selectedFeature === undefined
-											? 'fill-[#7D1D3F]/50 stroke-[#642965]/40  transition-all duration-200'
+										class="{keywordChapters.includes(meetup.chapter_id)
+											? 'fill-[#FF675B] stroke-[#FF675B]'
 											: selectedFeature === meetup
-											? 'fill-[#F6AA1C] stroke-[#764e05] '
-											: 'fill-[#3C6997]/30 stroke-[#5F634F]/30  transition-all duration-200'}
+											? 'fill-[#F6AA1C] stroke-[#764e05]'
+											: 'fill-[#3C6997]/30 stroke-[#5F634F]/30'} transition-all duration-200"
 									/>
 
 									<g
