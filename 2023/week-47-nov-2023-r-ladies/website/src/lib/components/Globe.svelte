@@ -121,7 +121,8 @@
 								geo={projection}
 								id={`circle-${meetup.chapter_id}`}
 								onRaise={raiseElement}
-								shouldRaise={selectedFeature === meetup}
+								shouldRaise={selectedFeature === meetup ||
+									keywordChapters.includes(meetup.chapter_id)}
 							>
 								<GeoPoint lat={meetup.latitude} long={meetup.longitude}>
 									<circle
@@ -149,7 +150,8 @@
 									/>
 
 									<g
-										class="pointer-events-none {selectedFeature === meetup
+										class="pointer-events-none {selectedFeature === meetup ||
+										keywordChapters.includes(meetup.chapter_id)
 											? 'opacity-100'
 											: 'opacity-0'} transition-opacity duration-200 fill-white"
 									>
