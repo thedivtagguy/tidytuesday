@@ -11,7 +11,7 @@
 	import rawData from '$lib/data/output.json';
 	import EdgeFade from './EdgeFade.svelte';
 	import { selectedChapter } from '$lib/stores';
-	import { getChapterLocation, raiseElement } from '$lib/utils';
+	import { getChapterLocation, raiseElement, selectChapter } from '$lib/utils';
 	import ZoomControls from './ZoomControls.svelte';
 	const meetupData: MeetupData = rawData as MeetupData;
 	const countries: any = feature(data, data.objects.countries);
@@ -29,7 +29,6 @@
 	let scale = 0;
 
 	let selectedFeature: MeetupChapter | undefined;
-	let hoverFeature: MeetupChapter | undefined;
 
 	$: if ($selectedChapter.chapter_id) {
 		const location = getChapterLocation($selectedChapter.chapter_id, meetupData);
@@ -106,16 +105,12 @@
 										r={selectedFeature === meetup
 											? rScale(meetup.total_events) + 5
 											: rScale(meetup.total_events)}
-										on:mouseover={() => (hoverFeature = meetup)}
-										on:mouseout={() => (hoverFeature = undefined)}
-										on:focus={() => (hoverFeature = meetup)}
-										on:blur={() => (hoverFeature = undefined)}
 										on:click={() => {
-											selectedChapter.set(meetup);
+											selectChapter(meetup.chapter_id, meetupData);
 										}}
 										on:keydown={(e) => {
 											if (e.key === 'Enter') {
-												selectedChapter.set(meetup);
+												selectChapter(meetup.chapter_id, meetupData);
 											}
 										}}
 										role="button"
