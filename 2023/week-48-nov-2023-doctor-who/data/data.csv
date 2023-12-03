@@ -1,0 +1,187 @@
+season_number,story_number,episode_number,episode_title,type,first_aired,uk_viewers,rating,duration,episode,overall_episode_number,writer,director
+1,157,1,Rose,episode,2005-03-26,10.81,76,45,1.1 Rose,1,Russell T Davies,Keith Boak
+1,158,2,The End of the World,episode,2005-04-02,7.97,76,44,1.2 The End of the World,2,Russell T Davies,Euros Lyn
+1,159,3,The Unquiet Dead,episode,2005-04-09,8.86,80,44,1.3 The Unquiet Dead,3,Mark Gatiss,Euros Lyn
+1,160a,4,Aliens of London,episode,2005-04-16,7.63,82,45,1.4 Aliens of London,4,Russell T Davies,Keith Boak
+1,160b,5,World War Three,episode,2005-04-23,7.98,81,42,1.5 World War Three,5,Russell T Davies,Keith Boak
+1,161,6,Dalek,episode,2005-04-30,8.63,84,45,1.6 Dalek,6,Robert Shearman,Joe Ahearne
+1,162,7,The Long Game,episode,2005-05-07,8.01,81,44,1.7 The Long Game,7,Russell T Davies,Brian Grant
+1,163,8,Father's Day,episode,2005-05-14,8.06,83,45,1.8 Father's Day,8,Paul Cornell,Joe Ahearne
+1,164a,9,The Empty Child,episode,2005-05-21,7.11,84,45,1.9 The Empty Child,9,Steven Moffat,James Hawes
+1,164b,10,The Doctor Dances,episode,2005-05-28,6.86,85,45,1.10 The Doctor Dances,10,Steven Moffat,James Hawes
+1,165,11,Boom Town,episode,2005-06-04,7.68,82,45,1.11 Boom Town,11,Russell T Davies,Joe Ahearne
+1,166a,12,Bad Wolf,episode,2005-06-11,6.81,86,45,1.12 Bad Wolf,12,Russell T Davies,Joe Ahearne
+1,166b,13,The Parting of the Ways,episode,2005-06-18,6.91,89,45,1.13 The Parting of the Ways,13,Russell T Davies,Joe Ahearne
+2,167,NA,The Christmas Invasion,special,2005-12-25,9.84,84,60,2.X The Christmas Invasion,14,Russell T Davies,James Hawes
+2,168,1,New Earth,episode,2006-04-15,8.62,85,45,2.1 New Earth,15,Russell T Davies,James Hawes
+2,169,2,Tooth and Claw,episode,2006-04-22,9.24,83,45,2.2 Tooth and Claw,16,Russell T Davies,Euros Lyn
+2,170,3,School Reunion,episode,2006-04-29,8.31,85,45,2.3 School Reunion,17,Toby Whithouse,James Hawes
+2,171,4,The Girl in the Fireplace,episode,2006-05-06,7.9,84,45,2.4 The Girl in the Fireplace,18,Steven Moffat,Euros Lyn
+2,172a,5,Rise of the Cybermen,episode,2006-05-13,9.22,86,45,2.5 Rise of the Cybermen,19,Tom MacRae,Graeme Harper
+2,172b,6,The Age of Steel,episode,2006-05-20,7.63,86,45,2.6 The Age of Steel,20,Tom MacRae,Graeme Harper
+2,173,7,The Idiot's Lantern,episode,2006-05-27,6.76,84,45,2.7 The Idiot's Lantern,21,Mark Gatiss,Euros Lyn
+2,174a,8,The Impossible Planet,episode,2006-06-03,6.32,85,45,2.8 The Impossible Planet,22,Matt Jones,James Strong
+2,174b,9,The Satan Pit,episode,2006-06-10,6.08,86,45,2.9 The Satan Pit,23,Matt Jones,James Strong
+2,175,10,Love & Monsters,episode,2006-06-17,6.66,76,45,2.10 Love & Monsters,24,Russell T Davies,Dan Zeff
+2,176,11,Fear Her,episode,2006-06-24,7.14,83,45,2.11 Fear Her,25,Matthew Graham,Euros Lyn
+2,177a,12,Army of Ghosts,episode,2006-07-01,8.19,86,45,2.12 Army of Ghosts,26,Russell T Davies,Graeme Harper
+2,177b,13,Doomsday,episode,2006-07-08,8.22,89,45,2.13 Doomsday,27,Russell T Davies,Graeme Harper
+3,178,NA,The Runaway Bride,special,2006-12-25,9.35,84,60,3.X The Runaway Bride,28,Russell T Davies,Euros Lyn
+3,179,1,Smith and Jones,episode,2007-03-31,8.71,88,45,3.1 Smith and Jones,29,Russell T Davies,Charles Palmer
+3,180,2,The Shakespeare Code,episode,2007-04-07,7.23,87,45,3.2 The Shakespeare Code,30,Gareth Roberts,Charles Palmer
+3,181,3,Gridlock,episode,2007-04-14,8.41,85,45,3.3 Gridlock,31,Russell T Davies,Richard Clark
+3,182a,4,Daleks in Manhattan,episode,2007-04-21,6.69,86,45,3.4 Daleks in Manhattan,32,Helen Raynor,James Strong
+3,182b,5,Evolution of the Daleks,episode,2007-04-28,6.97,85,45,3.5 Evolution of the Daleks,33,Helen Raynor,James Strong
+3,183,6,The Lazarus Experiment,episode,2007-05-05,7.19,86,45,3.6 The Lazarus Experiment,34,Stephen Greenhorn,Richard Clark
+3,184,7,42,episode,2007-05-19,7.41,85,45,3.7 42,35,Chris Chibnall,Graeme Harper
+3,185a,8,Human Nature,episode,2007-05-26,7.74,86,45,3.8 Human Nature,36,Paul Cornell,Charles Palmer
+3,185b,9,The Family of Blood,episode,2007-06-02,7.21,86,45,3.9 The Family of Blood,37,Paul Cornell,Charles Palmer
+3,186,10,Blink,episode,2007-06-09,6.62,87,45,3.10 Blink,38,Steven Moffat,Hettie MacDonald
+3,187a,11,Utopia,episode,2007-06-16,7.84,87,45,3.11 Utopia,39,Russell T Davies,Graeme Harper
+3,187b,12,The Sound of Drums,episode,2007-06-23,7.51,87,45,3.12 The Sound of Drums,40,Russell T Davies,Colin Teague
+3,187c,13,Last of the Time Lords,episode,2007-06-30,8.61,88,52,3.13 Last of the Time Lords,41,Russell T Davies,Colin Teague
+4,188,NA,Voyage of the Damned,special,2007-12-25,13.31,86,72,4.X Voyage of the Damned,42,Russell T Davies,James Strong
+4,189,1,Partners in Crime,episode,2008-04-05,9.14,88,50,4.1 Partners in Crime,43,Russell T Davies,James Strong
+4,190,2,The Fires of Pompeii,episode,2008-04-12,9.04,87,50,4.2 The Fires of Pompeii,44,James Moran,Colin Teague
+4,191,3,Planet of the Ood,episode,2008-04-19,7.5,87,45,4.3 Planet of the Ood,45,Keith Temple,Graeme Harper
+4,192a,4,The Sontaran Stratagem,episode,2008-04-26,7.06,87,45,4.4 The Sontaran Stratagem,46,Helen Raynor,Douglas Mackinnon
+4,192b,5,The Poison Sky,episode,2008-05-03,6.53,88,45,4.5 The Poison Sky,47,Helen Raynor,Douglas Mackinnon
+4,193,6,The Doctor's Daughter,episode,2008-05-10,7.33,88,45,4.6 The Doctor's Daughter,48,Stephen Greenhorn,Alice Troughton
+4,194,7,The Unicorn and the Wasp,episode,2008-05-17,8.41,86,45,4.7 The Unicorn and the Wasp,49,Gareth Roberts,Graeme Harper
+4,195a,8,Silence in the Library,episode,2008-05-31,6.27,89,45,4.8 Silence in the Library,50,Steven Moffat,Euros Lyn
+4,195b,9,Forest of the Dead,episode,2008-06-07,7.84,89,45,4.9 Forest of the Dead,51,Steven Moffat,Euros Lyn
+4,196,10,Midnight,episode,2008-06-14,8.05,86,45,4.10 Midnight,52,Russell T Davies,Alice Troughton
+4,197,11,Turn Left,episode,2008-06-21,8.09,88,50,4.11 Turn Left,53,Russell T Davies,Graeme Harper
+4,198a,12,The Stolen Earth,episode,2008-06-28,8.78,91,45,4.12 The Stolen Earth,54,Russell T Davies,Graeme Harper
+4,198b,13,Journey's End,episode,2008-07-05,10.57,91,63,4.13 Journey's End,55,Russell T Davies,Graeme Harper
+4,199,1,The Next Doctor,special,2008-12-25,13.1,86,60,4.1 The Next Doctor,56,Russell T Davies,Andy Goddard
+4,200,2,Planet of the Dead,special,2009-04-11,9.75,88,60,4.2 Planet of the Dead,57,Russell T Davies,James Strong
+4,200,2,Planet of the Dead,special,2009-04-11,9.75,88,60,4.2 Planet of the Dead,57,Gareth Roberts,James Strong
+4,201,3,The Waters of Mars,special,2009-11-15,10.32,88,60,4.3 The Waters of Mars,58,Russell T Davies,Graeme Harper
+4,201,3,The Waters of Mars,special,2009-11-15,10.32,88,60,4.3 The Waters of Mars,58,Phil Ford,Graeme Harper
+4,202a,4,The End of Time – Part One,special,2009-12-25,12.04,87,60,4.4 The End of Time – Part One,59,Russell T Davies,Euros Lyn
+4,202b,5,The End of Time – Part Two,special,2010-01-01,12.27,89,75,4.5 The End of Time – Part Two,60,Russell T Davies,Euros Lyn
+5,203,1,The Eleventh Hour,episode,2010-04-03,10.09,86,65,5.1 The Eleventh Hour,61,Steven Moffat,Adam Smith
+5,204,2,The Beast Below,episode,2010-04-10,8.42,86,45,5.2 The Beast Below,62,Steven Moffat,Andrew Gunn
+5,205,3,Victory of the Daleks,episode,2010-04-17,8.21,84,45,5.3 Victory of the Daleks,63,Mark Gatiss,Andrew Gunn
+5,206a,4,The Time of Angels,episode,2010-04-24,8.59,87,45,5.4 The Time of Angels,64,Steven Moffat,Adam Smith
+5,206b,5,Flesh and Stone,episode,2010-05-01,8.5,86,45,5.5 Flesh and Stone,65,Steven Moffat,Adam Smith
+5,207,6,The Vampires of Venice,episode,2010-05-08,7.68,86,50,5.6 The Vampires of Venice,66,Toby Whithouse,Jonny Campbell
+5,208,7,Amy's Choice,episode,2010-05-15,7.55,84,45,5.7 Amy's Choice,67,Simon Nye,Catherine Morshead
+5,209a,8,The Hungry Earth,episode,2010-05-22,6.49,86,45,5.8 The Hungry Earth,68,Chris Chibnall,Ashley Way
+5,209b,9,Cold Blood,episode,2010-05-29,7.49,85,45,5.9 Cold Blood,69,Chris Chibnall,Ashley Way
+5,210,10,Vincent and the Doctor,episode,2010-06-05,6.76,86,45,5.10 Vincent and the Doctor,70,Richard Curtis,Jonny Campbell
+5,211,11,The Lodger,episode,2010-06-12,6.44,87,45,5.11 The Lodger,71,Gareth Roberts,Catherine Morshead
+5,212a,12,The Pandorica Opens,episode,2010-06-19,7.57,88,50,5.12 The Pandorica Opens,72,Steven Moffat,Toby Haynes
+5,212b,13,The Big Bang,episode,2010-06-26,6.7,89,55,5.13 The Big Bang,73,Steven Moffat,Toby Haynes
+6,213,NA,A Christmas Carol,special,2010-12-25,12.11,83,60,6.X A Christmas Carol,74,Steven Moffat,Toby Haynes
+6,214a,1,The Impossible Astronaut,episode,2011-04-23,8.86,88,45,6.1 The Impossible Astronaut,75,Steven Moffat,Toby Haynes
+6,214b,2,Day of the Moon,episode,2011-04-30,7.3,87,45,6.2 Day of the Moon,76,Steven Moffat,Toby Haynes
+6,215,3,The Curse of the Black Spot,episode,2011-05-07,7.85,86,45,6.3 The Curse of the Black Spot,77,Stephen Thompson,Jeremy Webb
+6,216,4,The Doctor's Wife,episode,2011-05-14,7.97,87,45,6.4 The Doctor's Wife,78,Neil Gaiman,Richard Clark
+6,217a,5,The Rebel Flesh,episode,2011-05-21,7.35,85,45,6.5 The Rebel Flesh,79,Matthew Graham,Julian Simpson
+6,217b,6,The Almost People,episode,2011-05-28,6.72,86,45,6.6 The Almost People,80,Matthew Graham,Julian Simpson
+6,218,7,A Good Man Goes to War,episode,2011-06-04,7.51,88,50,6.7 A Good Man Goes to War,81,Steven Moffat,Peter Hoar
+6,219,8,Let's Kill Hitler,episode,2011-08-27,8.1,85,50,6.8 Let's Kill Hitler,82,Steven Moffat,Richard Senior
+6,220,9,Night Terrors,episode,2011-09-03,7.07,86,45,6.9 Night Terrors,83,Mark Gatiss,Richard Clark
+6,221,10,The Girl Who Waited,episode,2011-09-10,7.6,85,45,6.10 The Girl Who Waited,84,Tom MacRae,Nick Hurran
+6,222,11,The God Complex,episode,2011-09-17,6.77,86,50,6.11 The God Complex,85,Toby Whithouse,Nick Hurran
+6,223,12,Closing Time,episode,2011-09-24,6.93,86,45,6.12 Closing Time,86,Gareth Roberts,Steve Hughes
+6,224,13,The Wedding of River Song,episode,2011-10-01,7.67,86,45,6.13 The Wedding of River Song,87,Steven Moffat,Jeremy Webb
+7,225,NA,"The Doctor, the Widow and the Wardrobe",special,2011-12-25,10.77,84,60,"7.X The Doctor, the Widow and the Wardrobe",88,Steven Moffat,Farren Blackburn
+7,226,1,Asylum of the Daleks,episode,2012-09-01,8.33,89,50,7.1 Asylum of the Daleks,89,Steven Moffat,Nick Hurran
+7,227,2,Dinosaurs on a Spaceship,episode,2012-09-08,7.57,87,45,7.2 Dinosaurs on a Spaceship,90,Chris Chibnall,Saul Metzstein
+7,228,3,A Town Called Mercy,episode,2012-09-15,8.42,85,45,7.3 A Town Called Mercy,91,Toby Whithouse,Saul Metzstein
+7,229,4,The Power of Three,episode,2012-09-22,7.67,87,41,7.4 The Power of Three,92,Chris Chibnall,Douglas Mackinnon
+7,230,5,The Angels Take Manhattan,episode,2012-09-29,7.82,88,45,7.5 The Angels Take Manhattan,93,Steven Moffat,Nick Hurran
+7,231,NA,The Snowmen,special,2012-12-25,9.87,87,60,7.X The Snowmen,94,Steven Moffat,Saul Metzstein
+7,232,6,The Bells of Saint John,episode,2013-03-30,8.44,87,45,7.6 The Bells of Saint John,95,Steven Moffat,Colm McCarthy
+7,233,7,The Rings of Akhaten,episode,2013-04-06,7.45,84,44,7.7 The Rings of Akhaten,96,Neil Cross,Farren Blackburn
+7,234,8,Cold War,episode,2013-04-13,7.37,84,45,7.8 Cold War,97,Mark Gatiss,Douglas Mackinnon
+7,235,9,Hide,episode,2013-04-20,6.61,85,45,7.9 Hide,98,Neil Cross,Jamie Payne
+7,236,10,Journey to the Centre of the TARDIS,episode,2013-04-27,6.5,85,45,7.10 Journey to the Centre of the TARDIS,99,Stephen Thompson,Mat King
+7,237,11,The Crimson Horror,episode,2013-05-04,6.47,85,45,7.11 The Crimson Horror,100,Mark Gatiss,Saul Metzstein
+7,238,12,Nightmare in Silver,episode,2013-05-11,6.64,84,45,7.12 Nightmare in Silver,101,Neil Gaiman,Stephen Woolfenden
+7,239,13,The Name of the Doctor,episode,2013-05-18,7.45,88,45,7.13 The Name of the Doctor,102,Steven Moffat,Saul Metzstein
+7,240,1,The Day of the Doctor,special,2013-11-23,12.8,88,77,7.1 The Day of the Doctor,103,Steven Moffat,Nick Hurran
+7,241,2,The Time of the Doctor,special,2013-12-25,11.14,83,60,7.2 The Time of the Doctor,104,Steven Moffat,Jamie Payne
+8,242,1,Deep Breath,episode,2014-08-23,9.17,82,76,8.1 Deep Breath,105,Steven Moffat,Ben Wheatley
+8,243,2,Into the Dalek,episode,2014-08-30,7.29,84,45,8.2 Into the Dalek,106,Phil Ford and Steven Moffat,Ben Wheatley
+8,244,3,Robot of Sherwood,episode,2014-09-06,7.28,82,46,8.3 Robot of Sherwood,107,Mark Gatiss,Paul Murphy
+8,245,4,Listen,episode,2014-09-13,7.01,82,48,8.4 Listen,108,Steven Moffat,Douglas Mackinnon
+8,246,5,Time Heist,episode,2014-09-20,6.99,84,45,8.5 Time Heist,109,Stephen Thompson and Steven Moffat,Douglas Mackinnon
+8,247,6,The Caretaker,episode,2014-09-27,6.82,83,45,8.6 The Caretaker,110,Gareth Roberts and Steven Moffat,Paul Murphy
+8,248,7,Kill the Moon,episode,2014-10-04,6.91,82,45,8.7 Kill the Moon,111,Peter Harness,Paul Wilmshurst
+8,249,8,Mummy on the Orient Express,episode,2014-10-11,7.11,85,47,8.8 Mummy on the Orient Express,112,Jamie Mathieson,Paul Wilmshurst
+8,250,9,Flatline,episode,2014-10-18,6.71,85,43,8.9 Flatline,113,Jamie Mathieson,Douglas Mackinnon
+8,251,10,In the Forest of the Night,episode,2014-10-25,6.92,83,45,8.10 In the Forest of the Night,114,Frank Cottrell-Boyce,Sheree Folkson
+8,252a,11,Dark Water,episode,2014-11-01,7.34,85,46,8.11 Dark Water,115,Steven Moffat,Rachel Talalay
+8,252b,12,Death in Heaven,episode,2014-11-08,7.6,83,57,8.12 Death in Heaven,116,Steven Moffat,Rachel Talalay
+9,253,NA,Last Christmas,special,2014-12-25,8.28,82,60,9.X Last Christmas,117,Steven Moffat,Paul Wilmshurst
+9,254a,1,The Magician's Apprentice,episode,2015-09-19,6.54,84,46,9.1 The Magician's Apprentice,118,Steven Moffat,Hettie MacDonald
+9,254b,2,The Witch's Familiar,episode,2015-09-26,5.71,83,48,9.2 The Witch's Familiar,119,Steven Moffat,Hettie MacDonald
+9,255a,3,Under the Lake,episode,2015-10-03,5.63,84,43,9.3 Under the Lake,120,Toby Whithouse,Daniel O'Hara
+9,255b,4,Before the Flood,episode,2015-10-10,6.05,83,42,9.4 Before the Flood,121,Toby Whithouse,Daniel O'Hara
+9,256,5,The Girl Who Died,episode,2015-10-17,6.56,82,46,9.5 The Girl Who Died,122,Jamie Mathieson,Ed Bazalgette
+9,256,5,The Girl Who Died,episode,2015-10-17,6.56,82,46,9.5 The Girl Who Died,122,Steven Moffat,Ed Bazalgette
+9,257,6,The Woman Who Lived,episode,2015-10-24,6.11,81,46,9.6 The Woman Who Lived,123,Catherine Tregenna,Ed Bazalgette
+9,258a,7,The Zygon Invasion,episode,2015-10-31,5.76,82,46,9.7 The Zygon Invasion,124,Peter Harness,Daniel Nettheim
+9,258b,8,The Zygon Inversion,episode,2015-11-07,6.03,84,46,9.8 The Zygon Inversion,125,Peter Harness,Daniel Nettheim
+9,258b,8,The Zygon Inversion,episode,2015-11-07,6.03,84,46,9.8 The Zygon Inversion,125,Steven Moffat,Daniel Nettheim
+9,259,9,Sleep No More,episode,2015-11-14,5.61,78,45,9.9 Sleep No More,126,Mark Gatiss,Justin Molotnikov
+9,260,10,Face the Raven,episode,2015-11-21,6.05,84,47,9.10 Face the Raven,127,Sarah Dollard,Justin Molotnikov
+9,261,11,Heaven Sent,episode,2015-11-28,6.19,80,54,9.11 Heaven Sent,128,Steven Moffat,Rachel Talalay
+9,262,12,Hell Bent,episode,2015-12-05,6.17,82,61,9.12 Hell Bent,129,Steven Moffat,Rachel Talalay
+9,263,NA,The Husbands of River Song,special,2015-12-25,7.69,82,56,9.X The Husbands of River Song,130,Steven Moffat,Douglas Mackinnon
+10,264,NA,The Return of Doctor Mysterio,special,2016-12-25,7.83,82,60,10.X The Return of Doctor Mysterio,131,Steven Moffat,Ed Bazalgette
+10,265,1,The Pilot,episode,2017-04-15,6.68,83,50,10.1 The Pilot,132,Steven Moffat,Lawrence Gough
+10,266,2,Smile,episode,2017-04-22,5.98,83,46,10.2 Smile,133,Frank Cottrell-Boyce,Lawrence Gough
+10,267,3,Thin Ice,episode,2017-04-29,5.61,84,44,10.3 Thin Ice,134,Sarah Dollard,Bill Anderson
+10,268,4,Knock Knock,episode,2017-05-06,5.73,83,44,10.4 Knock Knock,135,Mike Bartlett,Bill Anderson
+10,269,5,Oxygen,episode,2017-05-13,5.27,83,45,10.5 Oxygen,136,Jamie Mathieson,Charles Palmer
+10,270,6,Extremis,episode,2017-05-20,5.53,82,49,10.6 Extremis,137,Steven Moffat,Daniel Nettheim
+10,271,7,The Pyramid at the End of the World,episode,2017-05-27,5.79,82,46,10.7 The Pyramid at the End of the World,138,Peter Harness,Daniel Nettheim
+10,271,7,The Pyramid at the End of the World,episode,2017-05-27,5.79,82,46,10.7 The Pyramid at the End of the World,138,Steven Moffat,Daniel Nettheim
+10,272,8,The Lie of the Land,episode,2017-06-03,4.82,82,45,10.8 The Lie of the Land,139,Toby Whithouse,Wayne Yip
+10,273,9,Empress of Mars,episode,2017-06-10,5.02,83,44,10.9 Empress of Mars,140,Mark Gatiss,Wayne Yip
+10,274,10,The Eaters of Light,episode,2017-06-17,4.73,81,42,10.10 The Eaters of Light,141,Rona Munro,Charles Palmer
+10,275a,11,World Enough and Time,episode,2017-06-24,5,85,46,10.11 World Enough and Time,142,Steven Moffat,Rachel Talalay
+10,275b,12,The Doctor Falls,episode,2017-07-01,5.3,83,60,10.12 The Doctor Falls,143,Steven Moffat,Rachel Talalay
+10,276,NA,Twice Upon a Time,special,2017-12-25,7.92,81,60,10.X Twice Upon a Time,144,Steven Moffat,Rachel Talalay
+11,277,1,The Woman Who Fell to Earth,episode,2018-10-07,10.96,83,64,11.1 The Woman Who Fell to Earth,145,Chris Chibnall,Jamie Childs
+11,278,2,The Ghost Monument,episode,2018-10-14,9,82,49,11.2 The Ghost Monument,146,Chris Chibnall,Mark Tonderai
+11,279,3,Rosa,episode,2018-10-21,8.41,83,50,11.3 Rosa,147,Malorie Blackman,Mark Tonderai
+11,279,3,Rosa,episode,2018-10-21,8.41,83,50,11.3 Rosa,147,Chris Chibnall,Mark Tonderai
+11,280,4,Arachnids in the UK,episode,2018-10-28,8.22,83,49,11.4 Arachnids in the UK,148,Chris Chibnall,Sallie Aprahamian
+11,281,5,The Tsuranga Conundrum,episode,2018-11-04,7.76,79,51,11.5 The Tsuranga Conundrum,149,Chris Chibnall,Jennifer Perrott
+11,282,6,Demons of the Punjab,episode,2018-11-11,7.48,80,50,11.6 Demons of the Punjab,150,Vinay Patel,Jamie Childs
+11,283,7,Kerblam!,episode,2018-11-18,7.46,81,49,11.7 Kerblam!,151,Pete McTighe,Jennifer Perrott
+11,284,8,The Witchfinders,episode,2018-11-25,7.21,81,47,11.8 The Witchfinders,152,Joy Wilkinson,Sallie Aprahamian
+11,285,9,It Takes You Away,episode,2018-12-02,6.42,80,49,11.9 It Takes You Away,153,Ed Hime,Jamie Childs
+11,286,10,The Battle of Ranskoor Av Kolos,episode,2018-12-09,6.65,79,50,11.10 The Battle of Ranskoor Av Kolos,154,Chris Chibnall,Jamie Childs
+11,287,NA,Resolution,special,2019-01-01,7.13,80,60,11.X Resolution,155,Chris Chibnall,Wayne Yip
+12,288a,1,"Spyfall, Part 1",episode,2020-01-01,6.89,82,59,"12.1 Spyfall, Part 1",156,Chris Chibnall,Jamie Magnus Stone
+12,288b,2,"Spyfall, Part 2",episode,2020-01-05,6.07,82,60,"12.2 Spyfall, Part 2",157,Chris Chibnall,Lee Haven Jones
+12,289,3,Orphan 55,episode,2020-01-12,5.38,77,46,12.3 Orphan 55,158,Ed Hime,Lee Haven Jones
+12,290,4,Nikola Tesla's Night of Terror,episode,2020-01-19,5.2,79,50,12.4 Nikola Tesla's Night of Terror,159,Nina Metivier,Nida Manzoor
+12,291,5,Fugitive of the Judoon,episode,2020-01-26,5.57,83,50,12.5 Fugitive of the Judoon,160,Vinay Patel,Nida Manzoor
+12,291,5,Fugitive of the Judoon,episode,2020-01-26,5.57,83,50,12.5 Fugitive of the Judoon,160,Chris Chibnall,Nida Manzoor
+12,292,6,Praxeus,episode,2020-02-02,5.22,78,49,12.6 Praxeus,161,Pete McTighe,Jamie Magnus Stone
+12,292,6,Praxeus,episode,2020-02-02,5.22,78,49,12.6 Praxeus,161,Chris Chibnall,Jamie Magnus Stone
+12,293,7,Can You Hear Me?,episode,2020-02-09,4.9,78,49,12.7 Can You Hear Me?,162,Charlene James,Emma Sullivan
+12,293,7,Can You Hear Me?,episode,2020-02-09,4.9,78,49,12.7 Can You Hear Me?,162,Chris Chibnall,Emma Sullivan
+12,294,8,The Haunting of Villa Diodati,episode,2020-02-16,5.07,80,49,12.8 The Haunting of Villa Diodati,163,Maxine Alderton,Emma Sullivan
+12,295a,9,Ascension of the Cybermen,episode,2020-02-23,4.99,81,49,12.9 Ascension of the Cybermen,164,Chris Chibnall,Jamie Magnus Stone
+12,295b,10,The Timeless Children,episode,2020-03-01,4.69,82,65,12.10 The Timeless Children,165,Chris Chibnall,Jamie Magnus Stone
+12,296,NA,Revolution of the Daleks,special,2021-01-01,6.36,79,71,12.X Revolution of the Daleks,166,Chris Chibnall,Lee Haven Jones
+13,297a,1,The Halloween Apocalypse,episode,2021-10-31,5.81,76,50,13.1 The Halloween Apocalypse,167,Chris Chibnall,Jamie Magnus Stone
+13,297b,2,War of the Sontarans,episode,2021-11-07,5.13,77,59,13.2 War of the Sontarans,168,Chris Chibnall,Jamie Magnus Stone
+13,297c,3,"Once, Upon Time",episode,2021-11-14,4.7,75,49,"13.3 Once, Upon Time",169,Chris Chibnall,Azhur Saleem
+13,297d,4,Village of the Angels,episode,2021-11-21,4.57,79,56,13.4 Village of the Angels,170,Chris Chibnall,Jamie Magnus Stone
+13,297d,4,Village of the Angels,episode,2021-11-21,4.57,79,56,13.4 Village of the Angels,170,Maxine Alderton,Jamie Magnus Stone
+13,297e,5,Survivors of the Flux,episode,2021-11-28,4.83,77,50,13.5 Survivors of the Flux,171,Chris Chibnall,Azhur Saleem
+13,297f,6,The Vanquishers,episode,2021-12-05,4.64,76,59,13.6 The Vanquishers,172,Chris Chibnall,Azhur Saleem
+13,298,1,Eve of the Daleks,special,2022-01-01,4.4,77,58,13.1 Eve of the Daleks,173,Chris Chibnall,Annetta Laufer
+13,299,2,Legend of the Sea Devils,special,2022-04-17,3.47,76,48,13.2 Legend of the Sea Devils,174,Ella Road,Haolu Wang
+13,299,2,Legend of the Sea Devils,special,2022-04-17,3.47,76,48,13.2 Legend of the Sea Devils,174,Chris Chibnall,Haolu Wang
+13,300,3,The Power of the Doctor,special,2022-10-23,5.3,82,87,13.3 The Power of the Doctor,175,Chris Chibnall,Jamie Magnus Stone

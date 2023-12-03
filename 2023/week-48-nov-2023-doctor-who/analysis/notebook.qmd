@@ -1,0 +1,385 @@
+---
+title: "TidyTuesday 2023-48 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2023-48
+
+This is the notebook for analysis of the data of week 48 (2023) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png"
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2023, "_", 48))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+## Cleaning
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2023, week = 48)
+
+names(tuesdata)
+
+directors <- tuesdata$drwho_directors
+writers <- tuesdata$drwho_writers
+
+episodes <- tuesdata$drwho_episodes %>%
+  select(-serial_title) %>%
+  fill(season_number) %>%
+  mutate(
+    episode = paste0(
+      season_number,
+      ".",
+      coalesce(as.character(episode_number), "X"),
+      " ",
+      episode_title
+    ),
+    episode = fct_reorder(episode, first_aired),
+    episode_title = fct_reorder(episode_title, first_aired),
+    overall_episode_number = as.integer(episode_title)
+  ) %>% 
+   inner_join(writers, by = "story_number") %>% 
+  inner_join(directors, by = "story_number")
+
+# Might as well just call it data
+data <- episodes %>% 
+  select(
+    -era,
+    -production_code
+  )
+
+```
+
+## I just want to do something pretty this time
+
+Can we make a gallifrey scene with data?
+
+### Data visualizations
+
+```{r}
+# Ratings
+seasons <-  data %>%
+      group_by(season_number) %>%
+      summarize(
+        start = min(overall_episode_number),
+        end = max(overall_episode_number),
+         label_position = (start + end) / 2
+      )
+data %>%
+  filter(!is.na(rating)) %>%
+  ggplot(aes(as.numeric(overall_episode_number), rating)) +
+  stat_smooth(
+    geom = 'area',
+    method = 'loess',
+    span = 1 / 11,
+    fill = "#8B3512"
+  ) +
+  geom_vline(
+    data = seasons,
+    aes(xintercept = start),
+    linetype = "dotted",
+    linewidth = 1,
+    color = "#E8B173"
+  ) +
+   geom_text(
+    data = seasons,
+    aes(x = label_position, y = 70, label = paste0("", season_number)),
+    vjust = -0.5,
+    color = "#E8B173",
+    fontface = "bold",
+    size = 6
+  ) +
+  coord_cartesian(ylim = c(65, 95)) +
+  theme_ipsum(grid = "Y",
+              grid_col = "#1F271B45",
+              base_family = "Arcane Nine",
+              plot_title_size = 25) +
+  theme(
+    plot.title	= element_text(hjust = 0.5, family = 'Arcane Nine', color = '#682C12'),
+    plot.background = element_rect(fill = '#E7AC67', colour = 'transparent'),
+    plot.margin = margin(0, -22, 0, 5, unit = 'pt'),
+    axis.text.x = element_text(vjust = 0.2, face = "bold",size = 15, color = '#682C12'),
+    axis.text.y = element_text(hjust = 0.2, face = "bold", size = 15,color = '#682C12'),
+    axis.title.x = element_text(hjust = 0.5, vjust = 1, size = 18, margin = margin(t = .5, unit = "cm"), color = '#682C12'),
+    axis.title.y = element_text(vjust = 2.2, hjust = 0.5, size = 18, margin = margin(r = .5, unit = "cm"),color = '#682C12'),
+    aspect.ratio = 0.3
+  ) +
+  labs(
+    x = "Overall episode number",
+    y = "Rating",
+    title = str_wrap("IMDB ratings for episodes across seasons", 40)
+  ) +
+  guides(color = "none") 
+
+ggsave(
+  'output/ratings_chart.png',
+  plot = last_plot(),
+  device = 'png',
+  width = 28,
+  height = 13,
+  units = 'cm'
+)
+
+
+# Viewers
+data %>%
+  ggplot(aes(x = uk_viewers)) +
+  geom_histogram(color = "transparent",
+                 fill = "#7F3616") +
+  geom_vline(aes(xintercept = mean(uk_viewers)), color = "#FAF0CA") +
+  geom_text(aes(
+    x = mean(uk_viewers) - 1,
+    y = 5,
+    label = str_wrap(paste(
+      round(mean(uk_viewers), 1), "million", "viewers on an average", sep = ' '
+    ), 20)
+  ),
+  family = "Arcane Nine",
+  size = 5,
+  color = '#E7AC67') +
+   theme_ipsum(grid = "Y",
+              grid_col = "#1F271B45",
+              base_family = "Arcane Nine",
+              plot_title_size = 25) +
+  theme(
+    plot.title	= element_text(hjust = 0.5, family = 'Arcane Nine', color = '#682C12'),
+    plot.background = element_rect(fill = '#E7AC67', colour = 'transparent'),
+    plot.margin = margin(0, -22, 0, 5, unit = 'pt'),
+    axis.text.x = element_text(vjust = 0.2, face = "bold",size = 15, color = '#682C12'),
+    axis.text.y = element_text(hjust = 0.2, face = "bold", size = 15,color = '#682C12'),
+    axis.title.x = element_text(hjust = 0.5, vjust = 1, size = 18, margin = margin(t = .5, unit = "cm"), color = '#682C12'),
+    axis.title.y = element_text(vjust = 2.2, hjust = 0.5, size = 18, margin = margin(r = .5, unit = "cm"),color = '#682C12'),
+    aspect.ratio = 0.3
+  ) +
+  labs(
+    x = "Viewers in millions",
+    y = "Frequency",
+    title = str_wrap("Distribution of viewers", 40)
+  ) +
+  guides(color = "none") 
+
+ggsave(
+  'output/viewers_chart.png',
+  plot = last_plot(),
+  device = 'png',
+  width = 28,
+  height = 13,
+  units = 'cm'
+)
+
+
+# Number of episodes and specials
+data %>%
+  group_by(type) %>%
+  summarise(count = n()) %>%
+  mutate(id = row_number(), type = paste0(type, 's')) %>%
+  ggplot(aes(x = type, y = id)) +
+  geom_point(aes(size = count, fill = type),
+             shape = 21,
+             stroke = 0.7) +
+  geom_text(aes(
+    label = paste(count, type),
+    vjust = ifelse(type == "specials",-2, 0),
+    color = type
+  ),
+  family = "Arcane Nine",
+  alpha = 0.6,
+  size = 8) +
+  scale_color_manual(values = c(
+    'specials' = '#4E201D',
+    'episodes' = '#E8B173'
+  ),
+  guide = "none") +
+  scale_fill_manual(values = c(
+    'specials' = '#9C421C',
+    'episodes' = '#682C12'
+  )) +
+  expand_limits(y = c(-1, 3), x = c(-1, 3)) +
+  scale_size_continuous(trans = 'sqrt', range = c(20, 140)) +
+  guides(size = "none", color = 'none', fill = 'none') +
+  theme_void()
+
+ggsave(
+  'output/circles.png',
+  plot = last_plot(),
+  device = 'png',
+  width = 21,
+  height = 20,
+  units = 'cm'
+)
+```
+
+### Stylized image elements
+
+```{r}
+library(ggpattern)
+library(grid)
+# The mountains
+mountains <- data %>%
+  filter(!is.na(rating)) %>%
+  ggplot(aes(as.numeric(episode_title), rating)) +
+  stat_smooth(
+    geom = 'area',
+    method = 'loess',
+    span = 1 / 11,
+    fill = "#8B3512"
+  ) +
+  coord_cartesian(ylim = c(65, 95)) +
+  theme(
+    axis.text.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  guides(color = "none") +
+  theme_void()  + 
+  theme(aspect.ratio = 0.3)
+   
+# T#7F3616', '#C07E44he towers
+towers <- data %>%
+  ggplot(aes(x = uk_viewers)) + 
+  geom_histogram_pattern(
+    pattern = 'gradient',
+    pattern_fill = "#C07E44",
+    pattern_fill2 = "#7F3616",
+    lineend = 'round'
+  ) +
+  guides(fill = "none")+
+  theme_void() + 
+  theme(aspect.ratio = 1.2)
+
+
+
+df <- data.frame(
+  group = factor(c("Cool"), levels = c("Cool")),
+  value = c(90*8.2)
+)
+
+dome <-  ggplot(df, aes(x="", y = value, pattern = group))+
+  geom_bar_pattern(
+    width                = 1, 
+    stat                 = "identity", 
+    pattern       = 'gradient', 
+    pattern_fill = '#DB843F10',
+    pattern_fill2 = '#9F3211', 
+    fill          = NA,
+    pattern_alpha = 0.5,
+    colour        = 'transparent'
+  ) +
+  coord_polar("y", start=0) + 
+  theme_void() + 
+   theme(legend.position = 'none')
+
+
+
+dome_solid <- ggplot(df, aes(x="", y = value, pattern = group))+
+  geom_bar(
+    width                = 1, 
+    stat                 = "identity", 
+    fill          = '#E08745',
+    colour        = 'transparent'
+  ) +
+  coord_polar("y", start=0) + 
+  theme_void() + 
+   theme(legend.position = 'none')
+
+ggsave('output/dome.png', plot = dome, device = 'png',width = 675, height = 1200, units = 'px', dpi = 160)
+ggsave('output/dome_solid.png', plot = dome_solid, device = 'png',width = 675, height = 1200, units = 'px', dpi = 160)
+ggsave('output/mountains.png', plot = mountains, device = 'png',width = 675, height = 1200, units = 'px', dpi = 160)
+ggsave('output/towers.png', plot = towers, device = 'png',width = 675, height = 1200, units = 'px', dpi = 160)
+
+
+
+```
+
+```{r}
+library(magick)
+
+mountains_image <- image_read('output/mountains.png') %>%
+  image_trim()
+
+towers_image <- image_read('output/towers.png') %>%
+  image_trim()
+
+dome_image <- image_read('output/dome.png') %>%
+  image_trim()
+
+dome_solid_image <- image_read('output/dome_solid.png') %>%
+  image_trim()
+
+ratings_chart_image <- image_read('output/ratings_chart.png') %>% 
+  image_trim()
+
+title_image <- image_read('output/title.png')
+
+circles <- image_read('output/circles.png') %>% 
+  image_trim()
+
+viewers_chart <- image_read('output/viewers_chart.png') %>% 
+  image_trim()
+
+canvas <- image_blank(width = 1200,
+                      height = 1800,
+                      color = "#E7AC67")
+
+
+
+noisy_image <- image_blank(width = 1200, height = 1800, color = "white") %>%
+  image_noise(noisetype = 'gaussian')
+
+canvas %>%
+  image_composite(image_scale(circles, '300x'), offset = '+850+120') %>%
+  image_composite(image_scale(dome_solid_image, "1100x"),
+                  gravity = "Center",
+                  offset = "+22-20") %>%
+  image_composite(image_scale(towers_image, "700"), offset = "+300+400") %>%
+  image_composite(image_scale(dome_image, "1100x"),
+                  gravity = "Center",
+                  offset = "+22-20") %>%
+  image_composite(image_scale(mountains_image, "1200x"), offset = '-20+1150') %>%
+  image_composite(image_scale(viewers_chart, "600x"), offset = '+70+1490') %>%
+   image_composite(image_scale(ratings_chart_image, "600x"), offset = '+570+1490') %>%
+ 
+  image_composite(image_scale(title_image, '700x'), offset = '+40+90') %>%
+  image_annotate("d", size = 30, color = "#682C12", location = "+550+1740", font = 'Doctor Who 2006') %>% 
+  image_noise(noisetype = 'laplacian') %>%
+  image_annotate("Source: datardis package, tidytuesday project", size = 12, color = "#682C1280", location = "+953+1780", font = 'Source Sans 3', weight = 600) %>% 
+  image_annotate("Graphic: Aman Bhargava | aman.bh | @thedivtagguy", size = 12, color = "#682C1280", location = "+50+1780", font = 'Source Sans 3', weight = 600) %>%
+  image_crop(geometry = "+40+60") %>%
+  
+  image_border(color = "#FEF5EF", geometry = "20x20") %>%
+  image_write(path = "output/postcard.png")
+
+
+```

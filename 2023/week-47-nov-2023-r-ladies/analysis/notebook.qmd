@@ -312,14 +312,17 @@ keyword_data <- collapsed_data %>%
 
 keywords <- keyword_data %>% 
   unnest_longer(keywords) %>% 
-  filter(keywords_id != "error")
-
-keywords %>% 
+  filter(keywords_id != "error") %>%  
   select(-titles) %>% 
   separate_rows(keywords, sep = ",\\s*") %>% 
   mutate(keywords = str_to_lower(keywords)) %>%
   filter(!keywords %in% c('r programming', 'data analysis', 'r-ladies community', 'r-ladies')) %>% 
-  count(keywords, sort = T)
+  group_by(chapter) %>%
+  summarize(keywords = paste(unique(keywords), collapse = ", ")) %>%
+  ungroup()
+
+
+  
 ```
 
 ## Finding out which r-ladies chapters are closely alike
@@ -355,6 +358,7 @@ We want to export this
 combined <- data %>% 
   ungroup() %>% 
   left_join(chapter_similarity, by = "chapter") %>%
+  left_join(keywords, by = 'chapter') %>% 
   mutate(similar_chapters = str_split(similar_chapters, ",\\s*") %>%
   map(~as.numeric(.x))) %>% 
   select(
@@ -366,6 +370,7 @@ combined <- data %>%
     latitude,
     longitude,
     similar_chapters,
+    keywords,
     title,
     date
   )
@@ -378,7 +383,8 @@ json_data <- combined %>%
     total_events,
     latitude,
     longitude,
-    similar_chapters
+    similar_chapters,
+    keywords,
   ) %>%
   nest(meetups = c(title, location, date)) 
 
