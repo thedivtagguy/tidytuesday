@@ -1,0 +1,175 @@
+---
+title: "TidyTuesday 2024-03 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Tidytuesday 2024-03
+
+This is the notebook for analysis of the data of week 03 (2024) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+# gg_record(
+#   dir = file.path(getwd(), "camcorder"), 
+#   device = "png", 
+#   width = 8,     
+#   height = 10,   
+#   units = "in",  
+#   dpi = 300    
+# )
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2024, "_", 03))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2024, week = 03)
+data <- tuesdata$polling_places %>% mutate(id = row_number())
+  
+names(tuesdata)
+glimpse(tuesdata[[1]])
+
+```
+
+## Geocoding addresses
+
+https://geocoding.geo.census.gov/geocoder/Geocoding_Services_API.html
+
+```{r,eval=F}
+library(httr)
+library(readr)
+library(pbapply)
+
+# Function to split data and perform batch geocoding
+geocode_addresses <-
+  function(input_file, chunk_size, output_folder) {
+    full_data <- read_csv(input_file) %>%
+      mutate(
+        `Unique ID` = row_number(),
+        `Street address` = address,
+        City = "",
+        State = "",
+        ZIP = ""
+      ) %>%
+      select(`Unique ID`,
+             `Street address`,
+             City,
+             State,
+             ZIP)
+    
+    num_chunks <- ceiling(nrow(full_data) / chunk_size)
+    pbar <- pbapply::startpb(0, num_chunks)
+    
+    for (i in 1:num_chunks) {
+      pbapply::setpb(pbar, i)
+      
+      chunk <-
+        full_data[((i - 1) * chunk_size + 1):min(i * chunk_size, nrow(full_data)),]
+      
+      chunk_file <- sprintf("%s/chunk_%d.csv", output_folder, i)
+      write_csv(chunk, chunk_file)
+      
+      curl_command <-
+        sprintf(
+          "curl --form addressFile=@%s --form benchmark=Public_AR_Current https://geocoding.geo.census.gov/geocoder/locations/addressbatch --output %s/geocoderesult_%d.csv",
+          chunk_file,
+          output_folder,
+          i
+        )
+  
+      system(curl_command)
+    }
+    
+    pbapply::closepb(pbar)
+  }
+
+geocode_addresses("data.csv", 9998, "geocoded")
+
+```
+
+Joining things back in:
+
+```{r}
+headers <- c("id", "combined_address", "did_match", "is_exact", "address", "coords", "somethingidk", "anotheridk") 
+
+# Generate file names
+file_names <- paste0("geocoded/geocoderesult_", 1:47, ".csv") # Adjust the range if needed
+
+col_types <- cols(
+  id = col_number(),
+  .default = col_guess()
+)
+
+# Read and combine all files
+geocoded <- file_names %>%
+  map(~ read_csv(.x, col_names = headers, col_types = col_types)) %>%
+  bind_rows() %>% 
+  select(id, address, coords) %>% 
+  separate(coords, into = c("longitude", "latitude"), sep = ",", convert = TRUE) %>% 
+  select(address, latitude, longitude, id) %>% 
+  drop_na(id)
+
+library(data.table)
+
+
+data_dt <- as.data.table(data)
+geocoded_dt <- as.data.table(geocoded)
+
+duplicates <- geocoded_dt[, .N, by = address][N > 1]
+
+geocoded_dt_unique <- geocoded_dt[!duplicated(geocoded_dt, by = "address")]
+
+all_data <- merge(data_dt, geocoded_dt_unique, by = "id", all.x = TRUE)
+merged <- as_tibble(all_data)
+
+
+```
+
+
+```{r}
+library(tidycensus)
+library(tigris)
+library(sf)
+us_states <- states(cb = TRUE, resolution = "20m") %>%
+  filter(NAME != "Puerto Rico") %>%
+  shift_geometry()
+
+us_map <- merged %>%
+  left_join(us_states, by = c("state" = "STUSPS")) %>% 
+  drop_na(longitude, latitude)
+
+result_sf <- st_as_sf(us_map, coords = c("longitude", "latitude"), crs = 4326) %>% 
+  shift_geometry()
+
+# Now plot using ggplot2
+ggplot(result_sf) +
+  geom_sf() +
+  theme_minimal() 
+```
