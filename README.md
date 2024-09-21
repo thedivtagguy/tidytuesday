@@ -10,3 +10,4 @@
 | 2023 | 37   | SEPT  | Human Day      | [week-37-sept-2023-human-day](./2023/week-37-sept-2023-human-day)         |
 | 2023 | 42   | OCT   | Taylor Swift   | [week-42-oct-2023-taylor-swift](./2023/week-42-oct-2023-taylor-swift)     |
 | 2023 | 46   | NOV   | Diwali Sales   | [week-46-nov-2023-diwali-sales](./2023/week-46-nov-2023-diwali-sales)     |
+| 2024 | 38   | SEPT  | Shakespeare   | [week-46-nov-2023-diwali-sales](./2023/week-38-shakespeare)     |
