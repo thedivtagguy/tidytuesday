@@ -186,7 +186,7 @@ data %>%
   labs(
     x = "Viewers in millions",
     y = "Frequency",
-    title = str_wrap("Distribution of viewers", 40)
+    title = str_wrap("Distribution of U.K viewers", 40)
   ) +
   guides(color = "none") 
 

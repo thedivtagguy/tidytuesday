@@ -18,7 +18,10 @@ const config = {
 			fallback: undefined,
 			precompress: false,
 			strict: true
-		})
+		}),
+		paths: {
+			base: 'https://rladies-explore.netlify.app'
+		}
 	}
 };
 

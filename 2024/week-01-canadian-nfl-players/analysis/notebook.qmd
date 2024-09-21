@@ -1,0 +1,149 @@
+---
+title: "TidyTuesday 2024-01 Analysis"
+output: 
+    # html_document:
+  #   toc: true
+  #   toc_float: true
+  md_document:
+    variant: markdown_github
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2024-01
+
+This is the notebook for analysis of the data of week 01 (2024) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+# gg_record(
+#   dir = file.path(getwd(), "camcorder"), 
+#   device = "png", 
+#   width = 8,     
+#   height = 10,   
+#   units = "in",  
+#   dpi = 300    
+# )
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2024, "_", 01))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2024, week = 2)
+
+births_aggregate <- tuesdata$canada_births_1991_2022
+births_total <- tuesdata$nhl_player_births
+rosters <- tuesdata$nhl_rosters
+teams <- tuesdata$nhl_teams
+player_stats <- read_csv(paste0(here(), "/data/player_stats.csv"))
+
+# Might just join teams and players
+
+data <- rosters %>% 
+  left_join(teams, by = "team_code") %>% 
+  rename("team_name" = full_name) %>% 
+  mutate(player_name = paste(first_name, last_name)) %>% 
+  select(player_name,
+         season, 
+         position_type, 
+         birth_date, 
+         birth_city,
+         birth_country,
+         birth_state_province,
+         team_name,
+         team_code)
+
+```
+
+## How many players in each team?
+
+```{r}
+data %>% 
+  group_by(team_code) %>% 
+  distinct(player_name) %>% 
+  count(sort = T) 
+```
+
+```{r}
+
+# Convert 'birth_date' to Date type and extract day of the year
+data$birth_date <- as.Date(data$birth_date)
+data$day_of_year <- yday(data$birth_date)
+
+# Plotting
+data %>%
+  mutate(team_code = fct_lump(team_code, 10)) %>%
+  filter(team_code != "Other") %>%
+  mutate(month = as_factor(month(birth_date))) %>% 
+  ggplot(aes(y = day_of_year, x = team_name)) +
+  geom_hline(aes(yintercept = as.numeric(day_of_year)),
+             color = "gray10",
+             linewidth = 1,
+             alpha = 0.08) +
+  scale_y_reverse() +
+  facet_wrap(~ team_code, ncol = 10, strip.position = 'top') +
+  labs(x = "", y = "Month", title = "Player Birthdays by Team") +
+  theme_minimal()
+
+```
+
+## Get additional data
+
+I want to get some additional stats about players from the 
+
+```{r, eval=FALSE}
+
+library(furrr)
+library(dplyr)
+library(jsonlite)
+
+plan(multisession)
+
+getCareerTotals <- function(playerId) {
+  api_url <- paste0("https://api-web.nhle.com/v1/player/", playerId, "/landing")
+  tryCatch({
+    player_info <- jsonlite::fromJSON(api_url)
+    career_totals <- player_info$careerTotals$regularSeason
+    return(career_totals)
+  }, error = function(e) {
+    cat("Error fetching data for player ID:", playerId, "\n")
+    return(NULL)
+  })
+}
+
+
+players <- rosters %>%
+  distinct(player_id) %>% 
+  mutate(careerTotals = future_map(player_id, getCareerTotals, .progress = T)) %>%
+  unnest_wider(careerTotals)
+
+
+```
+
+
+

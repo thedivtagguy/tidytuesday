@@ -1,0 +1,169 @@
+---
+title: "TidyTuesday 2024-01 Analysis"
+output: 
+  md_document:
+    variant: markdown_github
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2024-01
+
+This is the notebook for analysis of the data of week 01 (2024) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+# gg_record(
+#   dir = file.path(getwd(), "camcorder"), 
+#   device = "png", 
+#   width = 8,     
+#   height = 10,   
+#   units = "in",  
+#   dpi = 300    
+# )
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2024, "_", 01))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2024, week = 2)
+
+births_aggregate <- tuesdata$canada_births_1991_2022
+births_total <- tuesdata$nhl_player_births
+rosters <- tuesdata$nhl_rosters
+teams <- tuesdata$nhl_teams
+player_stats <- read_csv(paste0(here(), "/data/player_stats.csv"))
+
+```
+
+## Investigations into Laterality
+
+I want to get some additional stats about players from the NHL API but we have around 8400 unique players, so that would take a _longgggg_ time. We can speed it up by running this parallely using the `{furrr}` package. It also gives a nice progress bar out of the box and I love that for long-running processes. 
+
+```{r, eval=FALSE}
+
+library(furrr)
+library(dplyr)
+library(jsonlite)
+
+plan(multisession)
+
+getCareerTotals <- function(playerId) {
+  api_url <- paste0("https://api-web.nhle.com/v1/player/", playerId, "/landing")
+  tryCatch({
+    player_info <- jsonlite::fromJSON(api_url)
+    career_totals <- player_info$careerTotals$regularSeason
+    return(career_totals)
+  }, error = function(e) {
+    cat("Error fetching data for player ID:", playerId, "\n")
+    return(NULL)
+  })
+}
+
+
+players <- rosters %>%
+  distinct(player_id) %>% 
+  mutate(careerTotals = future_map(player_id, getCareerTotals, .progress = T)) %>%
+  unnest_wider(careerTotals)
+
+# Save so I don't have to run this over again.
+# player_stats <- read_csv(players, 'data/player_stats.csv')
+```
+
+Out of this, what I'm interested in is `gamesPlayed`, `goals` and `assists`. I don't really know a lot about hockey but the `shoots_catches` variable in the original rosters dataframe got me interested in laterality, or in this case, handedness, which is the tendency to use one hand or the other during play. In [this study on handedness in hockey](https://pubmed.ncbi.nlm.nih.gov/21058167/), I found an interesting titbit:
+
+> On average, right-shooters scored more goals than their left-shooting counterparts. Opposite to the trend found in goals per game, results indicate that left-shooters assisted more goals than right-shooters.
+
+That's interesting, and probably something I can investigate using my own limited brain capacity. Lets assemble some new data.
+
+```{r}
+data <- rosters %>%
+  left_join(player_stats, by = 'player_id') %>%
+  select(
+    player_id,
+    season,
+    first_name,
+    last_name,
+    position_type,
+    position_code,
+    shoots_catches,
+    goals,
+    shots,
+    gamesPlayed,
+    assists
+  )
+  
+```
+
+
+```{r}
+data %>% 
+  filter(position_type %in% c('forwards', 'defensemen')) %>% 
+  mutate(goals_per_game = goals/gamesPlayed,
+         assists_per_game = assists/gamesPlayed) %>% 
+  drop_na() %>% 
+  ggplot(aes(goals_per_game, assists_per_game, fill = shoots_catches, color = shoots_catches)) + 
+  geom_point( shape = 20) +
+  geom_smooth(method = "lm", se = FALSE, aes(group = shoots_catches)) +
+  facet_grid(~position_type)
+
+data %>% 
+  filter(position_type %in% c('forwards', 'defensemen')) %>% 
+  mutate(goals_per_game = goals/gamesPlayed,
+         assists_per_game = assists/gamesPlayed) %>% 
+  pivot_longer(cols = c(goals_per_game, assists_per_game), names_to = "type", values_to = "value") %>% 
+  drop_na() %>% 
+  ggplot(aes(x = value, fill = shoots_catches, color = shoots_catches)) + 
+  geom_histogram() +
+  facet_grid(~type)
+
+
+```
+
+```{r}
+fwd = data |>
+  filter(position_type=='forwards',
+         !is.na(shoots_catches),
+         !is.na(goals), goals>0,
+         !is.na(assists), assists>0) |>
+  mutate(ratio=assists/goals)
+
+# A density plot seems to show a clear difference between left- and right-handed players, with left-handed players having slightly more assists per goal.
+fwd |>
+  ggplot(aes(ratio, color=shoots_catches)) +
+  geom_density()
+
+fit = glm(assists ~ goals*shoots_catches, data=fwd)
+summary(fit)
+```
+
+
+
+
+
+
