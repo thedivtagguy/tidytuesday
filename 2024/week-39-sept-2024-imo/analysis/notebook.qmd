@@ -1,0 +1,349 @@
+---
+title: "TidyTuesday 2024-39 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2024-39
+
+This is the notebook for analysis of the data of week 39 (2024) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+library(ggtext)
+library(ggbump)
+library(ggplot2)
+library(dplyr)
+library(countrycode)
+library(ggflags)
+library(wesanderson)
+
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+  width = 22,     
+  height = 13,   
+  units = "in",  
+  dpi = 300    
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2024, "_", 39))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2024, week = 39)
+
+names(tuesdata)
+glimpse(tuesdata[[1]])
+
+country <- tuesdata$country_results_df
+```
+
+## Data exploration and initial plots
+
+```{r}
+rankings <- country %>% 
+  mutate(weighted_score = 3 * awards_gold + 2 * awards_silver + awards_bronze) %>%
+  mutate(total_medals = awards_gold + awards_silver + awards_bronze) %>%
+  group_by(year) %>%
+  mutate(rank = rank(-weighted_score, ties.method = "first")) %>%
+  arrange(year, rank) %>%
+  select(year, country, rank, weighted_score, total_medals, awards_gold, awards_silver, awards_bronze) 
+
+```
+
+## Questions
+
+I'd like to work with patchwork again, with some form of small multiples. But instead of doing an overall facet by some variable like country, maybe I can look for specific patterns and plot 4-5 of those. Let's have a look at one overall bump chart for rankings, for the top 15 countries.
+
+
+
+
+```{r}
+
+
+rankings_cumulative <- rankings %>%
+  filter(rank <= 10) %>%
+  group_by(country) %>%
+  mutate(cumulative_medals = cumsum(total_medals)) %>%
+  ungroup() %>% 
+  mutate(country = case_when(
+    country == "People's Republic of China" ~ "China", 
+    country ==  "United States of America"  ~ "USA",
+    TRUE ~ country
+  )) 
+
+top_countries <- rankings_cumulative %>%
+  group_by(country) %>%
+  slice_max(order_by = year, n = 1) %>%
+  ungroup() %>%
+  slice_max(order_by = cumulative_medals, n = 4) %>%
+  pull(country)
+
+color_palette <- c(
+  "USA" = "#072C8F",  
+  "Hungary" = "#009E73",                  
+  "Romania" = "#CC79A7",                  
+  "China" = "#FF4444"    
+)
+
+names(color_palette) <- c(top_countries, "Other")
+
+
+overall <- ggplot(rankings_cumulative,
+       aes(x = year, y = cumulative_medals, group = country)) +
+  geom_line(aes(
+    color = ifelse(country %in% top_countries, country, "Other"),
+    alpha = ifelse(country %in% top_countries, 1, 0.2)
+  ), size = 1.2) +
+  geom_point(
+    data = . %>% slice_max(year, n = 1, by = country) %>% filter(country %in% top_countries),
+    size = 3,
+    aes(color = country)
+  ) +
+  geom_label(
+    data = rankings_cumulative %>% 
+    group_by(country) %>% 
+    slice_max(year, n = 1) %>% 
+    filter(country %in% top_countries),
+  aes(
+    label = str_wrap(
+      glue::glue("{country} ({cumulative_medals})"), 
+      width = 19
+    ),
+    color = country
+  ),
+
+    color = "white",
+    label.padding = unit(2.45, "points"),
+    nudge_y = 1.1,
+    fontface = "bold",
+    size = 4
+  ) +
+ geom_text_repel(
+  data = rankings_cumulative %>% 
+    group_by(country) %>% 
+    slice_max(year, n = 1) %>% 
+    filter(country %in% top_countries),
+  aes(
+    label = str_wrap(
+      glue::glue("{country} ({cumulative_medals})"), 
+      width = 14
+    ),
+    color = country
+  ),
+  hjust = "left",
+  
+  nudge_x = 1,
+ nudge_y = 1.5,
+  fontface = "bold",
+  size = 4
+) +
+  scale_y_continuous(
+    breaks = scales::pretty_breaks(10),
+    labels = function(x) {
+      labels <- as.character(x)
+      labels[length(labels)] <- paste(labels[length(labels)], "total medals")
+      labels
+    }
+  ) +
+  theme_minimal() +
+  labs(y = "", x = "",  title = str_wrap("Total Medals in International Math Olympiad by Country", 38),
+  subtitle = str_wrap("Nearly 115 countries now send their top students to the IMO each year. USA leads the medal table with 289 medals, just ahead of Romania, while countries like China have risen quickly despite later starts.", 52)) +
+  scale_color_manual(values = color_palette) +
+  scale_alpha_identity() +
+  scale_x_continuous(breaks = seq(1960, 2020, by = 10),
+                     labels = c("1960", "'70", "'80", "'90", "2000", "'10", "'20")) +
+  theme(
+     plot.title = element_text(size = 20),
+    plot.subtitle = element_text(size = 16),
+    panel.grid.minor = element_blank(),
+    plot.margin = margin(-15.5, 120, 5.5, 5.5),
+    panel.grid.major.x = element_blank(),
+    axis.text = element_text(size = 13)
+  ) +
+   theme_ipsum_pub(grid = "y") + 
+   theme(legend.position="none") + 
+  coord_cartesian(clip = "off")
+
+```
+
+I'm now going to visualize trends in ranks in these four categories
+1. Biggest rise
+2. Biggest fall
+3. Most steady
+4. Least steady
+
+```{r}
+
+
+trends <- rankings %>%
+  group_by(country) %>%
+  arrange(year) %>%
+  mutate(
+    rank_change = rank - lag(rank),
+    total_change = last(rank) - first(rank),
+    variability = sd(rank, na.rm = TRUE)
+  ) %>%
+  filter(n() > 10) %>%
+  ungroup() %>%
+  mutate(
+    country = case_when(
+      country == "Czechoslovakia" ~ "Czech Republic",
+      country == "German Democratic Republic" ~ "Germany",
+      country == "Yugoslavia" ~ "Serbia",
+      TRUE ~ country
+    ),
+    iso2c = str_to_lower(case_when(
+      country == "Kosovo" ~ "XK",
+      TRUE ~ countrycode(country, "country.name", "iso2c", warn = FALSE)
+    ))
+  )
+
+
+create_bump_chart <- function(data,
+                              highlight_countries,
+                              title,
+                              highlight_color = "red",
+                              n_interesting_points = 1,
+                              left_label_countries = c()) {
+  data <- data %>%
+    mutate(highlight = ifelse(country %in% highlight_countries, country, "Other"))
+  
+  last_year <- max(data$year)
+  
+  ggplot(data, aes(
+    x = year,
+    y = rank,
+    color = highlight,
+    group = iso2c
+  )) +
+    geom_bump(
+      data = filter(data, highlight == "Other"),
+      alpha = 0.2,
+      size = 0.1
+    ) +
+    geom_point(
+      data = filter(data, highlight == "Other"),
+      size = 1,
+      alpha = 0.3
+    ) +
+    geom_bump(data = filter(data, highlight != "Other"), size = 1) +
+    geom_point(data = filter(data, highlight != "Other"), size = 1) +
+    geom_richtext(
+      data = data %>% filter(highlight != "Other" & year == max(year)),
+      aes(label = paste0(str_wrap(if_else(country == "United States of America", "USA", country), 10),  " ", "(", rank, ")"),
+          hjust = ifelse(country %in% left_label_countries, "right", "left")),
+      nudge_x = ifelse(data$country[data$highlight != "Other" & data$year == max(data$year)] %in% left_label_countries, -4, 4),
+      vjust = 0.5,
+      family = "IBMPlexSans",
+      label.color = NA,
+      size = 5,
+      show.legend = FALSE
+    ) +
+    geom_flag(
+      data = filter(data, year == last_year, highlight != "Other"),
+      aes(
+        x = year,
+        y = rank,
+        country = iso2c,
+        size = 13
+      )
+    ) +
+    scale_y_reverse() +
+    scale_country() +
+    scale_size(range = c(10)) +
+    scale_color_manual(values = c("Other" = "gray", setNames(
+      c(highlight_color), highlight_countries
+    ))) +
+     theme_ipsum_pub(grid = "xy",
+                     plot_title_size = 14,
+                     axis_text_size = 12) + 
+    labs(x = "", y = "Rank", title = title) +
+    coord_cartesian(clip = "off") +
+     theme(legend.position="none") + 
+    coord_cartesian(clip = "off")
+}
+
+# 1. Biggest rise
+biggest_rise <- trends %>%
+  group_by(country) %>%
+  summarize(total_change = first(rank) - last(rank)) %>%
+  arrange(desc(total_change)) %>%
+  slice_head(n = 1) %>%
+  pull(country)
+
+p1 <- create_bump_chart(trends, biggest_rise, "Biggest Rise in Rank", 
+                        highlight_color = "#FB9701", 
+                        left_label_countries = c("Bosnia and Herzegovina"))
+
+# 2. Biggest fall
+biggest_fall <- trends %>%
+  group_by(country) %>%
+  summarize(total_change = first(rank) - last(rank)) %>%
+  arrange(total_change) %>%
+  slice_head(n = 1) %>%
+  pull(country)
+
+
+p2 <- create_bump_chart(trends, biggest_fall, "Biggest Fall in Rank", 
+                        highlight_color = "#F70020", 
+                        left_label_countries = c("Venezuela"))
+
+# 3. Most steady
+most_steady <- trends %>%
+  filter(country != "Union of Soviet Socialist Republics") %>% 
+  group_by(country) %>%
+  summarize(variability = mean(variability)) %>%
+  arrange(variability) %>%
+  slice_head(n = 1) %>%
+  pull(country)
+
+p3 <- create_bump_chart(trends, most_steady, "Most Steady Ranks", highlight_color = "#072C8F")
+
+# 4. Least steady
+least_steady <- trends %>%
+  group_by(country) %>%
+  summarize(variability = mean(variability)) %>%
+  arrange(desc(variability)) %>%
+  slice_head(n = 1) %>%
+  pull(country)
+
+p4 <- create_bump_chart(trends, least_steady, "Least Steady Ranks", highlight_color = "#191A1A")
+
+((free(p1, side = "t") / p2 + plot_layout(axes = "collect")) | free(overall) | (free(p3, side = "t") / p4 + plot_layout(axes = "collect")) )
+  
+
+
+```
+
+
