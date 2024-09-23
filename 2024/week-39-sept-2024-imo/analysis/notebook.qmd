@@ -92,7 +92,6 @@ I'd like to work with patchwork again, with some form of small multiples. But in
 
 
 rankings_cumulative <- rankings %>%
-  filter(rank <= 10) %>%
   group_by(country) %>%
   mutate(cumulative_medals = cumsum(total_medals)) %>%
   ungroup() %>% 
@@ -106,94 +105,109 @@ top_countries <- rankings_cumulative %>%
   group_by(country) %>%
   slice_max(order_by = year, n = 1) %>%
   ungroup() %>%
-  slice_max(order_by = cumulative_medals, n = 4) %>%
+  slice_max(order_by = cumulative_medals, n = 3) %>%
   pull(country)
+
+top_countries <- append(top_countries, "China")
 
 color_palette <- c(
   "USA" = "#072C8F",  
   "Hungary" = "#009E73",                  
-  "Romania" = "#CC79A7",                  
-  "China" = "#FF4444"    
+  "United Kingdom" = "#CC79A7",                  
+  "China" = "#E69F00"   
 )
-
 names(color_palette) <- c(top_countries, "Other")
 
+overall_data <- rankings_cumulative %>%
+  group_by(country) %>%
+  slice_max(year, n = 1) %>%
+  ungroup() %>%
+  slice_max(cumulative_medals, n = 1) %>%
+  mutate(
+    total_countries = n_distinct(rankings_cumulative$country),
+    top_country = country,
+    top_medals = cumulative_medals,
+    second_country = top_countries[2],
+    second_medals = filter(rankings_cumulative, country == second_country & year == max(year))$cumulative_medals
+  ) %>%
+  slice(1) %>%
+  mutate(subtitle = str_wrap(glue::glue("Nearly {total_countries} countries now send their top students to the IMO each year. {top_country} leads the medal table with {top_medals} medals, just ahead of {second_country}, while China has risen quickly despite a later start."), 45))
 
 overall <- ggplot(rankings_cumulative,
-       aes(x = year, y = cumulative_medals, group = country)) +
-  geom_line(aes(
-    color = ifelse(country %in% top_countries, country, "Other"),
-    alpha = ifelse(country %in% top_countries, 1, 0.2)
-  ), size = 1.2) +
-  geom_point(
-    data = . %>% slice_max(year, n = 1, by = country) %>% filter(country %in% top_countries),
-    size = 3,
-    aes(color = country)
-  ) +
-  geom_label(
-    data = rankings_cumulative %>% 
-    group_by(country) %>% 
-    slice_max(year, n = 1) %>% 
-    filter(country %in% top_countries),
-  aes(
-    label = str_wrap(
-      glue::glue("{country} ({cumulative_medals})"), 
-      width = 19
-    ),
-    color = country
-  ),
-
-    color = "white",
-    label.padding = unit(2.45, "points"),
-    nudge_y = 1.1,
-    fontface = "bold",
-    size = 4
-  ) +
- geom_text_repel(
-  data = rankings_cumulative %>% 
-    group_by(country) %>% 
-    slice_max(year, n = 1) %>% 
-    filter(country %in% top_countries),
-  aes(
-    label = str_wrap(
-      glue::glue("{country} ({cumulative_medals})"), 
-      width = 14
-    ),
-    color = country
-  ),
-  hjust = "left",
-  
-  nudge_x = 1,
- nudge_y = 1.5,
-  fontface = "bold",
-  size = 4
-) +
-  scale_y_continuous(
-    breaks = scales::pretty_breaks(10),
-    labels = function(x) {
-      labels <- as.character(x)
-      labels[length(labels)] <- paste(labels[length(labels)], "total medals")
-      labels
-    }
-  ) +
-  theme_minimal() +
-  labs(y = "", x = "",  title = str_wrap("Total Medals in International Math Olympiad by Country", 38),
-  subtitle = str_wrap("Nearly 115 countries now send their top students to the IMO each year. USA leads the medal table with 289 medals, just ahead of Romania, while countries like China have risen quickly despite later starts.", 52)) +
-  scale_color_manual(values = color_palette) +
-  scale_alpha_identity() +
-  scale_x_continuous(breaks = seq(1960, 2020, by = 10),
-                     labels = c("1960", "'70", "'80", "'90", "2000", "'10", "'20")) +
-  theme(
-     plot.title = element_text(size = 20),
-    plot.subtitle = element_text(size = 16),
-    panel.grid.minor = element_blank(),
-    plot.margin = margin(-15.5, 120, 5.5, 5.5),
-    panel.grid.major.x = element_blank(),
-    axis.text = element_text(size = 13)
-  ) +
-   theme_ipsum_pub(grid = "y") + 
-   theme(legend.position="none") + 
-  coord_cartesian(clip = "off")
+           aes(x = year, y = cumulative_medals, group = country)) +
+      geom_line(aes(
+        color = ifelse(country %in% top_countries, country, "Other"),
+        alpha = ifelse(country %in% top_countries, 1, 0.1)
+      ), size = 1.2) +
+      geom_point(
+        data = . %>% slice_max(year, n = 1, by = country) %>% filter(country %in% top_countries),
+        size = 3,
+        aes(color = country)
+      ) +
+      geom_label(
+        data = rankings_cumulative %>% 
+          group_by(country) %>% 
+          slice_max(year, n = 1) %>% 
+          filter(country %in% top_countries),
+        aes(
+          label = str_wrap(
+            glue::glue("{country} ({cumulative_medals})"), 
+            width = 19
+          ),
+          color = country
+        ),
+        color = "white",
+        label.padding = unit(2.45, "points"),
+        nudge_y = 1.1,
+        fontface = "bold",
+        size = 4
+      ) +
+      geom_text_repel(
+        data = rankings_cumulative %>% 
+          group_by(country) %>% 
+          slice_max(year, n = 1) %>% 
+          filter(country %in% top_countries),
+        aes(
+          label = str_wrap(
+            glue::glue("{country} ({cumulative_medals})"), 
+            width = 14
+          ),
+          color = country
+        ),
+        hjust = "left",
+         box.padding = 0.5,
+        nudge_x = 1,
+        nudge_y = 1.5,
+        fontface = "bold",
+        size = 4
+      ) +
+      scale_y_continuous(
+        breaks = scales::pretty_breaks(10),
+        labels = function(x) {
+          labels <- as.character(x)
+          labels[length(labels)] <- paste(labels[length(labels)], "total medals")
+          labels
+        }
+      ) +
+      theme_minimal() +
+      labs(y = "", x = "",  
+           title = str_wrap("Total Medals in International Math Olympiad by Country", 38),
+           subtitle = overall_data$subtitle) +
+      scale_color_manual(values = color_palette) +
+      scale_alpha_identity() +
+      scale_x_continuous(breaks = seq(1960, 2020, by = 10),
+                         labels = c("1960", "'70", "'80", "'90", "2000", "'10", "'20")) +
+      theme(
+        plot.title = element_text(size = 20),
+        plot.subtitle = element_text(size = 16),
+        panel.grid.minor = element_blank(),
+        plot.margin = margin(-15.5, 120, 5.5, 5.5),
+        panel.grid.major.x = element_blank(),
+        axis.text = element_text(size = 13)
+      ) +
+      theme_ipsum_pub(grid = "y") + 
+      theme(legend.position="none") + 
+      coord_cartesian(clip = "off")
 
 ```
 
@@ -265,8 +279,9 @@ create_bump_chart <- function(data,
           hjust = ifelse(country %in% left_label_countries, "right", "left")),
       nudge_x = ifelse(data$country[data$highlight != "Other" & data$year == max(data$year)] %in% left_label_countries, -4, 4),
       vjust = 0.5,
-      family = "IBMPlexSans",
+     
       label.color = NA,
+      fontface = "bold",
       size = 5,
       show.legend = FALSE
     ) +
@@ -340,9 +355,11 @@ least_steady <- trends %>%
 
 p4 <- create_bump_chart(trends, least_steady, "Least Steady Ranks", highlight_color = "#191A1A")
 
-((free(p1, side = "t") / p2 + plot_layout(axes = "collect")) | free(overall) | (free(p3, side = "t") / p4 + plot_layout(axes = "collect")) )
+final <- ((free(p1, side = "t") / p2 + plot_layout(axes = "collect")) | free(overall) | (free(p3, side = "t") / p4 + plot_layout(axes = "collect")) ) + plot_annotation(caption = "Tidytuesday week 39 | Graphic by Aman Bhargava | aman.bh", theme = theme(
+  plot.caption = element_text(size = 14)
+))
   
-
+ggsave("./final.png", plot = final, device = "png")
 
 ```
 
