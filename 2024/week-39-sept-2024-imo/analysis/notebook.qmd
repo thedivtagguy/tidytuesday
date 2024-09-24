@@ -71,13 +71,19 @@ country <- tuesdata$country_results_df
 ## Data exploration and initial plots
 
 ```{r}
-rankings <- country %>% 
-  mutate(weighted_score = 3 * awards_gold + 2 * awards_silver + awards_bronze) %>%
-  mutate(total_medals = awards_gold + awards_silver + awards_bronze) %>%
+rankings <- country %>%
+  mutate(
+    total_score = rowSums(select(., p1:p6), na.rm = TRUE),
+    perfect_scores = rowSums(select(., p1:p6) == 7, na.rm = TRUE),
+    total_medals = awards_gold + awards_silver + awards_bronze
+  ) %>%
   group_by(year) %>%
-  mutate(rank = rank(-weighted_score, ties.method = "first")) %>%
-  arrange(year, rank) %>%
-  select(year, country, rank, weighted_score, total_medals, awards_gold, awards_silver, awards_bronze) 
+  mutate(rank = if_else(
+    !is.na(p1) &
+      !is.na(p2) & !is.na(p3) & !is.na(p4) & !is.na(p5) & !is.na(p6),
+    dense_rank(-total_score),
+    NA_integer_
+  ))
 
 ```
 
@@ -86,24 +92,44 @@ rankings <- country %>%
 I'd like to work with patchwork again, with some form of small multiples. But instead of doing an overall facet by some variable like country, maybe I can look for specific patterns and plot 4-5 of those. Let's have a look at one overall bump chart for rankings, for the top 15 countries.
 
 
+```{r}
+rankings <- country %>%
+  mutate(
+    total_score = rowSums(select(., p1:p6), na.rm = TRUE),
+    perfect_scores = rowSums(select(., p1:p6) == 7, na.rm = TRUE),
+    total_medals = awards_gold + awards_silver + awards_bronze
+  ) %>%
+  group_by(year) %>%
+  mutate(rank = if_else(
+    !is.na(p1) &
+      !is.na(p2) & !is.na(p3) & !is.na(p4) & !is.na(p5) & !is.na(p6),
+    dense_rank(-total_score),
+    NA_integer_
+  ))%>%
+  ungroup() 
+
+
+```
 
 
 ```{r}
 
 
-rankings_cumulative <- rankings %>%
-  group_by(country) %>%
+medals_cumulative <- rankings %>%
+  arrange(country, year) %>%  
+  group_by(country) %>% 
   mutate(cumulative_medals = cumsum(total_medals)) %>%
   ungroup() %>% 
   mutate(country = case_when(
     country == "People's Republic of China" ~ "China", 
-    country ==  "United States of America"  ~ "USA",
+    country == "United States of America" ~ "USA",
     TRUE ~ country
-  )) 
+  ))
 
-top_countries <- rankings_cumulative %>%
+
+top_countries <- medals_cumulative %>%
   group_by(country) %>%
-  slice_max(order_by = year, n = 1) %>%
+  slice_max(order_by = year, n = 1) %>%  
   ungroup() %>%
   slice_max(order_by = cumulative_medals, n = 3) %>%
   pull(country)
@@ -114,26 +140,27 @@ color_palette <- c(
   "USA" = "#072C8F",  
   "Hungary" = "#009E73",                  
   "United Kingdom" = "#CC79A7",                  
-  "China" = "#E69F00"   
+  "China" = "#E69F00",
+
 )
 names(color_palette) <- c(top_countries, "Other")
 
-overall_data <- rankings_cumulative %>%
+overall_data <- medals_cumulative %>%
   group_by(country) %>%
   slice_max(year, n = 1) %>%
   ungroup() %>%
   slice_max(cumulative_medals, n = 1) %>%
   mutate(
-    total_countries = n_distinct(rankings_cumulative$country),
+    total_countries = n_distinct(medals_cumulative$country),
     top_country = country,
     top_medals = cumulative_medals,
     second_country = top_countries[2],
-    second_medals = filter(rankings_cumulative, country == second_country & year == max(year))$cumulative_medals
+    second_medals = filter(medals_cumulative, country == second_country & year == max(year))$cumulative_medals
   ) %>%
   slice(1) %>%
   mutate(subtitle = str_wrap(glue::glue("Nearly {total_countries} countries now send their top students to the IMO each year. {top_country} leads the medal table with {top_medals} medals, just ahead of {second_country}, while China has risen quickly despite a later start."), 45))
 
-overall <- ggplot(rankings_cumulative,
+overall <- ggplot(medals_cumulative,
            aes(x = year, y = cumulative_medals, group = country)) +
       geom_line(aes(
         color = ifelse(country %in% top_countries, country, "Other"),
@@ -145,7 +172,7 @@ overall <- ggplot(rankings_cumulative,
         aes(color = country)
       ) +
       geom_label(
-        data = rankings_cumulative %>% 
+        data = medals_cumulative %>% 
           group_by(country) %>% 
           slice_max(year, n = 1) %>% 
           filter(country %in% top_countries),
@@ -163,7 +190,7 @@ overall <- ggplot(rankings_cumulative,
         size = 4
       ) +
       geom_text_repel(
-        data = rankings_cumulative %>% 
+        data = medals_cumulative %>% 
           group_by(country) %>% 
           slice_max(year, n = 1) %>% 
           filter(country %in% top_countries),
@@ -222,6 +249,7 @@ I'm now going to visualize trends in ranks in these four categories
 
 trends <- rankings %>%
   group_by(country) %>%
+  #drop_na(year, total_score, p1, p2, p3, p4, p5, p6, total_medals) %>% 
   arrange(year) %>%
   mutate(
     rank_change = rank - lag(rank),
@@ -332,11 +360,11 @@ biggest_fall <- trends %>%
 
 p2 <- create_bump_chart(trends, biggest_fall, "Biggest Fall in Rank", 
                         highlight_color = "#F70020", 
-                        left_label_countries = c("Venezuela"))
+                        left_label_countries = c("Kuwait"))
 
 # 3. Most steady
 most_steady <- trends %>%
-  filter(country != "Union of Soviet Socialist Republics") %>% 
+  filter(!country %in% c("Union of Soviet Socialist Republics", "Russian Federation")) %>% 
   group_by(country) %>%
   summarize(variability = mean(variability)) %>%
   arrange(variability) %>%
@@ -358,8 +386,12 @@ p4 <- create_bump_chart(trends, least_steady, "Least Steady Ranks", highlight_co
 final <- ((free(p1, side = "t") / p2 + plot_layout(axes = "collect")) | free(overall) | (free(p3, side = "t") / p4 + plot_layout(axes = "collect")) ) + plot_annotation(caption = "Tidytuesday week 39 | Graphic by Aman Bhargava | aman.bh", theme = theme(
   plot.caption = element_text(size = 14)
 ))
-  
-ggsave("./final.png", plot = final, device = "png")
+
+(
+  (free(overall) | (free(p1) / free(p2) / free(p3) / free(p4))) 
+)
+
+
 
 ```
 
