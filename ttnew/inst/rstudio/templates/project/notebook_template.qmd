@@ -1,72 +1,33 @@
 ---
-title: "TidyTuesday {{year}}-{{week}} Analysis"
-output: 
-  html_document:
+title: "TidyTuesday {{year}} Week {{week}}"
+format:
+  html:
+    theme: cosmo
+    code-fold: false
     toc: true
-    toc_float: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
 ---
 
-# Tidytuesday {{year}}-{{week}}
-
-This is the notebook for analysis of the data of week {{week}} ({{year}}) for the [tidytuesday](https://tidytues.day) project. The game is on!
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+```{r}
 library(tidyverse)
 library(tidytuesdayR)
-library(hrbrthemes)
-library(scales)
-library(lubridate)
-library(ggrepel)
-library(patchwork)
-library(here)
-library(gganimate)
-library(patchwork)
 library(camcorder)
-library(ragg)
+library(here)
 
-# Set theme
-theme_set(theme_ipsum() + theme(legend.position = "bottom"))
-
-#Initialize Camcorder
+# Setup camcorder
 gg_record(
-  dir = file.path(getwd(), "camcorder"), 
-  device = "png", 
-  width = 8,     
-  height = 10,   
-  units = "in",  
-  dpi = 300    
+  dir = here("output"),
+  device = "png",
+  width = 10,
+  height = 8,
+  units = "in",
+  dpi = 300
 )
 
-# Define default path for saving plots
-plot_path <- here::here("output", paste0("tidytuesday_", {{year}}, "_", {{week}}))
-if (!dir.exists(plot_path)) {
-  dir.create(plot_path, recursive = TRUE)
-}
-
-```
-
-Okay let us see what we have.
-
-```{r}
-# Load TidyTuesday Data
-tuesdata <- tidytuesdayR::tt_load({{year}}, week = {{week}})
-
-names(tuesdata)
-glimpse(tuesdata[[1]])
-
-```
-
-## Data exploration and initial plots
-
-```{r}
-# What is the data like?
-
-```
-
-## Questions
-
-```{r}
-# Let us try to answer them one by one
-
+# Load data
+tuesdata <- tt_load({{year}}, week = {{week}})
 ```

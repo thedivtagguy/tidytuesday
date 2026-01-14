@@ -1,0 +1,132 @@
+---
+title: "TidyTuesday 2026 Week 02"
+format:
+  html:
+    theme: cosmo
+    code-fold: false
+    toc: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+```{r}
+library(tidyverse)
+library(ggCheysson)
+library(scales)
+library(showtext)
+setwd(here::here("2026", "week-02-jan-2026-african-languages"))
+
+font_add_google("Atkinson Hyperlegible", "atkinson")
+showtext_auto()
+
+tuesdata <- tidytuesdayR::tt_load(2026, 2)$africa |>
+  filter(family != "Language") |>
+  mutate(
+    family = fct_reorder(str_replace(family, "ʼ", "'"), native_speakers, sum)
+  )
+
+counts <- tuesdata |>
+  group_by(family) |>
+  summarise(n = n(), tot = sum(native_speakers, na.rm = T)) |>
+  mutate(lab = if_else(tot == max(tot), paste(n, "languages"), as.character(n)))
+
+small <- tuesdata |> slice_min(native_speakers, n = 1)
+
+ggplot(tuesdata, aes(native_speakers, family, color = family)) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.8, groupOnX = F, bandwidth = 0.8) +
+  geom_rect(
+    data = counts,
+    aes(
+      xmin = 2.5e8,
+      xmax = 8e8,
+      ymin = as.numeric(family) - .4,
+      ymax = as.numeric(family) + .4
+    ),
+    fill = "#F7E6CD",
+    color = NA,
+    inherit.aes = F
+  ) +
+  geom_text(
+    data = counts,
+    aes(4e8, family, label = lab),
+    family = "atkinson",
+    size = 6,
+    color = "#6c695bff",
+    hjust = 0,
+    inherit.aes = F
+  ) +
+  geom_curve(
+    data = small,
+    aes(
+      x = native_speakers * 18,
+      y = as.numeric(family) - 2.4,
+      xend = native_speakers,
+      yend = as.numeric(family) - .4
+    ),
+    arrow = arrow(length = unit(.1, "cm"), type = "closed"),
+    curvature = -.3,
+    color = "#4E4334",
+    linewidth = .5,
+    inherit.aes = F
+  ) +
+  geom_text(
+    data = small,
+    aes(
+      native_speakers * 28,
+      as.numeric(family) - 2.8,
+      label = paste0(language, "\n", comma(native_speakers), " speakers")
+    ),
+    family = "atkinson",
+    size = 6,
+    color = "#4E4334",
+    hjust = 0,
+    lineheight = .4,
+    inherit.aes = F
+  ) +
+  scale_x_log10(
+    breaks = 10^(2:8),
+    labels = label_number(scale_cut = cut_short_scale()),
+    expand = expansion(mult = c(.02, .15))
+  ) +
+  scale_y_discrete(expand = expansion(add = c(.8, 1))) +
+  scale_color_cheysson("1880_07") +
+  labs(
+    x = "Number of Native Speakers",
+    y = NULL,
+    title = "Africa's Linguistic Groups",
+    subtitle = str_wrap(
+      "The Niger-Congo family accounts for nearly three-quarters of all languages on the continent",
+      55
+    ),
+    caption = "Source: TidyTuesday 2026 Week 2, Wikipedia  | Visualization: @aman.bh"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "atkinson", color = "#4E4334"),
+    plot.background = element_rect(fill = "#F7E6CD", color = NA),
+    panel.background = element_rect(fill = "#F7E6CD", color = NA),
+    panel.grid.major.x = element_line(color = "#D6C5A0", linewidth = 0.3),
+    panel.grid.major.y = element_line(color = "#D6C5A0", linewidth = 0.1),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 36, face = "bold"),
+    plot.subtitle = element_text(size = 24, lineheight = 0.3),
+    plot.caption = element_text(
+      size = 16,
+      color = "#545148ff",
+      hjust = 0.5,
+      margin = margin(t = 10)
+    ),
+    axis.text = element_text(size = 18, color = "#4E4334"),
+    axis.title.x = element_text(
+      size = 18,
+      color = "#4E4334",
+      margin = margin(t = 10)
+    ),
+    legend.position = "none",
+    plot.margin = margin(20, 25, 20, 20)
+  ) +
+  coord_cartesian(clip = "off") +
+  ggsave("output/plot.png", width = 1200, height = 1600, units = "px")
+```

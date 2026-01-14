@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# TidyTuesday Quick Setup
+# Usage: ./ttsetup <week_number> [year]
+
+if [ $# -lt 1 ]; then
+  echo "Usage: ./ttsetup <week_number> [year]"
+  echo "Example: ./ttsetup 1"
+  echo "Example: ./ttsetup 5 2026"
+  exit 1
+fi
+
+WEEK=$1
+YEAR=${2:-$(date +%Y)}
+
+# Format week with leading zero
+WEEK_FORMATTED=$(printf "%02d" $WEEK)
+
+# Get month abbreviation (simplified - you might need to adjust based on actual TidyTuesday dates)
+MONTH=$(date +%b | tr '[:upper:]' '[:lower:]')
+
+# Ask for topic
+read -p "Topic name (e.g., 'polling-places'): " TOPIC
+
+if [ -z "$TOPIC" ]; then
+  echo "Topic name required!"
+  exit 1
+fi
+
+# Create directory name: week-##-month-year-topic
+DIR_NAME="week-${WEEK_FORMATTED}-${MONTH}-${YEAR}-${TOPIC}"
+FULL_PATH="${YEAR}/${DIR_NAME}"
+
+# Create year directory if needed
+mkdir -p "${YEAR}"
+
+# Check if ttnew package is installed, if not use devtools
+if Rscript -e "if (!require('ttnew', quietly=TRUE)) quit(status=1)" 2>/dev/null; then
+  # Package is installed, use it
+  Rscript -e "ttnew::create_project('${FULL_PATH}', ${YEAR}, ${WEEK})"
+else
+  # Package not installed, load from source
+  Rscript -e "devtools::load_all('ttnew'); create_project('${FULL_PATH}', ${YEAR}, ${WEEK})"
+fi
+
+echo ""
+echo "✓ Created: ${FULL_PATH}"
+echo ""
+echo "Next steps:"
+echo "  cd ${FULL_PATH}/analysis"
+echo "  quarto preview notebook.qmd"
