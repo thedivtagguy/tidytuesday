@@ -1,3 +1,7 @@
 # TidyTuesday 2026 Week 03
 
 [TidyTuesday 2026 Week 03](https://github.com/rfordatascience/tidytuesday)
+
+![Star map showing "The Universe Through APOD" - commonly photographed celestial objects from NASA APOD (2007-2025) plotted on galactic coordinates. The visualization shows the Milky Way's plane as a luminous band across the center, with labeled regions including Andromeda Galaxy in the upper portion, the Pleiades star cluster to the left, Orion Nebula and Horsehead Nebula on the left side, and Antares region on the right. The Large and Small Magellanic Clouds are visible in the lower portion. Numerous nebulae, galaxies, and star clusters are labeled in blue and yellow text across the black starfield background. Grid lines mark right ascension (horizontal) and declination (vertical) coordinates.](plot.png)
+
+![Animated transition of the APOD star map from a photographic Milky Way background to a clean coordinate grid view. The animation smoothly fades between two states: the first showing celestial objects overlaid on an actual photograph of the Milky Way galaxy, and the second showing the same objects on a black background with only coordinate grid lines. Throughout the transition, labeled objects including Andromeda Galaxy, Pleiades, Orion Nebula, Horsehead Nebula, Antares, and the Magellanic Clouds remain consistently positioned, demonstrating how the visualization maps actual astronomical photographs to their celestial coordinates.](transition.gif)

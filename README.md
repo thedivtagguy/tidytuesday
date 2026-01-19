@@ -17,3 +17,4 @@
 | 2024 | 03 | polling | week 03 polling places | [week-03-polling-places](./2024/week-03-polling-places) |
 | 2024 | 39 | sept | imo | [week-39-sept-2024-imo](./2024/week-39-sept-2024-imo) |
 | 2026 | 02 | jan | african languages | [week-02-jan-2026-african-languages](./2026/week-02-jan-2026-african-languages) |
+| 2026 | 03 | jan | apod images | [week-03-jan-2026-apod-images](./2026/week-03-jan-2026-apod-images) |
