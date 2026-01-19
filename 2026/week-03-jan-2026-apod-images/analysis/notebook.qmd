@@ -1,0 +1,444 @@
+---
+title: "TidyTuesday 2026 Week 03"
+format: html
+execute:
+  echo: true
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+library(tidytuesdayR)
+library(here)
+library(glue)
+library(showtext)
+library(ggrepel)
+library(jsonlite)
+library(httr)
+library(gemini.R)
+library(magick)
+setwd(here("2026/week-03-jan-2026-apod-images/"))
+font_add_google("Atkinson Hyperlegible", "atkinson")
+showtext_auto()
+setAPI(Sys.getenv("GEMINI_API_KEY"))
+
+tuesdata <- tt_load(2026, week = 03)
+apod_data <- tuesdata$apod
+starmap <- image_read("starmap.png")
+```
+
+
+```{r}
+extraction_prompt <- "
+You are an expert astronomer. Extract distinct astronomical bodies (Stars, Nebulas, Galaxies, etc.) from the text.
+Rules:
+1. Exclude atmospheric phenomena (aurora, clouds), Earth, and man-made objects.
+2. Exclude generic terms (e.g. 'a star') unless it is a specific named object.
+3. Return JSON only.
+"
+
+# Define the data shape we want back
+object_schema <- list(
+  type = "OBJECT",
+  properties = list(
+    objects = list(
+      type = "ARRAY",
+      items = list(
+        type = "OBJECT",
+        properties = list(
+          name = list(type = "STRING"),
+          type = list(
+            type = "STRING",
+            enum = c(
+              "Star",
+              "Nebula",
+              "Galaxy",
+              "Cluster",
+              "Black Hole",
+              "Comet",
+              "Asteroid"
+            )
+          )
+        ),
+        required = c("name", "type")
+      )
+    )
+  )
+)
+
+extract_astronomy_items <- function(text) {
+  tryCatch(
+    {
+      response <- gemini_structured(
+        prompt = paste(extraction_prompt, "\nText:", text),
+        schema = object_schema,
+        model = "2.0-flash-lite",
+        temperature = 0
+      )
+      data <- fromJSON(response)
+
+      # Return an empty tibble if nothing found, otherwise the data
+      if (is.null(data$objects) || length(data$objects) == 0) {
+        return(tibble(name = character(), type = character()))
+      }
+      return(as_tibble(data$objects))
+    },
+    error = function(e) return(tibble(name = character(), type = character()))
+  )
+}
+
+entities <- apod_data %>%
+  # sample_n(10) %>%
+  mutate(combined_text = paste(title, explanation)) %>%
+  mutate(found_objects = map(combined_text, extract_astronomy_items)) %>%
+  select(date, title, found_objects) %>%
+  unnest(found_objects)
+
+print(head(entities))
+
+entities <- read_csv("entities.csv")
+```
+
+
+```{r}
+get_coordinates <- function(names_list) {
+  # Format names for the query: "Name"@en
+  formatted_names <- paste0('"', names_list, '"@en', collapse = "\n")
+
+  # Wikidata SPARQL Query
+  query <- glue(
+    '
+    SELECT DISTINCT ?label ?ra ?dec WHERE {{
+      VALUES ?label {{
+        {formatted_names}
+      }}
+      ?item rdfs:label ?label.
+      ?item wdt:P6257 ?ra;
+            wdt:P6258 ?dec.
+    }}
+  '
+  )
+
+  # Send request
+  response <- POST(
+    url = "https://query.wikidata.org/sparql",
+    body = list(query = query),
+    encode = "form",
+    add_headers(Accept = "application/json")
+  )
+
+  # Parse result
+  data <- content(response, as = "parsed", type = "application/json")
+
+  map_dfr(data$results$bindings, function(row) {
+    tibble(
+      name = row$label$value,
+      ra = as.numeric(row$ra$value),
+      dec = as.numeric(row$dec$value)
+    )
+  })
+}
+
+
+unique_names <- unique(entities$name)
+batches <- split(unique_names, ceiling(seq_along(unique_names) / 50))
+
+coords_data <- map_dfr(batches, get_coordinates)
+coords_data <- read_csv("entities_with_coords.csv")
+final_data <- entities %>%
+  inner_join(coords_data, by = "name", relationship = "many-to-many") |>
+  rename(type = "type.x") %>%
+  filter(
+    ra <= 360,
+    name != "Magellanic Clouds",
+    type != "Constellation",
+    !(name == "Big Dipper" & type == "Asteroid"),
+    !(name == "Sagittarius Star Cloud" & type %in% c("Cluster", "Galaxy")),
+    !(name == "Stephan's Quintet" & type == "Cluster"),
+    !(name == "IC 1396" & type == "Cluster"),
+    !(name == "Rho Ophiuchi" & type == "Nebula"),
+    !name %in%
+      c(
+        "MWC 922",
+        "Crab Pulsar",
+        "NGC 2070",
+        "Alpha Centauri A",
+        "Alpha Centauri B"
+      ),
+    !(name == "Atlas" & type == "Moon"),
+    !name %in%
+      c(
+        "Local Interstellar Cloud",
+        "Taurus Molecular Cloud",
+        "Perseus molecular cloud",
+        "Virgo Cluster",
+        "Fornax Cluster",
+        "Coma Cluster"
+      ),
+    !name %in% c("Keyhole Nebula", "Homunculus Nebula"),
+    !name %in% c("Bubble Nebula", "Ring Nebula")
+  ) %>%
+  group_by(name, type) %>%
+  summarise(
+    n = n(),
+    ra = first(ra),
+    dec = first(dec)
+  ) %>%
+  arrange(desc(n)) |>
+  filter(n > 7) |>
+  head(150)
+
+```
+
+
+
+```{r}
+font_add(
+  "sci_am_title",
+  regular = "/Users/amnbh/Library/Fonts/LibreCaslonCondensed-Medium.ttf",
+  bold = "/Users/amnbh/Library/Fonts/LibreCaslonCondensed-SemiBold.ttf"
+)
+font_add_google("Source Sans Pro", "sci_am_body")
+
+sci_am_pal <- c(
+  "Star" = "#D4AA4F",
+  "Nebula" = "#3C8DAD",
+  "Galaxy" = "#B07AA1",
+  "Cluster" = "#6AAB73",
+  "Other" = "#7F7F7F"
+)
+
+ra_dec_to_xy_centered <- function(ra, dec, width, height) {
+  ra_prime <- ifelse(ra > 180, ra - 360, ra)
+  x <- (0.5 - (ra_prime / 360)) * width
+  y <- (dec + 90) / 180 * height
+  tibble(x = x, y = y)
+}
+
+info <- magick::image_info(starmap)
+
+plot_styled <- final_data %>%
+  ungroup() |>
+  arrange(desc(n)) %>%
+  mutate(
+    tier = case_when(
+      row_number() <= 7 ~ "Tier 1",
+      row_number() <= 30 ~ "Tier 2",
+      TRUE ~ "Tier 3"
+    ),
+    label_text = ifelse(tier == "Tier 1", toupper(name), name),
+    ra_dec_to_xy_centered(ra, dec, info$width, info$height)
+  )
+
+ra_breaks_hours <- seq(0, 21, by = 3)
+ra_minor_hours <- seq(0, 23, by = 1)
+dec_breaks_deg <- seq(-60, 60, by = 30)
+dec_minor_deg <- seq(-90, 90, by = 10)
+
+grid_x_pos <- map_dbl(ra_breaks_hours * 15, function(r) {
+  r_prime <- ifelse(r > 180, r - 360, r)
+  (0.5 - (r_prime / 360)) * info$width
+})
+
+grid_x_minor <- map_dbl(ra_minor_hours * 15, function(r) {
+  r_prime <- ifelse(r > 180, r - 360, r)
+  (0.5 - (r_prime / 360)) * info$width
+})
+
+grid_y_pos <- (dec_breaks_deg + 90) / 180 * info$height
+grid_y_minor <- (dec_minor_deg + 90) / 180 * info$height
+
+grid_x_labels <- paste0(ra_breaks_hours, "h")
+grid_y_labels <- paste0(
+  ifelse(dec_breaks_deg > 0, "+", ""),
+  dec_breaks_deg,
+  "\u00B0"
+)
+
+left_caption <- "Data: NASA APOD | #TidyTuesday 2026 W03 | Basemap: NASA/GSFC SVS, Gaia DR2 (ESA/Gaia/DPAC)"
+right_caption <- "Visualized by Aman Bhargava | https://aman.bh"
+subtitle_text <- "<span style='color:#A0A0A8; letter-spacing:0.01em;'>Commonly photographed </span><span style='color:#6AAB73; font-weight:bold !important;'>clusters</span><span style='color:#A0A0A8;'>, </span><span style='color:#B07AA1; font-weight:bold !important;'>galaxies</span><span style='color:#A0A0A8;'>, </span><span style='color:#3C8DAD; font-weight:bold !important;'>nebulae</span><span style='color:#A0A0A8;'>, and </span><span style='color:#D4AA4F; font-weight:bold !important;'>stars</span><span style='color:#A0A0A8;'> from NASA APOD (2007–2025)</span>"
+
+showtext_opts(dpi = 120)
+
+inner_pad <- info$height * 0.002
+outer_pad <- info$height * 0.028
+border_color_inner <- "#45444a"
+border_color_outer <- "#45444a"
+
+p <- ggplot(plot_styled, aes(x = x, y = y)) +
+  annotation_raster(starmap, 0, info$width, 0, info$height) +
+  geom_vline(
+    xintercept = grid_x_minor,
+    color = alpha("#FFFFFF", 0.08),
+    linewidth = 0.2
+  ) +
+  geom_hline(
+    yintercept = grid_y_minor,
+    color = alpha("#FFFFFF", 0.08),
+    linewidth = 0.2
+  ) +
+  geom_vline(
+    xintercept = grid_x_pos,
+    color = alpha("#FFFFFF", 0.09),
+    linewidth = 0.2
+  ) +
+  geom_hline(
+    yintercept = grid_y_pos,
+    color = alpha("#FFFFFF", 0.09),
+    linewidth = 0.2
+  ) +
+  geom_rect(
+    xmin = 0 - inner_pad,
+    xmax = info$width + inner_pad,
+    ymin = 0 - inner_pad,
+    ymax = info$height + inner_pad,
+    fill = NA,
+    color = border_color_inner,
+    linewidth = 0.1,
+    inherit.aes = FALSE
+  ) +
+  geom_rect(
+    xmin = -outer_pad,
+    xmax = info$width + outer_pad,
+    ymin = -outer_pad,
+    ymax = info$height + outer_pad,
+    fill = NA,
+    color = border_color_outer,
+    linewidth = 0.1,
+    inherit.aes = FALSE
+  ) +
+  scale_x_continuous(
+    breaks = grid_x_pos,
+    labels = grid_x_labels,
+    expand = c(0, 0),
+    sec.axis = dup_axis()
+  ) +
+  scale_y_continuous(
+    breaks = grid_y_pos,
+    labels = grid_y_labels,
+    expand = c(0, 0),
+    sec.axis = dup_axis()
+  ) +
+  geom_point(aes(color = type), size = 0.8, alpha = 0.9, stroke = 0) +
+  geom_point(color = "white", size = 0.4, alpha = 0.6) +
+  geom_text_repel(
+    aes(label = label_text, color = type, size = tier, fontface = tier),
+    family = "sci_am_body",
+    bg.color = alpha("#000000", 0.85),
+    bg.r = 0.12,
+    seed = 4232,
+    box.padding = 0.5,
+    min.segment.length = 0,
+    segment.color = alpha("white", 0.25),
+    segment.size = 0.25,
+    max.overlaps = 50
+  ) +
+  annotate(
+    "text",
+    x = -55,
+    y = -info$height * 0.07,
+    label = left_caption,
+    hjust = 0,
+    family = "sci_am_body",
+    color = "#888888",
+    size = 5
+  ) +
+  annotate(
+    "text",
+    x = info$width + 55,
+    y = -info$height * 0.07,
+    label = right_caption,
+    hjust = 1,
+    family = "sci_am_body",
+    color = "#888888",
+    size = 5
+  ) +
+  scale_color_manual(
+    values = sci_am_pal,
+    name = NULL,
+    guide = guide_legend(
+      override.aes = list(size = 5, alpha = 1),
+      nrow = 1
+    )
+  ) +
+  scale_size_manual(
+    values = c("Tier 1" = 6.5, "Tier 2" = 5, "Tier 3" = 4.2),
+    guide = "none"
+  ) +
+  scale_discrete_manual(
+    "fontface",
+    values = c("Tier 1" = "bold", "Tier 2" = "plain", "Tier 3" = "plain"),
+    guide = "none"
+  ) +
+  coord_fixed(
+    xlim = c(0, info$width),
+    ylim = c(0, info$height),
+    expand = FALSE,
+    clip = "off"
+  ) +
+  labs(
+    title = "The Universe Through APOD",
+    subtitle = subtitle_text
+  ) +
+  theme_void() +
+  theme(
+    plot.background = element_rect(fill = "#000000", color = NA),
+    panel.background = element_rect(fill = "#000000", color = NA),
+    panel.grid = element_blank(),
+    axis.text.x = element_text(
+      family = "sci_am_body",
+      color = "#b1b1b1ff",
+      face = "bold",
+      size = 10,
+      margin = margin(t = 4, b = 3)
+    ),
+    axis.text.y = element_text(
+      family = "sci_am_body",
+      color = "#b1b1b1ff",
+      size = 10,
+      face = "bold",
+      margin = margin(r = 1.5, l = 1.5)
+    ),
+
+    plot.title = element_text(
+      family = "sci_am_title",
+      color = "#FFFFFF",
+      size = 54,
+      face = "bold",
+      hjust = 0.5,
+      margin = margin(b = 8, t = 10)
+    ),
+    plot.subtitle = ggtext::element_markdown(
+      family = "sci_am_body",
+      color = "#A0A0A8",
+      size = 24,
+      hjust = 0.5,
+
+      margin = margin(b = 12)
+    ),
+    plot.margin = margin(10, 8, 30, 8),
+    legend.position = "none",
+    legend.justification = "right",
+    legend.margin = margin(t = -15),
+    legend.spacing.x = unit(2, "pt"),
+    legend.text = element_text(
+      family = "sci_am_body",
+      color = "#C8C8D0",
+      size = 16
+    ),
+    legend.key = element_rect(fill = NA, size = 4),
+    legend.key.spacing.x = unit(3, "pt")
+  )
+
+
+ggsave(
+  "plot.png",
+  p,
+  width = 3200,
+  height = 2000,
+  dpi = 290,
+  units = "px",
+  bg = "#000000"
+)
+```

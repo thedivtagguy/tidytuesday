@@ -24,6 +24,10 @@ showtext_auto()
 tuesdata <- tidytuesdayR::tt_load(2026, 2)$africa |>
   filter(family != "Language") |>
   mutate(
+    family = case_when(
+      family == "Afro-Asiatic" ~ "Afroasiatic",
+      TRUE ~ family
+    ),
     family = fct_reorder(str_replace(family, "ʼ", "'"), native_speakers, sum)
   )
 
@@ -35,7 +39,12 @@ counts <- tuesdata |>
 small <- tuesdata |> slice_min(native_speakers, n = 1)
 
 ggplot(tuesdata, aes(native_speakers, family, color = family)) +
-  ggbeeswarm::geom_quasirandom(alpha = 0.8, groupOnX = F, bandwidth = 0.8) +
+  ggbeeswarm::geom_quasirandom(
+    alpha = 0.8,
+    groupOnX = F,
+    bandwidth = 0.8,
+    size = 1
+  ) +
   geom_rect(
     data = counts,
     aes(
@@ -97,7 +106,7 @@ ggplot(tuesdata, aes(native_speakers, family, color = family)) +
     y = NULL,
     title = "Africa's Linguistic Groups",
     subtitle = str_wrap(
-      "The Niger-Congo family accounts for nearly three-quarters of all languages on the continent",
+      "The Niger-Congo family accounts for 73% of all languages on the continent",
       55
     ),
     caption = "Source: TidyTuesday 2026 Week 2, Wikipedia  | Visualization: @aman.bh"
@@ -127,6 +136,7 @@ ggplot(tuesdata, aes(native_speakers, family, color = family)) +
     legend.position = "none",
     plot.margin = margin(20, 25, 20, 20)
   ) +
-  coord_cartesian(clip = "off") +
-  ggsave("output/plot.png", width = 1200, height = 1600, units = "px")
+  coord_cartesian(clip = "off")
+
+ggsave("output/plot.png", width = 1200, height = 1600, units = "px")
 ```

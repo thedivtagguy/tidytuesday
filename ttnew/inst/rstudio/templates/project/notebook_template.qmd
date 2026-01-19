@@ -17,6 +17,14 @@ library(tidyverse)
 library(tidytuesdayR)
 library(camcorder)
 library(here)
+library(showtext)
+
+# Set working directory
+setwd(here::here("{{project_dir}}"))
+
+# Setup fonts
+font_add_google("Atkinson Hyperlegible", "atkinson")
+showtext_auto()
 
 # Setup camcorder
 gg_record(

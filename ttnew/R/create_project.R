@@ -52,6 +52,7 @@ create_project <- function(project_directory_base, tidytuesdayYear = NULL, tidyt
   # Replace placeholders with actual values
   quarto_content <- gsub("\\{\\{year\\}\\}", tt_year, template_content)
   quarto_content <- gsub("\\{\\{week\\}\\}", sprintf("%02d", tt_week), quarto_content)
+  quarto_content <- gsub("\\{\\{project_dir\\}\\}", project_directory_base, quarto_content)
 
   # Write the Quarto document with the populated content
   writeLines(quarto_content, file.path(project_path, "analysis", "notebook.qmd"))
