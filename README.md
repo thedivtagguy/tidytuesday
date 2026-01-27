@@ -12,9 +12,9 @@
 | 2023 | 46 | nov | diwali sales | [week-46-nov-2023-diwali-sales](./2023/week-46-nov-2023-diwali-sales) |
 | 2023 | 47 | nov | r ladies | [week-47-nov-2023-r-ladies](./2023/week-47-nov-2023-r-ladies) |
 | 2023 | 48 | nov | doctor who | [week-48-nov-2023-doctor-who](./2023/week-48-nov-2023-doctor-who) |
-| 2023 | 50 | holiday | holiday movies | [week-50-holiday-movies](./2023/week-50-holiday-movies) |
-| 2024 | 01 | canadian | canadian nfl players | [week-01-canadian-nfl-players](./2024/week-01-canadian-nfl-players) |
-| 2024 | 03 | polling | polling places | [week-03-polling-places](./2024/week-03-polling-places) |
+| 2023 | 50 | dec | holiday movies | [week-50-holiday-movies](./2023/week-50-holiday-movies) |
+| 2024 | 01 | jan | canadian nfl players | [week-01-canadian-nfl-players](./2024/week-01-canadian-nfl-players) |
+| 2024 | 03 | jan | polling places | [week-03-polling-places](./2024/week-03-polling-places) |
 | 2024 | 39 | sept | imo | [week-39-sept-2024-imo](./2024/week-39-sept-2024-imo) |
 | 2026 | 02 | jan | african languages | [week-02-jan-2026-african-languages](./2026/week-02-jan-2026-african-languages) |
 | 2026 | 03 | jan | apod images | [week-03-jan-2026-apod-images](./2026/week-03-jan-2026-apod-images) |
