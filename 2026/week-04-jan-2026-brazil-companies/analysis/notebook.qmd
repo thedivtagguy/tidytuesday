@@ -29,8 +29,10 @@ showtext_auto()
 tuesdata <- tt_load(2026, week = 04)
 ```
 
-
 ```{r}
+library(ggmosaic)
+showtext_opts(dpi = 200)
+
 df <- tuesdata$companies %>%
   mutate(
     legal_nature = case_when(
@@ -38,41 +40,7 @@ df <- tuesdata$companies %>%
       str_detect(legal_nature, "Sole Proprietorship") ~ "Sole Prop",
       str_detect(legal_nature, "Privately Held") ~ "Corp",
       TRUE ~ "Other"
-    )
-  )
-
-df %>%
-  count(legal_nature) %>%
-  mutate(
-    share = n / sum(n),
-    pct = round(share * 100, 1)
-  ) %>%
-  arrange(desc(pct))
-```
-
-```{r}
-# LLC breakdown by company size
-df %>%
-  filter(legal_nature == "LLC") %>%
-  count(company_size) %>%
-  mutate(
-    share = n / sum(n),
-    pct = round(share * 100, 1)
-  ) %>%
-  arrange(desc(pct))
-```
-
-```{r}
-library(scales)
-library(showtext)
-showtext_opts(dpi = 200)
-
-font_add_google("Atkinson Hyperlegible", "atkinson")
-showtext_auto()
-
-# Add company size labels
-df_clean <- df %>%
-  mutate(
+    ),
     company_size = factor(
       company_size,
       levels = c("other", "small-enterprise", "micro-enterprise"),
@@ -80,79 +48,77 @@ df_clean <- df %>%
     )
   )
 
-y_heights <- df_clean %>%
-  count(legal_nature) %>%
-  mutate(
-    share_y = n / sum(n),
-    ymax = cumsum(share_y),
-    ymin = lag(ymax, default = 0),
-    y_center = (ymin + ymax) / 2,
-    y_height = ymax - ymin
-  )
-
-plot_data <- df_clean %>%
-  count(legal_nature, company_size) %>%
-  group_by(legal_nature) %>%
-  mutate(
-    share_x = n / sum(n),
-    xmax = cumsum(share_x),
-    xmin = lag(xmax, default = 0),
-    x_center = (xmin + xmax) / 2,
-    x_width = xmax - xmin
-  ) %>%
-  ungroup() %>%
-  left_join(
-    y_heights %>% select(legal_nature, ymin, ymax, y_center, y_height),
-    by = "legal_nature"
-  ) %>%
-  mutate(
-    label_text = case_when(
-      legal_nature == "LLC" ~ paste0(
-        company_size,
-        "\n",
-        percent(share_x, accuracy = 1)
-      ),
-      y_height > 0.1 & x_width > 0.1 ~ percent(share_x, accuracy = 1),
-      TRUE ~ ""
+p1 <- ggplot(data = df) +
+  geom_mosaic(
+    aes(x = product(company_size, legal_nature), fill = company_size),
+    color = "white",
+    size = 10.1
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Medium/Large" = "#fe672a",
+      "Small" = "#fef37a",
+      "Micro" = "#cccccc"
     )
   )
 
-p <- ggplot(plot_data) +
-  geom_rect(
-    aes(
-      xmin = xmin,
-      xmax = xmax,
-      ymin = ymin,
-      ymax = ymax,
-      fill = company_size
+p1_data <- ggplot_build(p1)$data[[1]] %>%
+  filter(.wt > 0)
+
+calc_percentages <- function(ymax_vals) {
+  diffs <- c(ymax_vals, 1) - c(0, ymax_vals)
+  diffs[-length(diffs)]
+}
+
+percentages <- p1_data %>%
+  group_by(x__legal_nature) %>%
+  arrange(x__legal_nature, ymin) %>%
+  mutate(
+    perc = calc_percentages(ymax),
+    percentage_label = case_when(
+      x__legal_nature == "LLC" ~ paste0(
+        x__fill__company_size,
+        "\n",
+        percent(perc, accuracy = 1)
+      ),
+      (ymax - ymin) > 0.1 & (xmax - xmin) > 0.1 ~ percent(perc, accuracy = 1),
+      TRUE ~ ""
     ),
-    color = "white",
-    size = 1
-  ) +
+    x_center = (xmin + xmax) / 2,
+    y_center = (ymin + ymax) / 2
+  ) %>%
+  ungroup()
+
+y_labels <- percentages %>%
+  group_by(x__legal_nature) %>%
+  summarize(
+    x_center = mean(c(min(xmin), max(xmax))), # x position of the band
+    .groups = "drop"
+  )
+
+p2 <- p1 +
   geom_text(
-    aes(x = x_center, y = y_center, label = label_text),
+    data = percentages,
+    aes(x = x_center, y = y_center, label = percentage_label),
     color = "#333333",
     fontface = "bold",
     family = "atkinson",
     size = 5.5,
-    lineheight = 0.8
+    lineheight = 0.8,
+    inherit.aes = FALSE
   ) +
   geom_text(
-    data = y_heights,
-    aes(x = 1.01, y = y_center, label = legal_nature),
+    data = y_labels,
+    aes(x = x_center, y = 1.01, label = x__legal_nature), # y = 1.05 to place outside
     color = "#333333",
     family = "atkinson",
     fontface = "bold",
     size = 6,
-    hjust = 0
+    vjust = 0,
+    hjust = 0,
+    inherit.aes = FALSE
   ) +
-  scale_fill_manual(
-    values = c(
-      "Medium/Large" = "#ec6c2d",
-      "Small" = "#f8d68c",
-      "Micro" = "#fae5d4"
-    )
-  ) +
+  coord_flip(clip = "off") +
   labs(
     title = "LLCs dominate the Brazilian landscape",
     subtitle = "Over 84% of Brazilian businesses operate as limited liability companies,\nwith micro and small enterprises making up the bulk of the market",
@@ -170,28 +136,30 @@ p <- ggplot(plot_data) +
     plot.title = element_text(
       family = "atkinson",
       color = "#333333",
-      size = 32,
+      size = 36,
       face = "bold",
-      margin = margin(b = 12, t = 12, l = 24)
+      margin = margin(b = 16, t = 12, l = 28)
     ),
     plot.subtitle = element_text(
       family = "atkinson",
       color = "#333333",
-      size = 18,
+      size = 20,
       lineheight = 0.8,
-      margin = margin(b = 4, l = 24)
+      margin = margin(b = 4, l = 28)
     ),
-    plot.margin = margin(16, 48, 20, 8),
+    plot.margin = margin(20, 48, 32, 8),
     legend.position = "none",
     plot.caption = element_text(
       color = "#535353",
       hjust = 0.1,
-      size = 13,
-      margin = margin(t = 4, l = 8)
+      family = "atkinson",
+      size = 16,
+      margin = margin(t = 4, l = 10)
     )
-  ) +
-  coord_cartesian(clip = "off")
+  )
 
-ggsave("output/plot.png", p, width = 2400, height = 2000, units = "px")
+p2
+
+ggsave("output/plot.png", p2, width = 2800, height = 2000, units = "px")
+
 ```
-
