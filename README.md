@@ -18,3 +18,4 @@
 | 2024 | 39 | sept | imo | [week-39-sept-2024-imo](./2024/week-39-sept-2024-imo) |
 | 2026 | 02 | jan | african languages | [week-02-jan-2026-african-languages](./2026/week-02-jan-2026-african-languages) |
 | 2026 | 03 | jan | apod images | [week-03-jan-2026-apod-images](./2026/week-03-jan-2026-apod-images) |
+| 2026 | 04 | jan | brazil companies | [week-04-jan-2026-brazil-companies](./2026/week-04-jan-2026-brazil-companies) |
