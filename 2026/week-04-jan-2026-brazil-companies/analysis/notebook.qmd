@@ -25,20 +25,42 @@ setwd(here::here("2026/week-04-jan-2026-brazil-companies"))
 font_add_google("Atkinson Hyperlegible", "atkinson")
 showtext_auto()
 
-# Setup camcorder
-gg_record(
-  dir = here("output"),
-  device = "png",
-  width = 10,
-  height = 8,
-  units = "in",
-  dpi = 300
-)
-
 # Load data
 tuesdata <- tt_load(2026, week = 04)
 ```
 
+
+```{r}
+df <- tuesdata$companies %>%
+  mutate(
+    legal_nature = case_when(
+      str_detect(legal_nature, "Limited Liability") ~ "LLC",
+      str_detect(legal_nature, "Sole Proprietorship") ~ "Sole Prop",
+      str_detect(legal_nature, "Privately Held") ~ "Corp",
+      TRUE ~ "Other"
+    )
+  )
+
+df %>%
+  count(legal_nature) %>%
+  mutate(
+    share = n / sum(n),
+    pct = round(share * 100, 1)
+  ) %>%
+  arrange(desc(pct))
+```
+
+```{r}
+# LLC breakdown by company size
+df %>%
+  filter(legal_nature == "LLC") %>%
+  count(company_size) %>%
+  mutate(
+    share = n / sum(n),
+    pct = round(share * 100, 1)
+  ) %>%
+  arrange(desc(pct))
+```
 
 ```{r}
 library(scales)
@@ -47,15 +69,9 @@ showtext_opts(dpi = 200)
 
 font_add_google("Atkinson Hyperlegible", "atkinson")
 showtext_auto()
-df_clean <- tuesdata$companies %>%
-  mutate(
-    legal_nature = case_when(
-      str_detect(legal_nature, "Limited Liability") ~ "LLC",
-      str_detect(legal_nature, "Sole Proprietorship") ~ "Sole Prop",
-      str_detect(legal_nature, "Privately Held") ~ "Corp",
-      TRUE ~ "Other"
-    )
-  ) %>%
+
+# Add company size labels
+df_clean <- df %>%
   mutate(
     company_size = factor(
       company_size,
@@ -118,8 +134,8 @@ p <- ggplot(plot_data) +
     color = "#333333",
     fontface = "bold",
     family = "atkinson",
-    size = 3.5,
-    lineheight = 1
+    size = 5.5,
+    lineheight = 0.8
   ) +
   geom_text(
     data = y_heights,
@@ -127,7 +143,7 @@ p <- ggplot(plot_data) +
     color = "#333333",
     family = "atkinson",
     fontface = "bold",
-    size = 4,
+    size = 6,
     hjust = 0
   ) +
   scale_fill_manual(
@@ -139,7 +155,7 @@ p <- ggplot(plot_data) +
   ) +
   labs(
     title = "LLCs dominate the Brazilian landscape",
-    subtitle = "Almost 75% of Brazilian businesses operate as limited liability companies,\nwith micro and small enterprises making up the bulk of the market",
+    subtitle = "Over 84% of Brazilian businesses operate as limited liability companies,\nwith micro and small enterprises making up the bulk of the market",
     caption = "Source: TidyTuesday Week 03-26, Receita Federal | Visualization: Aman Bhargava @aman.bh",
     x = NULL,
     y = NULL
@@ -154,28 +170,28 @@ p <- ggplot(plot_data) +
     plot.title = element_text(
       family = "atkinson",
       color = "#333333",
-      size = 28,
+      size = 32,
       face = "bold",
-      margin = margin(b = 12, t = 12, l = 20)
+      margin = margin(b = 12, t = 12, l = 24)
     ),
     plot.subtitle = element_text(
       family = "atkinson",
       color = "#333333",
-      size = 14,
+      size = 18,
       lineheight = 0.8,
-      margin = margin(b = 0, l = 20)
+      margin = margin(b = 4, l = 24)
     ),
-    plot.margin = margin(10, 48, 12, 8),
+    plot.margin = margin(16, 48, 20, 8),
     legend.position = "none",
     plot.caption = element_text(
-      color = "#747474ff",
+      color = "#535353",
       hjust = 0.1,
-      size = 9,
-      margin = margin(t = 0, l = 4)
+      size = 13,
+      margin = margin(t = 4, l = 8)
     )
   ) +
   coord_cartesian(clip = "off")
 
-ggsave("output/plot.png", p, width = 2000, height = 1600, units = "px")
+ggsave("output/plot.png", p, width = 2400, height = 2000, units = "px")
 ```
 
