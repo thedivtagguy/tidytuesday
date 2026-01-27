@@ -1,0 +1,65 @@
+---
+title: "TidyTuesday 2023-03 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Tidytuesday 2023-03
+
+This is the notebook for analysis of the data of week 03 (2023) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2023, "_", 03))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2023, week = 03)$artists
+
+```
+
+## Data exploration and initial plots
+
+```{r}
+# What is the data like?
+
+```
+
+## Questions
+
+```{r}
+# Let us try to answer them one by one
+
+```

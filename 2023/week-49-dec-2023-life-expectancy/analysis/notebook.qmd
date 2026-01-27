@@ -1,0 +1,87 @@
+---
+title: "TidyTuesday 2023-49 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2023-49
+
+This is the notebook for analysis of the data of week 49 (2023) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2023, week = 49)
+
+names(tuesdata)
+
+data <- tuesdata$life_expectancy %>% 
+  janitor::clean_names()
+
+```
+
+## Redefining old age
+
+I really like this post by [Nathan Yau](https://flowingdata.com/2020/08/26/redefining-old-age/). This is interesting to me:
+
+> Warren Sanderson and Sergei Scherbov [suggest](http://pure.iiasa.ac.at/id/eprint/11473/) that we classify old age by looking closer at the end. Instead of counting the number of years someone has lived (and whether or not they're at least 65), we can go the other direction and look at the number of expected years left. They recommend the 15-year mark, as shown below.
+
+Can we do something similar?
+
+I suppose if the only thing we're looking for is years left to live (the 15-year mark) then we could do that quite simply by subtracting the threshold from the life expectancy.
+
+```{r}
+# First of all, which is the earliest year for which all countries have complete data. 
+tuesdata$life_expectancy %>%
+  janitor::clean_names() %>% 
+  group_by(code) %>%
+  summarise(min_year = min(year),
+            max_year = max(year)) %>%
+  ungroup() %>%
+  summarise(earliest_year = max(min_year),
+            latest_year = max(max_year))
+
+data <- tuesdata$life_expectancy %>%
+  janitor::clean_names() %>% 
+  filter(year >= 1950 & year <= 2021) %>% 
+  fill(life_expectancy)
+
+```
+
+## Questions
+
+```{r}
+data %>% 
+  mutate(code = as.factor(code),
+         code = fct_reorder(code, -life_expectancy)) %>% 
+  ggplot(aes(year, code, fill = life_expectancy)) +
+  geom_tile(color = "white", size = 0.01)
+  
+
+```

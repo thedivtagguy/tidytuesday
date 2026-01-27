@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Census Geocoder</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" sizes="192x192" href="https://www.census.gov/etc.clientlibs/census/clientlibs/common-site/resources/icons/android-chrome-192x192.png">
+  <link rel="icon" sizes="256x256" href="https://www.census.gov/etc.clientlibs/census/clientlibs/common-site/resources/icons/android-chrome-256x256.png">
+  <link rel="shortcut icon" sizes="32x32" href="https://www.census.gov/etc.clientlibs/census/clientlibs/common-site/resources/icons/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://www.census.gov/etc.clientlibs/census/clientlibs/common-site/resources/icons/apple-touch-icon-180x180.png"> 
+  <link rel="stylesheet" href="/geocoder/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/geocoder/static/css/main.css">
+  <script src="/geocoder/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/geocoder/static/js/jquery.js"></script>
+  
+
+</head>
+<body>
+	<!-- Census Header -->
+	<div>
+
+    <meta charset="utf-8" />
+    <script src="https://www.census.gov/main/uswds/uswds-2.12.0/js/uswds-init.min.js"></script>
+    <script src="https://assets.adobedtm.com/7d6e749d4118/1f2b049df95b/launch-ENdc1ca6bab15e46a5b880a2c3f9d462ab.min.js"></script>  
+  	<link rel="stylesheet" href="https://www.census.gov/main/css/all_header_styles.css" />
+
+    <script src="https://www.census.gov/main/uswds/uswds-2.12.0/js/uswds.min.js"></script>    
+    <section class="usa-banner" aria-label="Official government website">
+        <div class="usa-accordion">
+          <header class="usa-banner__header">
+            <div class="usa-banner__inner">
+              <div class="grid-col-auto">
+                <img
+                  class="usa-banner__header-flag"
+                  src="https://www.census.gov/main/uswds/uswds-2.12.0/img/us_flag_small.png"
+                  alt="U.S. flag"
+                />
+              </div>
+              <div class="grid-col-fill tablet:grid-col-auto">
+                <p class="usa-banner__header-text">
+                  An official website of the United States government
+                </p>             
+                </div>
+              </div>
+            </div>
+         <!-- </div>
+        </div>-->
+      </section>
+    <style id="antiClickjack">
+        body {
+            display: none !important
+        }
+    </style>
+    <script type="text/javascript" src="https://www.census.gov/main/javascript/clickjack.js"></script>
+    <script src="https://www.census.gov/main/responsive-header/jquery/jquery.js"
+        class="cb-main-support global-file"></script>
+    <script src="https://www.census.gov/main/responsive-header/jquery/jquery-ui.js"
+        class="cb-main-support global-file"></script>
+    
+    <!-- Check for jquery conflict -->
+    <script type="text/javascript">
+    
+    // THIS BLOCK OF CODE IS USED TO DETERMINE WHAT ADOBE LAUNCH ENVIRONMENT SHOULD RECIEVE METRICS DATA
+    // 	$.ajax({
+    // 		type : 'get',
+    // 		url : '/main/app-config/header/adobe-launch.txt',	
+    // 		dataType: 'text',            	
+    // 		success : function(data){		 		
+    // 	                var adobeLaunchScript = document.createElement("script");
+    // 	                adobeLaunchScript.setAttribute("src",data);
+    // 	                document.head.appendChild(adobeLaunchScript);
+    // 	            },
+    // 	    error : function(xhr, errorText, errorMessage){
+    // 	                console.log('adobe-launch URL recognition failed: ' + errorText);
+    // 	            }
+    // 	});
+    
+        $acn = jQuery.noConflict();
+        if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
+            jQuery = $acn;
+            $ = $acn;
+        }
+        $(function () {
+            $('.cb-header-skip-nav').click(function () {
+                $('#cb-after-header-anchor').focus();
+            });
+        });
+    </script>
+    
+    <script src="https://www.census.gov/main/responsive-header/bootstrap-custom/js/bootstrap.js"
+        class="cb-main-support global-file"></script>
+    <script src="https://www.census.gov/main/responsive-header/js/typeahead.js"
+        class="cb-main-support global-file"></script>
+    
+    
+    <style type="text/css">
+        header.hdr-primary,
+        header.hdr-primary>nav {
+            display: flex !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 64px !important;
+            background-color: #ffffff !important;
+           /* border-color: #112e51 !important;*/
+        }
+    
+        header.hdr-primary>nav>div {
+            box-sizing: border-box !important;
+            height: 36.62px !important;
+            font-size: 20px !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.02em !important;
+            line-height: 30px !important;
+            white-space: nowrap !important;
+            vertical-align: baseline !important;
+            padding: 0 0 0 16px !important;
+            margin: 0 !important;
+            min-width: 150px !important;
+        }
+    
+        header.hdr-primary>nav>div>a,
+        header.hdr-primary>nav>div>a>img {
+            padding: 0 !important;
+            margin: 0 !important;
+            border-style: none !important;
+            background: transparent !important;
+            text-decoration: none !important;
+        }
+    
+        header.hdr-primary>nav>div>a {
+            box-sizing: border-box !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+    
+        header.hdr-primary>nav>div>a>img {
+            width: 86px !important;
+            height: 33.62px !important;
+            margin-left: 15px !important;
+        }
+        hr.blue-line {
+       /* border-top-width: 2px;*/
+       /* border-color: #d0dce1;*/
+        margin: 0px;
+        border-bottom: #d0dce1 1px solid;
+        
+        }        
+    </style>
+    <button class="cb-header-skip-nav sr-only sr-only-focusable">Skip to main content</button>
+    <header class="hdr-primary">
+        <nav>
+            <div><a href="https://www.census.gov" id="census-home-link"><img
+                        src="https://www.census.gov/main/img/USCENSUS_IDENTITY_SOLO_BLACK_1.5in_R_no_padding.svg"
+                        alt="United States Census Bureau" title="U.S. Census Bureau"></a></div>
+        </nav>
+    </header>
+    <hr class="blue-line">
+    <a class="sr-only" tabindex="-1" id="cb-after-header-anchor">end of header</a>
+
+
+	<!-- End Census Header -->	
+	<header>
+	<script>
+	/*<![CDATA[*/
+
+    var ctx = "\/geocoder\/";
+
+	/*]]>*/
+	</script>
+	<nav class="navbar navbar-expand-geocoder navbar-dark" style="background-color: rgb(12,59,114);">
+		<div class="container-fluid justify-content-center">
+		<!-- <div class=".container-lg">-->
+		    <button class="navbar-toggler me-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="#navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+		    </button>
+		    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+			          	<a class="nav-link active" href="/geocoder/">Census Geocoder</a>
+			        </li>
+					
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle locationsTab" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Find Locations</a>
+			          	<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+			            	<li><a class="dropdown-item" id="locOneLineTab" href="/geocoder/locations/onelineaddress?form">One Line Address Processing</a></li>
+				  			<li><hr class="dropdown-divider"></li>
+			            	<li><a class="dropdown-item" id="locParsedTab" href="/geocoder/locations/address?form">Parsed Address Processing</a></li>
+			            	<li><hr class="dropdown-divider"></li>
+			            	<li><a class="dropdown-item" id="locBatchTab" href="/geocoder/locations/addressbatch?form">Batch Address Processing</a></li>
+			            	
+			            	
+			          	</ul>
+			        </li>
+			        
+			        <li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle geographiesTab" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Find Geographies</a>
+			          	<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+			            	<li><a class="dropdown-item" id="geoOneLineTab" href="/geocoder/geographies/onelineaddress?form">One Line Address Processing</a></li>
+			            	<li><hr class="dropdown-divider"></li>
+			            	<li><a class="dropdown-item" id="geoParsedTab" href="/geocoder/geographies/address?form">Parsed Address Processing</a></li>
+			            	<li><hr class="dropdown-divider"></li>
+			            	<li><a class="dropdown-item" id="geoBatchTab" href="/geocoder/geographies/addressbatch?form">Batch Address Processing</a></li>
+			            	<li><hr class="dropdown-divider"></li>
+			            	<li><a class="dropdown-item" id="geoCoordsTab" href="/geocoder/geographies/coordinates?form">Geographic Coordinates</a></li>
+			          	</ul>
+			        </li>
+			        
+			        <li class="nav-item">
+			          	<a class="nav-link" target="_blank" href="https://www.census.gov/programs-surveys/geography/technical-documentation/complete-technical-documentation/census-geocoder.html">Detailed Information and FAQs</a>
+			        </li>
+			        
+			        <li class="nav-item">
+			          	<a class="nav-link contactUsTab" href="/geocoder/contact-us">Contact Us</a>
+			        </li>
+			        
+		      	</ul>
+			</div>
+		</div>
+	</nav>
+</header>
+	<!-- Navigation Bar End -->
+	
+	<div class="container error">
+		<div class="row">
+			<div class="d-flex col-lg-12 justify-content-center">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="landingPage" role="tabpanel" aria-labelledby="landingPage-tab">
+						<h2>Bad Request</h2>
+						<p style="padding:10px;">Please check the parameters and try the request again. Required request part &#39;addressFile&#39; is not present</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Census Footer -->
+	<div><html>
+<head>
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<link rel="stylesheet" href="https://www.census.gov/main/css/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="https://www.census.gov/main/css/new_footer.css">
+
+<style>
+
+@media only screen and (max-width: 700px) {
+    .val {
+    width: 100%;
+    margin: auto 0;
+    
+}
+
+a{
+font-size: small;
+}
+
+.foot_bottom_links{
+width: 100%;
+
+text-align:left;
+}
+
+}
+
+hr.foot-line {
+margin-bottom: 10px;
+}
+
+
+
+</style>
+
+</head>
+        
+        <footer class="footer container-fluid">
+   <div class="row">
+  
+    <div class="grid_footer_links cf">
+   
+
+        <div class="foot_bottom">
+            <div class="foot_bottom_links">
+            
+                <div class="footerbottom">
+                
+                 
+                <div class="val">
+					<a class="foot_bottom_socialLinks" href="https://www.census.gov/about/contact-us/social_media.html">CONNECT WITH US</a>
+                    <a class="social-icon" href="https://www.facebook.com/uscensusbureau"><i class="fa fa-facebook"></i></a>
+                    <a class="social-icon" href="https://twitter.com/uscensusbureau"><i class="fa fa-twitter"></i></a>
+                    <a class="social-icon" href="https://www.linkedin.com/company/us-census-bureau"><i class="fa fa-linkedin"></i></a>
+                    <a class="social-icon" href="https://www.youtube.com/user/uscensusbureau"><i class="fa fa-youtube"></i></a>
+                    <a class="social-icon" href="https://www.instagram.com/uscensusbureau/"><i class="fa fa-instagram"></i></a>
+                    <!-- <i class="foot_bottom_socialLinks" href="https://public.govdelivery.com/accounts/USCENSUS/subscriber/new" target="_blank"><img src="//www.census.gov/main/img/Mail_White.svg" alt="Email Updates logo" title="Email Updates"/></i> -->
+</div>
+
+<div class="val">
+                    <ul class="legal-menu">
+                    <li><a href="https://www.census.gov/quality/">Information Quality</a></li>
+                    <li><a href="https://www.census.gov/datalinkage/">Data Linkage Infrastructure</a></li>
+                    <li><a href="https://www.census.gov/privacy/">Data Protection and Privacy Policy</a></li>
+                    <li><a href="https://www.census.gov/about/policies/privacy/privacy-policy.html#accessibility">Accessibility</a></li>      
+                    <li><a href="https://www.census.gov/foia/">FOIA</a></li>
+                    <li><a href="https://www.oig.doc.gov/Pages/default.aspx">Inspector General</a></li>
+                    <li><a href="https://www.commerce.gov/cr/reports-and-resources/no-fear-act">No FEAR Act</a></li>
+                    <li><a href="https://www.commerce.gov/">U.S. Department of Commerce</a></li>
+                    <li><a href="https://www.usa.gov/">USA.gov</a></li>
+                        
+                    </ul>
+                   
+                   </div>
+                   <hr class="foot-line">
+                   <p class="foot_bottom_tagline">Measuring America's People, Places, and Economy</p>
+                   </div> 
+                </div> <!-- end class=footerbotom -->
+            </div> <!-- end class=foot_bottom_links -->
+        </div> <!-- end class=grid_footer_links -->
+    </div>
+</footer> <!-- end class=footer -->
+</html></div>
+	<!-- End Census Footer -->
+
+</body> 
+
+	<script type="text/javascript" src="/geocoder/static/js/main.js"></script>
+
+</html>

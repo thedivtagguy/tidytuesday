@@ -1,0 +1,309 @@
+---
+title: "TidyTuesday 2024-38 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2024-38
+
+This is the notebook for analysis of the data of week 38 (2024) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+library(sysfonts)
+library(figpatch)
+library(patchwork)
+library(magick)
+library(grid)
+
+sysfonts::font_add_google(name = "Cinzel", family = "cinzel")
+showtext::showtext_auto()
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+#Initialize Camcorder
+gg_record(
+  dir = file.path(getwd(), "camcorder"), 
+  device = "png", 
+  width = 15,     
+  height = 18,   
+  units = "in",  
+  dpi = 300    
+)
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2024, "_", 38))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+header_img <- system.file("../header.png")
+
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2024, week = 38)
+
+names(tuesdata)
+glimpse(tuesdata[[1]])
+hamlet <- tuesdata$hamlet
+macbeth <- tuesdata$macbeth
+romeo_juliet <- tuesdata$romeo_juliet
+```
+
+
+
+```{r}
+library(tidytext)
+library(ggbump)
+library(ggtext)
+library(glue)
+library(magick)
+
+create_bump_chart <- function(data, n = 4, play) {
+  top_n <- data %>%
+    filter(!character %in% c('[stage direction]', 'All')) %>%
+    unnest_tokens(word, dialogue) %>%
+    anti_join(stop_words) %>%
+    count(character, sort = TRUE) %>%
+    slice_head(n = n) %>%
+    pull(character)
+  
+  act_levels <- c("Act I", "Act II", "Act III", "Act IV", "Act V")
+  
+  final_data <- data %>%
+    filter(!character %in% c('[stage direction]', 'All')) %>%
+    unnest_tokens(word, dialogue) %>%
+    anti_join(stop_words) %>%
+    count(act, character, name = "word_count") %>%
+    group_by(character) %>%
+    filter(n_distinct(act) >= 3) %>%
+    group_by(act, character) %>%
+    summarize(act_word_count = sum(word_count), .groups = "drop") %>%
+    group_by(act) %>%
+    mutate(
+      act_rank = dense_rank(desc(act_word_count)),
+      act = factor(act, levels = act_levels),
+      is_top_n = character %in% top_n
+    )%>%
+    ungroup()
+  
+  
+  act_i_rankings <- final_data %>%
+    filter(act == "Act I") %>%
+    arrange(act_rank) %>%
+    mutate(color_rank = row_number()) %>%
+    select(character, color_rank)
+  
+  
+  final_data <- final_data %>%
+    left_join(act_i_rankings, by = "character")
+  
+ # color palette
+  n_colors <- min(n, nrow(act_i_rankings))
+  shakespeare_colors <- c("#7f7f7f", "#c27d38", "#ccc591", "#29211f", "#5b2333")[1:n_colors]
+  
+  # Identify first and last appearances for each character
+  char_appearances <- final_data %>%
+    group_by(character) %>%
+    summarize(
+      first_act = min(as.numeric(act)),
+      last_act = max(as.numeric(act)),
+      .groups = "drop"
+    )
+  
+ 
+  final_data <- final_data %>%
+    left_join(char_appearances, by = "character")
+  
+  
+  label_data <- final_data %>%
+    group_by(character) %>%
+    filter(as.numeric(act) == first_act | as.numeric(act) == last_act) %>%
+    mutate(
+      label_x = case_when(
+        as.numeric(act) == first_act & first_act == 1 ~ as.numeric(act) - 0.1,
+        as.numeric(act) == first_act ~ as.numeric(act) - 0.05,
+        as.numeric(act) == last_act & last_act == length(act_levels) ~ as.numeric(act) + 0.1,
+        TRUE ~ as.numeric(act) + 0.05
+      ),
+      label = case_when(
+        !as.numeric(act) %in% c(2, 3, 4) & as.numeric(act) == first_act ~ glue("<span style='font-size:50pt;'><strong>{character}</strong><span style='color:#F6F4DF;'>...</span><span style='font-size:50pt; color: #23231A;'>**{act_rank}**</span></span>"),
+        !as.numeric(act) %in% c(2, 3, 4) ~ glue("<span style='font-size:50pt;'><span style='font-size:50pt; color: #23231A;'>**{act_rank}**</span><span style='color:#F6F4DF;'>...</span><strong>{character}</strong></span>"),
+        TRUE ~ glue("<span style='font-size:30pt; color: #808080;'>{character}</span>")
+      ),
+      hjust = if_else(as.numeric(act) == first_act, 1, 0),
+      label_type = if_else(as.numeric(act) %in% c(2, 3, 4), "small", "large")
+    )
+
+  ggplot(final_data, aes(x = act, y = act_rank, group = character)) +
+    geom_bump(aes(color = factor(color_rank), alpha = is_top_n), size = 2.5) +
+    geom_point(aes(color = factor(color_rank), alpha = is_top_n), size = 4) +
+    ggtext::geom_richtext(
+      data = label_data %>% filter(label_type == "large"),
+      aes(x = label_x, label = label, hjust = hjust),
+      color = "#23231A",
+      label.color = NA,
+      fill = NA,
+      label.padding = unit(c(1, 1, 1, 1), "lines"),
+      label.r = unit(0, "lines"),
+      size = 3.5
+    ) +
+    ggtext::geom_richtext(
+      data = label_data %>% filter(label_type == "small"),
+      aes(x = label_x, label = label, hjust = hjust),
+      color = "#23231A",
+      label.color = NA,
+      fill = "#F6F4DF",  #
+      label.padding = unit(c(0.3, 0.3, 0.3, 0.3), "lines"), 
+      label.r = unit(5, "pt"), 
+      size = 3.5
+    ) +
+    scale_y_reverse(
+      breaks = 1:max(final_data$act_rank),
+      labels = 1:max(final_data$act_rank)
+    ) +
+    scale_alpha_manual(values = c(0.2, 1), guide = "none") +
+    scale_color_manual(values = c(shakespeare_colors, rep("#7E7F9A", nrow(act_i_rankings) - n_colors))) +
+    scale_x_discrete(limits = c(act_levels), position = "top") +
+    cowplot::theme_minimal_grid() +
+    labs(
+      title = paste(play),
+      x = "Act",
+      y = "Rank",
+      color = "Character"
+    ) +
+    coord_cartesian(clip = "off") +
+    theme(
+      legend.position = "none",
+      panel.grid.major.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      axis.text.x = element_markdown(size = 46, margin = margin(0, 0, 100, 0)),
+      plot.title = element_text(
+        face = "bold",
+        size = 80,
+        family = "cinzel",
+        colour = "#23231A",
+        hjust = 0.5,
+        margin = margin(20, 0, 20, 0, unit = "pt")
+      ),
+      plot.subtitle = element_text(size = 12, color = "darkgrey"),
+      axis.title = element_text(face = "bold"),
+      legend.title = element_text(face = "bold"),
+      plot.margin = margin(20, 150, 20,150, unit = "pt")
+    )
+}
+h <- create_bump_chart(hamlet, n = 5, "Hamlet")
+m <- create_bump_chart(macbeth, n = 5, "Macbeth")
+r <- create_bump_chart(romeo_juliet, n = 5, "Romeo and Juliet")
+
+
+
+
+header_img <- image_read("header.png")
+
+header_raster <- as.raster(header_img)
+
+header_plot <- ggplot() +
+  annotation_custom(rasterGrob(header_raster, interpolate = TRUE), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+  theme_void()
+
+text_plot <- ggplot() +
+  theme_void() +
+  annotate("text", x = 0.5, y = 0.9, 
+           label = str_wrap("Tracking Shakespeare's Key Players", width = 55),
+           hjust = 0.5, vjust = 1.5, size = 40, fontface = "bold", family = "cinzel", lineheight = 0.3) +
+  annotate("text", x = 0.5, y = 0.1, 
+           label = str_wrap("How character prominence shifts across five acts in Hamlet, Macbeth, and Romeo and Juliet based on dialogue frequency", width = 65),
+           hjust = 0.5, vjust = -0.8, size = 20, lineheight = 0.4) +
+  theme(
+    plot.background = element_rect(fill = "#F6F4DF", color = NA)
+  )
+
+# Combine all plots
+combined_plot <- header_plot +
+  text_plot +
+  (h + m + r + plot_layout(nrow = 3, ncol = 1)) +
+  plot_layout(nrow = 3, heights = c(0.2, 0.2, 1)) +
+ plot_annotation(
+    caption = paste("Tidytuesday Week 38 | Graphic by Aman Bhargava | aman.bh"),
+    theme = theme(
+      plot.background = element_rect(fill = "#F6F4DF"),
+      plot.caption = element_text(size = 32, hjust = 0.5, margin = margin(20, 0, 0, 0))
+    )
+  ) 
+
+combined_plot
+
+
+ggsave(
+  filename = "combined_plot.png",
+  plot = combined_plot,
+  width = 8,
+  height = 10,
+  units = "in",
+  dpi = 300
+)
+img <- image_read("./combined_plot.png")
+
+img_with_noise <- img %>%
+  image_noise("gaussian") %>%
+  image_noise("gaussian") %>%
+  image_modulate(brightness = 100, saturation = 95) %>%
+  image_contrast(sharpen = 1)
+
+img_with_noise
+
+info <- image_info(img_with_noise)
+width <- info$width
+height <- info$height
+
+
+frame_color <- "#23231A" 
+frame_width <- 20 
+inner_frame_width <- 2 
+frame_offset <- 100  
+
+
+framed_img <- img_with_noise %>%
+  image_border(color = frame_color, geometry = sprintf("%dx%d", frame_width, frame_width))
+
+plot.new()
+
+framed_img <- framed_img %>%
+  image_draw() %>%
+  {
+    rect(frame_offset, frame_offset, width - frame_offset, height - frame_offset, 
+         border = frame_color, lwd = inner_frame_width)
+    .
+  }
+
+
+framed_img
+  
+```
+
+
+

@@ -1,0 +1,384 @@
+---
+title: "TidyTuesday 2023-50 Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tidytuesday 2023-50
+
+This is the notebook for analysis of the data of week 50 (2023) for the [tidytuesday](https://tidytues.day) project. The game is on!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 8, cache = TRUE)
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+library(scales)
+library(lubridate)
+library(ggrepel)
+library(patchwork)
+library(here)
+library(gganimate)
+library(patchwork)
+library(camcorder)
+library(ragg)
+readRenviron(".env")
+# Set theme
+theme_set(theme_ipsum() + theme(legend.position = "bottom"))
+
+# Define default path for saving plots
+plot_path <- here::here("output", paste0("tidytuesday_", 2023, "_", 50))
+if (!dir.exists(plot_path)) {
+  dir.create(plot_path, recursive = TRUE)
+}
+
+```
+
+Okay let us see what we have.
+
+```{r}
+# Load TidyTuesday Data
+tuesdata <- tidytuesdayR::tt_load(2023, week = 50)
+
+movies <- tuesdata$holiday_movies
+genres <- tuesdata$holiday_movie_genres
+movie_details <- read_csv(paste0(here::here(),"/data/movie_details.csv"))
+data <- movies %>% 
+  right_join(genres)
+colors <- read_csv(paste0(here::here(),'/data/colors.csv'))
+
+```
+
+## Download Movie Details
+
+```{r, eval=FALSE}
+library(httr)
+
+api_endpoint <- "https://api.themoviedb.org/3/find/"
+auth_header <- add_headers(Authorization = paste("Bearer", Sys.getenv("TMDB_READ_TOKEN")))
+
+
+fetch_movie_details <- function(movie_id) {
+  response <-
+    GET(url = paste0(api_endpoint, movie_id, "?external_source=imdb_id"),
+        auth_header)
+  data <- content(response, "parsed")
+  print(response, data)
+  if (length(data$movie_results) > 0) {
+    movie_data <- data$movie_results[[1]]
+    
+    movie_data_processed <- map(movie_data, function(x) {
+      if (is.null(x)) {
+        NA
+      } else if (is.list(x)) {
+        toString(x)
+      } else {
+        x
+      }
+    })
+    
+    return(as_tibble(movie_data_processed))
+  } else {
+    return(tibble())
+  }
+}
+
+movie_details <- data %>%
+  select(tconst) %>%
+  mutate(details = map(tconst, fetch_movie_details)) %>%
+  unnest(details)
+```
+
+## Get Poster
+
+```{r, eval=FALSE}
+downloadPosters <- function(movie_details, folder_path) {
+  width <- 150
+  height <- 225
+  image_endpoint <- paste0("https://image.tmdb.org/t/p/w", width, "_and_h", height, "_bestv2")
+  
+  for (i in 1:nrow(movie_details)) {
+    poster_path <- movie_details$poster_path[i]
+    if (!is.na(poster_path) && poster_path != "") {
+      full_url <- paste0(image_endpoint, poster_path)
+      file_name <- basename(poster_path)
+      file_path <- file.path(folder_path, file_name)
+      download.file(full_url, file_path, mode = "wb")
+    }
+  }
+}
+
+folder_path <- paste0(here::here(), "/data/posters")
+downloadPosters(movie_details, folder_path)
+```
+
+## Movie by year
+
+```{r}
+movie_details %>% 
+  drop_na() %>% 
+  mutate(year = year(release_date)) %>% 
+  filter(year > 1950) %>% 
+  group_by(year) %>% 
+  count() %>% 
+  ggplot(aes(year, n)) + 
+  geom_col() + 
+  coord_flip()
+  
+```
+
+## Handling 4000 colors
+
+The *idea* was to visualize colors and how much they were used in, say, that year. The issue is that *obviously* there are a lot of unique color codes. `FEFFFF` and `FFFFFF` or even `e8eded` are essential the same color, visually. But I have around 4000 individual colors, so how can I do that?
+
+R4DS Slack was useful in discussing possibilities. Tan pointed out:
+
+> I'd recommend decomposing to HSL (hue, saturation, brightness) over rgb and then binning saturation and brightness into very large bins (maybe 2-3) and hue into a series of smaller bins (since hue is more of a driver what colour you are seeing)
+
+And Jon was kind enough to write the code to show me how to do this:
+
+```{r}
+
+
+binned_colors <- colors %>%
+  mutate(hsv = t(col2rgb(color) %>% rgb2hsv()) %>%
+           tibble::as_tibble()) %>%
+  unnest(hsv, names_sep = "_") %>%
+  mutate(
+    hue_family = round(hsv_h * 10) / 10,
+    saturation_family = round(hsv_s * 3) / 3,
+    value_family = round(hsv_v * 3) / 3
+  ) %>%
+  mutate(hsv_family = hsv(hue_family, saturation_family, value_family)) %>%
+  select(-c(hsv_h:value_family)) %>% 
+  mutate(year = year(release_date))
+
+
+```
+
+The trick is very clever when you look at how the data was transformed.
+
+|     hsv_h |     hsv_s |     hsv_v | hue_family | saturation_family | value_family |
+|----------:|----------:|----------:|-----------:|------------------:|-------------:|
+| 0.5000000 | 0.0039216 | 1.0000000 |        0.5 |         0.0000000 |    1.0000000 |
+| 0.1041667 | 0.5000000 | 0.0627451 |        0.1 |         0.6666667 |    0.0000000 |
+| 0.1666667 | 0.0078431 | 1.0000000 |        0.2 |         0.0000000 |    1.0000000 |
+| 0.5382514 | 0.8243243 | 0.5803922 |        0.5 |         0.6666667 |    0.6666667 |
+| 0.5000000 | 0.0392157 | 1.0000000 |        0.5 |         0.0000000 |    1.0000000 |
+
+Just by using `round()`, you're able to bin the colors into broader families. And it is just as accurate!
+
+![By \@jonthegeek on R4DS Slack](images/hsv_families.png)
+
+I *LOVE* this exercise. We have accurately reduced \~4000 colors to just 71.
+
+```{r}
+binned_colors %>%
+  group_by(year, hsv_family) %>%
+  mutate(total = sum(percentage)) %>% 
+  summarise(perc = total / sum(total)) %>%
+  ungroup() %>% 
+  ggplot(aes(year, perc, fill = hsv_family)) +
+  geom_area(size=0.1, colour="black") +
+  scale_fill_manual(values = binned_colors$hsv_family) +
+  guides(fill = "none")
+```
+
+### Anthony's Solution
+
+```{r}
+
+get_values <- function(x){
+unique(as.character(x)) |>
+    strsplit(",") |>
+    map_dbl(~as.integer(mean(parse_number(.x))))
+}
+
+get_nearest_hex <- function(hex, vals) {
+    col <- t(col2rgb(hex))
+    
+    keep_closest <- \(x) vals[which.min(abs(col[, x] - vals[, x])), x]
+    nearest_rgb <-
+      mapply(keep_closest, colnames(vals), USE.NAMES = FALSE)
+    
+    rgb(nearest_rgb["red"], nearest_rgb["green"], nearest_rgb["blue"], maxColorValue = 255)
+  }
+  
+
+getColorTable <- function(path) {
+  # From https://stackoverflow.com/questions/41104206/image-colors-composition-using-r
+  
+  color <- as.raster(readJPEG(path))
+  tab <- table(color) %>% as_tibble()
+  
+  colors <- t(col2rgb(tab$color))
+  cs <- apply(colors, 2, santoku::chop_equally, groups = 5)
+
+  vals <- apply(cs, 2, get_values)
+  dat <- tab %>%
+    mutate(nearest = map_chr(color, get_nearest_hex, vals)) %>% 
+    group_by(nearest) %>%
+    summarize(n = sum(n)) %>%
+    mutate(total_pixels = sum(n), 
+           percentage = n / total_pixels * 100) %>%
+    arrange(desc(n)) %>%
+    slice_head(n = 5) %>%
+    select(-n, -total_pixels) %>% 
+    nest()
+
+  return(dat)
+}
+
+
+getColorTable(paste0(here::here(), "/data/posters/3fn8kyXO9sbtkrRdF03F3lnghQr.jpg")) %>% unnest(cols = c(data)) 
+
+
+```
+
+```{r, eval=FALSE}
+library(jpeg)
+
+progress_bar <- progress_estimated(nrow(movie_details))
+
+movie_details <- movie_details %>%
+  mutate(
+    poster_color_table = map(paste0(here::here(), '/data/posters', poster_path), ~ {
+      progress_bar$tick()$print()
+      if (file.exists(.x)) {
+        tryCatch({
+          getColorTable(.x)
+        }, error = function(e) NA)
+      } else {
+        NA
+      }
+    })
+  )
+
+colors <- movie_details %>% 
+  select(tconst, genre_ids, release_date, title, poster_path, poster_color_table) %>% 
+  unnest(poster_color_table) %>% 
+  unnest(data) %>%
+   mutate(year = year(ymd(release_date)))
+  
+
+# write_csv(colors, "data/colors.csv")
+```
+
+Still a lot of colors. Can we run this again for the resulting dataset?
+
+```{r}
+get_nearest_hex_overall <- function(hex, dm = 1){
+    s <- as.integer(seq(from = 0, to = 255, length.out = dm))
+    col <- col2rgb(hex)
+    nearest_rgb <- apply(col, 1, \(x) s[which.min(abs(x - s))])
+    rgb(nearest_rgb["red"], nearest_rgb["green"], nearest_rgb["blue"], maxColorValue = 255)
+}
+
+dat <-
+    colors %>%
+    mutate(nearest_overall = map_chr(nearest, get_nearest_hex_overall, 5)) 
+
+dat %>%
+    distinct(nearest, nearest_overall) %>%
+    sample_n(20) %>%
+    gt::gt() %>%
+    gt::data_color(
+        columns = nearest_overall, 
+        colors = 
+            scales::col_factor(
+                palette = unique(dat$nearest_overall),
+                domain = as_factor(unique(dat$nearest_overall))
+            )
+    )  %>%
+    gt::data_color(
+        columns = nearest, 
+        colors = 
+            scales::col_factor(
+                palette = unique(dat$nearest),
+                domain = as_factor(unique(dat$nearest))
+            )
+    )  
+
+
+
+```
+
+## Plotting it
+
+```{r}
+
+dat %>%
+  ggplot(aes(fill = nearest_overall, x = year, y = percentage)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_manual(values = dat$nearest_overall) +
+  scale_y_percent()+
+  theme_ipsum_pub() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+  ) +
+  labs(title = "Colors of christmas",
+       x = "Year",
+       y = "Percentage of the poster") +
+  guides(fill = "none")
+
+```
+
+```{r}
+library(streamgraph)
+dat2 <- dat %>%
+   mutate(nearest_overall = map_chr(nearest, get_nearest_hex_overall, 3)) %>% 
+  mutate(year = as.numeric(year)) %>%
+  group_by(year, nearest_overall) %>%
+  tally(wt = percentage) %>%
+  ungroup() %>%
+  drop_na(year) 
+
+# Sort 'nearest_overall' and create corresponding color vector
+sorted_categories <- sort(unique(dat2$nearest_overall))
+color_vector <- dat2 %>%
+  filter(nearest_overall %in% sorted_categories) %>%
+  arrange(nearest_overall) %>%
+  distinct(nearest_overall, .keep_all = TRUE) %>%
+  pull(nearest_overall)
+
+# Create the streamgraph with manual color mapping
+dat2 %>%
+  streamgraph("nearest_overall", "n", "year", offset="expand", interpolate = "basis-open") %>%
+  sg_fill_manual(values = color_vector)
+
+
+```
+
+### Stacked bar
+
+```{r}
+unique_categories <- unique(dat2$nearest_overall)
+color_vector_bar <- setNames(dat2$nearest_overall, dat2$nearest_overall)
+color_vector_bar <- color_vector_bar[!duplicated(names(color_vector_bar))]
+
+# Plot
+dat2 %>%
+  ggplot(aes(fill = fct_reorder(nearest_overall, n), x = year, y = n)) +
+  geom_bar(
+    stat = "identity",
+    position = "fill",
+    width = 0.99,
+    color = "black",
+    size = 0.1
+  ) +
+  scale_fill_manual(values = color_vector_bar) +
+  scale_y_log10() +
+  theme_ipsum_es() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  labs(title = "Colors of Christmas",
+       x = "Year",
+       y = "Percentage of the Poster") +
+  guides(fill = "none")
+
+```
