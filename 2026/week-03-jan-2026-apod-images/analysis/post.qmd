@@ -1,0 +1,566 @@
+---
+title: "The Universe Through APOD"
+subtitle: "TidyTuesday 2026 Week 03"
+format: html
+execute:
+  echo: true
+  warning: false
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(tidytuesdayR)
+library(glue)
+library(showtext)
+library(ggrepel)
+library(jsonlite)
+library(httr)
+library(gemini.R)
+library(magick)
+
+font_add_google("Atkinson Hyperlegible", "atkinson")
+font_add(
+  "sci_am_title",
+  regular = "/Users/amnbh/Library/Fonts/LibreCaslonCondensed-Medium.ttf",
+  bold = "/Users/amnbh/Library/Fonts/LibreCaslonCondensed-SemiBold.ttf"
+)
+font_add_google("Source Sans Pro", "sci_am_body")
+showtext_auto()
+
+setAPI(Sys.getenv("GEMINI_API_KEY"))
+```
+
+
+This week's TidyTuesday dataset contains APOD entries from 2007 to 2025—about 6,000 images and their descriptions. NASA's [Astronomy Picture of the Day](https://apod.nasa.gov/) has been running since 1995. Every day, a new image of the cosmos with an accompanying explanation written by a professional astronomer. That's nearly 30 years of galaxies, nebulae, star clusters, and the occasional aurora thrown in for good measure.
+
+
+The final result looks like this:
+
+![The Universe Through APOD](./plot.png)
+
+
+I wanted to answer a two-part question. Firstly, which celestial objects show up again and again in these curated images? And _if possible_, could we "map" these? What do star maps even look like, what would the _coordinates_ for this looks like? Let's take a look at the data before we start.
+
+```{r}
+#| echo: false
+tuesdata <- tt_load(2026, week = 03)
+apod_data <- tuesdata$apod
+starmap <- image_read("starmap.png")
+```
+
+```{r}
+apod_data |> sample_n(5)
+```
+
+The answer to either of my questions isn't available in any column yet, so we'll have to figure out how to get there.
+
+The `starmap.png` used here is an equirectangular projection of the entire sky from the [NASA/Goddard Space Flight Center Scientific Visualization Studio](https://svs.gsfc.nasa.gov/4851/). We'll use it as the basemap.
+
+## Extracting Objects with Gemini
+
+The APOD dataset gives us titles and explanations for each image, but what I actually need are the *names* of specific astronomical objects mentioned in that text. "The Horsehead Nebula rises above the dust clouds..." is a good sentence for being read, but I need to pull out "Horsehead Nebula" as a discrete entity I can look up. There is an undefined number of such entities, and many different _ways_ these entities can show up. Andromeda, Andromeda galaxy, M1; all refer to the same thing so what all are you going to write a regex for?
+
+This is exactly the kind of thing LLMs are good at. I'm using Google's Gemini API through the `{gemini.R}` package, specifically with structured outputs. Structured outputs let you define a schema for what you want back—instead of hoping the model returns valid JSON, you *force* it to conform to a shape you specify.
+
+Here's what my schema looks like:
+
+```{r}
+object_schema <- list(
+  type = "OBJECT",
+  properties = list(
+    objects = list(
+      type = "ARRAY",
+      items = list(
+        type = "OBJECT",
+        properties = list(
+          name = list(type = "STRING"),
+          type = list(
+            type = "STRING",
+            enum = c(
+              "Star",
+              "Nebula",
+              "Galaxy",
+              "Cluster",
+              "Black Hole",
+              "Comet",
+              "Asteroid"
+            )
+          )
+        ),
+        required = c("name", "type")
+      )
+    )
+  )
+)
+```
+
+This tells Gemini: "Give me back an array of objects, each with a `name` string and a `type` that must be one of these seven categories." The `enum` constraint means I don't have to worry about the model inventing categories that would mess up my downstream grouping.
+
+The prompt itself is simple. Writing these always feels a little stupid because because you might want to define a "role" that, idk, triggers the right weights or something. But basically, we tell it to extract distinct astronomical bodies, and crucially, to *exclude* things like aurora, clouds, Earth, and generic terms. Without that last rule, you end up with a lot of "a star" and "the moon" entries that aren't useful.
+
+```{r}
+extraction_prompt <- "
+You are an expert astronomer. Extract distinct astronomical bodies (Stars, Nebulas, Galaxies, etc.) from the text.
+Rules:
+1. Exclude atmospheric phenomena (aurora, clouds), Earth, and man-made objects.
+2. Exclude generic terms (e.g. 'a star') unless it is a specific named object.
+3. Return JSON only.
+"
+```
+
+I wrap this in a function maps it over the entire dataset. I'm using `2.0-flash-lite` because it's fast and cheap, and this task doesn't need the heavy reasoning of a larger model. Setting `temperature = 0` makes the outputs deterministic.
+
+```{r}
+extract_astronomy_items <- function(text) {
+  tryCatch(
+    {
+      response <- gemini_structured(
+        prompt = paste(extraction_prompt, "\nText:", text),
+        schema = object_schema,
+        model = "2.0-flash-lite",
+        temperature = 0
+      )
+      data <- fromJSON(response)
+      if (is.null(data$objects) || length(data$objects) == 0) {
+        return(tibble(name = character(), type = character()))
+      }
+      as_tibble(data$objects)
+    },
+    error = function(e) tibble(name = character(), type = character())
+  )
+}
+
+entities <- apod_data %>%
+  mutate(combined_text = paste(title, explanation)) %>%
+  mutate(found_objects = map(combined_text, extract_astronomy_items)) %>%
+  select(date, title, found_objects) %>%
+  unnest(found_objects)
+```
+
+The extraction runs over all ~6,000 APOD entries. It takes a while, so in practice I cached the results to a CSV and reload from there for iteration.
+
+## The Semantic Web and SPARQL
+
+Now I have a list of object names like "Orion Nebula" and "Andromeda Galaxy," but names alone won't get me anywhere on a star map. I need coordinates, specifically, Right Ascension (RA) and Declination (Dec), the celestial equivalent of longitude and latitude.
+
+Where do you look up coordinates for thousands of astronomical objects? This is where the **semantic web** comes in.
+
+The semantic web is an extension of the World Wide Web where information is structured in a way that machines can understand and reason about. Instead of web pages designed for humans to read, the semantic web consists of *data* organized as relationships between things.
+
+At its core, the semantic web uses a simple but powerful data model called **RDF (Resource Description Framework)**. Everything in RDF is expressed as *triples*: subject-predicate-object statements. For example:
+
+- `Orion Nebula` → `has coordinate RA` → `83.82 degrees`
+- `Orion Nebula` → `is instance of` → `emission nebula`
+- `Orion Nebula` → `is located in` → `Orion constellation`
+
+Each subject and predicate is identified by a URI (like a URL), which makes it possible to link data across different databases worldwide.
+
+[Wikidata](https://www.wikidata.org/) is one of the largest and most accessible semantic web databases. It's the structured data backbone of Wikipedia, containing millions of items with standardized properties. Crucially for us, most well-known celestial objects have Wikidata entries with properties for:
+
+- **P6257**: Right Ascension (RA)
+- **P6258**: Declination (Dec)
+
+These "P-numbers" are Wikidata's way of standardizing properties across all items. `P6257` always means Right Ascension, whether you're looking at the Orion Nebula or a random star.
+
+To query semantic web databases like Wikidata, we use **SPARQL**. If you know SQL, SPARQL will feel somewhat familiar, but it operates on graphs of triples rather than tables of rows.
+
+Say we want to find the coordinates for just one object: the Orion Nebula. Here's what that query looks like:
+
+```{r}
+simple_query <- '
+SELECT ?ra ?dec WHERE {
+  ?item rdfs:label "Orion Nebula"@en.
+  ?item wdt:P6257 ?ra.
+  ?item wdt:P6258 ?dec.
+}
+'
+```
+
+Piece by piece:
+
+- **`SELECT ?ra ?dec`**: We want to retrieve values for the variables `?ra` and `?dec` (variables in SPARQL start with `?`)
+- **`WHERE { ... }`**: The conditions that must be matched
+- **`?item rdfs:label "Orion Nebula"@en`**: Find any item whose English label is exactly "Orion Nebula"
+- **`?item wdt:P6257 ?ra`**: That same item must have property P6257 (Right Ascension), and store its value in `?ra`
+- **`?item wdt:P6258 ?dec`**: And property P6258 (Declination), stored in `?dec`
+
+Let's run this query:
+
+```{r}
+run_sparql <- function(query) {
+  response <- POST(
+    url = "https://query.wikidata.org/sparql",
+    body = list(query = query),
+    encode = "form",
+    add_headers(Accept = "application/json")
+  )
+  content(response, as = "parsed", type = "application/json")
+}
+
+result <- run_sparql(simple_query)
+
+# Extract the values
+if (length(result$results$bindings) > 0) {
+  binding <- result$results$bindings[[1]]
+  cat("Orion Nebula coordinates:\n")
+  cat("  Right Ascension:", binding$ra$value, "degrees\n")
+  cat("  Declination:", binding$dec$value, "degrees\n")
+}
+```
+
+That's it! One query, and we have real astronomical coordinates pulled from a global knowledge base.
+
+What if we want coordinates for several objects at once? We could run separate queries, but SPARQL has a better way: the `VALUES` clause. This lets us specify a list of things to match:
+
+```{r}
+multi_query <- '
+SELECT ?label ?ra ?dec WHERE {
+  VALUES ?label { "Orion Nebula"@en "Andromeda Galaxy"@en "Pleiades"@en }
+  ?item rdfs:label ?label.
+  ?item wdt:P6257 ?ra;
+        wdt:P6258 ?dec.
+}
+'
+
+result <- run_sparql(multi_query)
+
+# Parse into a tibble
+map_dfr(result$results$bindings, function(row) {
+  tibble(
+    name = row$label$value,
+    ra = as.numeric(row$ra$value),
+    dec = as.numeric(row$dec$value)
+  )
+})
+```
+
+Now that we understand the building blocks, here's the full function that queries coordinates for all our extracted objects. It batches requests (Wikidata has query limits) and handles the response parsing:
+
+```{r}
+get_coordinates <- function(names_list) {
+  formatted_names <- paste0('"', names_list, '"@en', collapse = "\n")
+
+  query <- glue(
+    '
+    SELECT DISTINCT ?label ?ra ?dec WHERE {{
+      VALUES ?label {{ {formatted_names} }}
+      ?item rdfs:label ?label.
+      ?item wdt:P6257 ?ra;
+            wdt:P6258 ?dec.
+    }}
+  '
+  )
+
+  response <- POST(
+    url = "https://query.wikidata.org/sparql",
+    body = list(query = query),
+    encode = "form",
+    add_headers(Accept = "application/json")
+  )
+
+  data <- content(response, as = "parsed", type = "application/json")
+
+  map_dfr(data$results$bindings, function(row) {
+    tibble(
+      name = row$label$value,
+      ra = as.numeric(row$ra$value),
+      dec = as.numeric(row$dec$value)
+    )
+  })
+}
+```
+
+
+```{r}
+#| eval: false
+unique_names <- unique(entities$name)
+batches <- split(unique_names, ceiling(seq_along(unique_names) / 50))
+coords_data <- map_dfr(batches, get_coordinates)
+
+# Cache results
+write_csv(coords_data, "cached_coords.csv")
+```
+
+```{r}
+#| echo: false
+# Load cached coordinate results
+coords_data <- read_csv("", show_col_types = FALSE)
+
+# Fix the minus sign encoding issue (convert Unicode minus to ASCII minus)
+coords_data <- coords_data %>%
+  mutate(dec = as.numeric(gsub("−", "-", as.character(dec))))
+```
+
+Not every object will return coordinates. Some names are too obscure, some have variant spellings, and some just don't have coordinate data in Wikidata. That's fine; we'll lose those in the join and work with what we have.
+
+I also need to filter out objects that are too "broad" to plot meaningfully or are just names for a group of things. Some objects have multiple Wikidata entries with different coordinates, which creates duplicates in the join. A lot of this is solved by first sorting by counts of entities and then filtering through only the top 50 or so, otherwise you'd be going through things all day.
+
+```{r}
+final_data <- entities %>%
+  inner_join(coords_data, by = "name", relationship = "many-to-many") %>%
+  rename(type = "type.x") %>%
+  filter(
+    ra <= 360,
+    name != "Magellanic Clouds",
+    type != "Constellation",
+    !(name == "Big Dipper" & type == "Asteroid"),
+    !(name == "Sagittarius Star Cloud" & type %in% c("Cluster", "Galaxy")),
+    !(name == "Stephan's Quintet" & type == "Cluster"),
+    !(name == "IC 1396" & type == "Cluster"),
+    !(name == "Rho Ophiuchi" & type == "Nebula"),
+    !(name == "Atlas" & type == "Moon"),
+    !name %in%
+      c(
+        "MWC 922",
+        "Crab Pulsar",
+        "NGC 2070",
+        "Alpha Centauri A",
+        "Alpha Centauri B",
+        "Local Interstellar Cloud",
+        "Taurus Molecular Cloud",
+        "Perseus molecular cloud",
+        "Virgo Cluster",
+        "Fornax Cluster",
+        "Coma Cluster",
+        "Keyhole Nebula",
+        "Homunculus Nebula",
+        "Bubble Nebula",
+        "Ring Nebula"
+      )
+  ) %>%
+  group_by(name, type) %>%
+  summarise(n = n(), ra = first(ra), dec = first(dec), .groups = "drop") %>%
+  arrange(desc(n)) %>%
+  filter(n > 7) %>%
+  head(150)
+```
+
+After all that, I'm left with ~150 objects that appear more than 7 times in the dataset. That's a good number for a readable map.
+
+## Mapping RA/Dec to Pixel Coordinates
+
+Alright, we have celestial coordinates. Now we need to put them on an actual image. As I said before, the basemap is an equirectangular projection of the sky.
+
+In an equirectangular projection, the mapping is straightforward: RA maps to the x-axis, Dec maps to the y-axis. But my basemap is centered on RA=0°, which means RA=0° should land in the *middle* of the image, not at the left edge. RA increases eastward, but on screen that means going *left* from center.
+
+![Starmap showing the coordinate system. RA runs horizontally from 180° at the left edge through 0° at center to 270° at the right. Dec runs vertically from -90° at the bottom to +90° at the top.](./starmap-coordinates.png)
+
+For RA: I convert to a -180° to +180° range, then `0.5 - (ra_prime / 360)` gives us 0.5 (center) when RA=0°. The subtraction flips the direction so east goes left.
+
+For Dec: Adding 90 shifts the range to 0–180, dividing by 180 normalizes to 0–1, and in ggplot y=0 is at the bottom, which conveniently matches Dec=-90°.
+
+```{r}
+ra_dec_to_xy <- function(ra, dec, width, height) {
+  # Shift RA so that 0° is centered and values wrap correctly
+  ra_prime <- ifelse(ra > 180, ra - 360, ra)
+  # RA increases eastward = leftward on screen
+  x <- (0.5 - (ra_prime / 360)) * width
+  # Dec is simple: -90° at bottom, +90° at top
+  y <- (dec + 90) / 180 * height
+  tibble(x = x, y = y)
+}
+```
+
+I'm also adding tiers based on frequency. The top 7 objects get bold uppercase labels, the next 23 get regular labels, and the rest get smaller text. This creates visual hierarchy without a separate legend.
+
+```{r}
+info <- image_info(starmap)
+
+plot_data <- final_data %>%
+  arrange(desc(n)) %>%
+  mutate(
+    tier = case_when(
+      row_number() <= 7 ~ "Tier 1",
+      row_number() <= 30 ~ "Tier 2",
+      TRUE ~ "Tier 3"
+    ),
+    label_text = ifelse(tier == "Tier 1", toupper(name), name),
+    ra_dec_to_xy(ra, dec, info$width, info$height)
+  )
+```
+
+
+After this, the rest is a dense ggplot call, but it's mostly layering the basemap, grid lines, border rectangles, points, labels, and annotations.
+```{r}
+sci_am_pal <- c(
+  "Star" = "#D4AA4F",
+  "Nebula" = "#3C8DAD",
+  "Galaxy" = "#B07AA1",
+  "Cluster" = "#6AAB73",
+  "Other" = "#7F7F7F"
+)
+
+left_caption <- "Data: NASA APOD | #TidyTuesday 2026 W03 | Basemap: NASA/GSFC SVS, Gaia DR2 (ESA/Gaia/DPAC)"
+right_caption <- "Visualized by Aman Bhargava | https://aman.bh"
+subtitle_text <- "<span style='color:#A0A0A8;'>Commonly photographed </span><span style='color:#6AAB73; font-weight:bold;'>clusters</span><span style='color:#A0A0A8;'>, </span><span style='color:#B07AA1; font-weight:bold;'>galaxies</span><span style='color:#A0A0A8;'>, </span><span style='color:#3C8DAD; font-weight:bold;'>nebulae</span><span style='color:#A0A0A8;'>, and </span><span style='color:#D4AA4F; font-weight:bold;'>stars</span><span style='color:#A0A0A8;'> from NASA APOD (2007–2025)</span>"
+
+inner_pad <- info$height * 0.002
+outer_pad <- info$height * 0.028
+border_color <- "#45444a"
+
+showtext_opts(dpi = 120)
+```
+
+```{r}
+#| fig-width: 11
+#| fig-height: 7
+
+p <- ggplot(plot_data, aes(x = x, y = y)) +
+  annotation_raster(starmap, 0, info$width, 0, info$height) +
+  geom_vline(
+    xintercept = grid_x_minor,
+    color = alpha("#FFFFFF", 0.08),
+    linewidth = 0.2
+  ) +
+  geom_hline(
+    yintercept = grid_y_minor,
+    color = alpha("#FFFFFF", 0.08),
+    linewidth = 0.2
+  ) +
+  geom_vline(
+    xintercept = grid_x_pos,
+    color = alpha("#FFFFFF", 0.09),
+    linewidth = 0.2
+  ) +
+  geom_hline(
+    yintercept = grid_y_pos,
+    color = alpha("#FFFFFF", 0.09),
+    linewidth = 0.2
+  ) +
+  geom_rect(
+    xmin = -inner_pad,
+    xmax = info$width + inner_pad,
+    ymin = -inner_pad,
+    ymax = info$height + inner_pad,
+    fill = NA,
+    color = border_color,
+    linewidth = 0.1,
+    inherit.aes = FALSE
+  ) +
+  geom_rect(
+    xmin = -outer_pad,
+    xmax = info$width + outer_pad,
+    ymin = -outer_pad,
+    ymax = info$height + outer_pad,
+    fill = NA,
+    color = border_color,
+    linewidth = 0.1,
+    inherit.aes = FALSE
+  ) +
+  scale_x_continuous(
+    breaks = grid_x_pos,
+    labels = grid_x_labels,
+    expand = c(0, 0),
+    sec.axis = dup_axis()
+  ) +
+  scale_y_continuous(
+    breaks = grid_y_pos,
+    labels = grid_y_labels,
+    expand = c(0, 0),
+    sec.axis = dup_axis()
+  ) +
+  geom_point(aes(color = type), size = 0.8, alpha = 0.9, stroke = 0) +
+  geom_point(color = "white", size = 0.4, alpha = 0.6) +
+  geom_text_repel(
+    aes(label = label_text, color = type, size = tier, fontface = tier),
+    family = "sci_am_body",
+    bg.color = alpha("#000000", 0.85),
+    bg.r = 0.12,
+    seed = 4232,
+    box.padding = 0.5,
+    min.segment.length = 0,
+    segment.color = alpha("white", 0.25),
+    segment.size = 0.25,
+    max.overlaps = 50
+  ) +
+  annotate(
+    "text",
+    x = -55,
+    y = -info$height * 0.07,
+    label = left_caption,
+    hjust = 0,
+    family = "sci_am_body",
+    color = "#888888",
+    size = 5
+  ) +
+  annotate(
+    "text",
+    x = info$width + 55,
+    y = -info$height * 0.07,
+    label = right_caption,
+    hjust = 1,
+    family = "sci_am_body",
+    color = "#888888",
+    size = 5
+  ) +
+  scale_color_manual(values = sci_am_pal) +
+  scale_size_manual(
+    values = c("Tier 1" = 6.5, "Tier 2" = 5, "Tier 3" = 4.2),
+    guide = "none"
+  ) +
+  scale_discrete_manual(
+    "fontface",
+    values = c("Tier 1" = "bold", "Tier 2" = "plain", "Tier 3" = "plain"),
+    guide = "none"
+  ) +
+  coord_fixed(
+    xlim = c(0, info$width),
+    ylim = c(0, info$height),
+    expand = FALSE,
+    clip = "off"
+  ) +
+  labs(title = "The Universe Through APOD", subtitle = subtitle_text) +
+  theme_void() +
+  theme(
+    plot.background = element_rect(fill = "#000000", color = NA),
+    panel.background = element_rect(fill = "#000000", color = NA),
+    axis.text.x = element_text(
+      family = "sci_am_body",
+      color = "#b1b1b1",
+      face = "bold",
+      size = 10,
+      margin = margin(t = 4, b = 3)
+    ),
+    axis.text.y = element_text(
+      family = "sci_am_body",
+      color = "#b1b1b1",
+      face = "bold",
+      size = 10,
+      margin = margin(r = 1.5, l = 1.5)
+    ),
+    plot.title = element_text(
+      family = "sci_am_title",
+      color = "#FFFFFF",
+      size = 54,
+      face = "bold",
+      hjust = 0.5,
+      margin = margin(b = 8, t = 10)
+    ),
+    plot.subtitle = ggtext::element_markdown(
+      family = "sci_am_body",
+      color = "#A0A0A8",
+      size = 24,
+      hjust = 0.5,
+      margin = margin(b = 12)
+    ),
+    plot.margin = margin(10, 8, 30, 8),
+    legend.position = "none"
+  )
+
+p
+```
+
+```{r}
+ggsave(
+  "plot.png",
+  p,
+  width = 3200,
+  height = 2000,
+  dpi = 290,
+  units = "px",
+  bg = "#000000"
+)
+```
+
+
