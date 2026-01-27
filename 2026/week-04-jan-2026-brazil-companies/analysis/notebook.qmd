@@ -1,0 +1,181 @@
+---
+title: "TidyTuesday 2026 Week 04"
+format:
+  html:
+    theme: cosmo
+    code-fold: false
+    toc: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(tidytuesdayR)
+library(camcorder)
+library(here)
+library(showtext)
+
+# Set working directory
+setwd(here::here("2026/week-04-jan-2026-brazil-companies"))
+
+font_add_google("Atkinson Hyperlegible", "atkinson")
+showtext_auto()
+
+# Setup camcorder
+gg_record(
+  dir = here("output"),
+  device = "png",
+  width = 10,
+  height = 8,
+  units = "in",
+  dpi = 300
+)
+
+# Load data
+tuesdata <- tt_load(2026, week = 04)
+```
+
+
+```{r}
+library(scales)
+library(showtext)
+showtext_opts(dpi = 200)
+
+font_add_google("Atkinson Hyperlegible", "atkinson")
+showtext_auto()
+df_clean <- tuesdata$companies %>%
+  mutate(
+    legal_nature = case_when(
+      str_detect(legal_nature, "Limited Liability") ~ "LLC",
+      str_detect(legal_nature, "Sole Proprietorship") ~ "Sole Prop",
+      str_detect(legal_nature, "Privately Held") ~ "Corp",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  mutate(
+    company_size = factor(
+      company_size,
+      levels = c("other", "small-enterprise", "micro-enterprise"),
+      labels = c("Medium/Large", "Small", "Micro")
+    )
+  )
+
+y_heights <- df_clean %>%
+  count(legal_nature) %>%
+  mutate(
+    share_y = n / sum(n),
+    ymax = cumsum(share_y),
+    ymin = lag(ymax, default = 0),
+    y_center = (ymin + ymax) / 2,
+    y_height = ymax - ymin
+  )
+
+plot_data <- df_clean %>%
+  count(legal_nature, company_size) %>%
+  group_by(legal_nature) %>%
+  mutate(
+    share_x = n / sum(n),
+    xmax = cumsum(share_x),
+    xmin = lag(xmax, default = 0),
+    x_center = (xmin + xmax) / 2,
+    x_width = xmax - xmin
+  ) %>%
+  ungroup() %>%
+  left_join(
+    y_heights %>% select(legal_nature, ymin, ymax, y_center, y_height),
+    by = "legal_nature"
+  ) %>%
+  mutate(
+    label_text = case_when(
+      legal_nature == "LLC" ~ paste0(
+        company_size,
+        "\n",
+        percent(share_x, accuracy = 1)
+      ),
+      y_height > 0.1 & x_width > 0.1 ~ percent(share_x, accuracy = 1),
+      TRUE ~ ""
+    )
+  )
+
+p <- ggplot(plot_data) +
+  geom_rect(
+    aes(
+      xmin = xmin,
+      xmax = xmax,
+      ymin = ymin,
+      ymax = ymax,
+      fill = company_size
+    ),
+    color = "white",
+    size = 1
+  ) +
+  geom_text(
+    aes(x = x_center, y = y_center, label = label_text),
+    color = "#333333",
+    fontface = "bold",
+    family = "atkinson",
+    size = 3.5,
+    lineheight = 1
+  ) +
+  geom_text(
+    data = y_heights,
+    aes(x = 1.01, y = y_center, label = legal_nature),
+    color = "#333333",
+    family = "atkinson",
+    fontface = "bold",
+    size = 4,
+    hjust = 0
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Medium/Large" = "#ec6c2d",
+      "Small" = "#f8d68c",
+      "Micro" = "#fae5d4"
+    )
+  ) +
+  labs(
+    title = "LLCs dominate the Brazilian landscape",
+    subtitle = "Almost 75% of Brazilian businesses operate as limited liability companies,\nwith micro and small enterprises making up the bulk of the market",
+    caption = "Source: TidyTuesday Week 03-26, Receita Federal | Visualization: Aman Bhargava @aman.bh",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal(base_family = "Arial") +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_blank(),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    plot.title = element_text(
+      family = "atkinson",
+      color = "#333333",
+      size = 28,
+      face = "bold",
+      margin = margin(b = 12, t = 12, l = 20)
+    ),
+    plot.subtitle = element_text(
+      family = "atkinson",
+      color = "#333333",
+      size = 14,
+      lineheight = 0.8,
+      margin = margin(b = 0, l = 20)
+    ),
+    plot.margin = margin(10, 48, 12, 8),
+    legend.position = "none",
+    plot.caption = element_text(
+      color = "#747474ff",
+      hjust = 0.1,
+      size = 9,
+      margin = margin(t = 0, l = 4)
+    )
+  ) +
+  coord_cartesian(clip = "off")
+
+ggsave("output/plot.png", p, width = 2000, height = 1600, units = "px")
+```
+
