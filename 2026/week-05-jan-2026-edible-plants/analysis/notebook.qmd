@@ -1,5 +1,5 @@
 ---
-title: "TidyTuesday 2026 Week 05"
+title: "TidyTuesday 2026 Week 05 - Water & Sunlight"
 format:
   html:
     theme: cosmo
@@ -46,37 +46,65 @@ gg_record(
 
 tuesdata <- tt_load(2026, week = 05)
 df <- tuesdata$edible_plants |>
-  select(common_name, water, sunlight, nutrients)
+  select(common_name, water, sunlight, nutrients) |>
+  mutate(
+    common_name = str_remove_all(common_name, "\\s*\\(.*?\\)") |>
+      str_remove_all("/.*")
+  )
 ```
 
 ```{r}
 #| fig-width: 20
-#| fig-height: 20
+#| fig-height: 28
 
-# CORRECTED CATEGORIZATION - Only 3 categories
 clean_df <- df %>%
   mutate(
-    sun_cat = factor(
-      case_when(
-        # Plants that ONLY need partial shade (no full sun option)
-        sunlight == "Partial shade" ~ "PART SHADE",
-        # Plants that can do full sun OR partial shade
-        grepl("Full sun", sunlight, ignore.case = T) &
-          grepl("partial", sunlight, ignore.case = T) ~ "PART SUN",
-        # Everything else is full sun only
-        TRUE ~ "FULL SUN"
-      ),
-      levels = c("FULL SUN", "PART SUN", "PART SHADE")
+    sun_cat = case_when(
+      sunlight == "Partial shade" ~ "PART SHADE",
+      sunlight == "partial shade" ~ "PART SHADE",
+      sunlight == "Full sun/partial shade" ~ "PART SUN",
+      sunlight == "Full sun/partial shade/full shade" ~ "PART SUN",
+      sunlight == "full sun/partial shade/ full shade" ~ "PART SUN",
+      sunlight == "Full sun" ~ "FULL SUN",
+      TRUE ~ "FULL SUN"
+    ),
+    sun_cat = factor(sun_cat, levels = c("FULL SUN", "PART SUN", "PART SHADE")),
+
+    water_cat = case_when(
+      water == "Very High" ~ "Very High",
+      water == "very high" ~ "Very High",
+      water == "High" ~ "High",
+      water == "high" ~ "High",
+      water == "Medium" ~ "Medium",
+      water == "Low" ~ "Low",
+      water == "Very Low" ~ "Very Low",
+      water == "Very low" ~ "Very Low",
+      TRUE ~ "Medium"
+    ),
+    water_cat = factor(
+      water_cat,
+      levels = c("Very High", "High", "Medium", "Low", "Very Low")
+    ),
+
+    # Map water needs to radius (higher water = closer to pond/center)
+    water_radius = case_when(
+      water_cat == "Very High" ~ 1.0,
+      water_cat == "High" ~ 1.8,
+      water_cat == "Medium" ~ 2.8,
+      water_cat == "Low" ~ 3.6,
+      water_cat == "Very Low" ~ 4.3,
+      TRUE ~ 2.8
     )
-  )
+  ) |>
+  distinct(common_name, sun_cat, water_cat, water_radius)
 
 # Updated for 120° wedges (3 categories)
 wedge_stats <- clean_df %>%
   count(sun_cat) %>%
   mutate(
-    width = 120, # Changed from 90
-    start_deg = (as.integer(sun_cat) - 1) * 120, # Changed from 90
-    end_deg = start_deg + 120, # Changed from 90
+    width = 120,
+    start_deg = (as.integer(sun_cat) - 1) * 120,
+    end_deg = start_deg + 120,
     radius_max = scales::rescale(n, to = c(2, 4.5))
   )
 
@@ -95,13 +123,28 @@ plot_data <- clean_df %>%
   rowwise() %>%
   mutate(
     angle_final = runif(1, start_deg + 2, end_deg - 2),
-    radius_final = runif(1, 0.9, radius_max - 0.15)
-  )
+    # Map water_radius proportionally within each wedge's radius_max
+    # Water radius ranges from 1.0 to 4.3, map to 0.9 to radius_max
+    radius_final = scales::rescale(
+      water_radius,
+      to = c(0.9, radius_max - 0.15),
+      from = c(1.0, 4.3)
+    ) +
+      rnorm(1, 0, 0.08)
+  ) %>%
+  ungroup()
 
 labeled_plants <- plot_data %>%
-  group_by(sun_cat) %>%
-  slice_max(radius_final, n = 10) %>%
+  group_by(sun_cat, water_cat) %>%
+  slice_sample(n = 3) %>%
   ungroup()
+
+# Pond circle data
+pond_data <- data.frame(
+  angle = seq(0, 360, length.out = 200),
+  radius = 0.2
+)
+
 
 # Updated sun icons for 3 categories
 sun_icons <- data.frame(
@@ -109,12 +152,12 @@ sun_icons <- data.frame(
     c("FULL SUN", "PART SUN", "PART SHADE"),
     levels = c("FULL SUN", "PART SUN", "PART SHADE")
   ),
-  angle = c(60, 180, 300), # Center of each 120° wedge
+  angle = c(60, 180, 300),
   radius = c(2.5, 2.5, 2.5),
-  icon = c("Y", "P", "R") # Full sun, partial sun, shade
+  icon = c("Y", "P", "R")
 )
 
-grid_circles <- data.frame(radius = c(1.25, 2.08, 2.92, 5.5)) %>%
+grid_circles <- data.frame(radius = c(1.25, 2.08, 3, 4)) %>%
   rowwise() %>%
   reframe(
     radius = radius,
@@ -122,15 +165,23 @@ grid_circles <- data.frame(radius = c(1.25, 2.08, 2.92, 5.5)) %>%
   )
 
 # Updated grid spokes for 3 sections
-grid_spokes <- data.frame(angle = seq(0, 240, 120)) # 3 spokes at 120° intervals
+grid_spokes <- data.frame(angle = seq(0, 240, 120))
 
 center_star <- data.frame(
-  angle = rep(seq(0, 240, 120), each = 2), # Updated for 3 sections
-  radius = rep(c(0, 0.29), 3) # Changed from 8 to 3
+  angle = rep(seq(0, 240, 120), each = 2),
+  radius = rep(c(0, 0.45), 3)
 ) %>%
-  mutate(group = rep(1:3, each = 2)) # Changed from 8 to 3
+  mutate(group = rep(1:3, each = 2))
+
+
+water_arrow <- data.frame(
+  angle = 120, # Choose which spoke (60, 180, or 300)
+  y = seq(0.9, 4.5, length.out = 50)
+)
+
 
 ggplot() +
+  # Background ribbons
   geom_ribbon_pattern(
     data = bg_ribbons,
     aes(
@@ -146,22 +197,34 @@ ggplot() +
     pattern_spacing = 0.025,
     color = NA
   ) +
-  geom_text(
-    data = sun_icons,
-    aes(x = angle, y = radius + 2, label = icon),
-    family = "retrosun",
-    size = 40,
-    color = "#3D4A36",
-    alpha = 0.3,
+  # Pond - main circle
+  geom_polygon(
+    data = pond_data,
+    aes(x = angle, y = radius),
+    fill = "#6BA3C4",
+    alpha = 0.8,
+    color = "#4A7B94",
+    linewidth = 12.5
   ) +
+  # Sun icons
+  # geom_text(
+  #   data = sun_icons,
+  #   aes(x = angle, y = radius + 2, label = icon),
+  #   family = "retrosun",
+  #   size = 40,
+  #   color = "#3D4A36",
+  #   alpha = 0.3,
+  # ) +
+  # Outer border
   annotate(
     "path",
     x = seq(0, 360, length.out = 200),
     y = 5,
-    linewidth = 8,
-    color = "#5C7856",
-    alpha = 0.9
+    linewidth = 4,
+    color = "#263922ff",
+    alpha = 0.2
   ) +
+  # Grid circles
   geom_path(
     data = grid_circles,
     aes(x = angle, y = radius, group = radius),
@@ -170,13 +233,32 @@ ggplot() +
     linewidth = 0.4,
     linetype = "dotted"
   ) +
+  # Grid spokes
+  geom_segment(
+    data = data.frame(angle = 120),
+    aes(x = angle, xend = angle, y = 0.2, yend = 4.8),
+    arrow = arrow(length = unit(0.08, "inches"), type = "closed"),
+    color = "#4A7B94",
+    linewidth = 0.6,
+    alpha = 1
+  ) +
+  geom_textpath(
+    data = water_arrow,
+    aes(x = angle, y = y, label = "WATER REQUIREMENT"),
+    family = "spacemono",
+    size = 5,
+    color = "#2e4858ff",
+    fontface = "bold",
+    hjust = 0.5
+  ) +
   geom_segment(
     data = grid_spokes,
-    aes(x = angle, xend = angle, y = 0, yend = 5.5),
+    aes(x = angle, xend = angle, y = 0.7, yend = 4),
     color = "#3D4A36",
     alpha = 0.2,
     linewidth = 0.3
   ) +
+  # Center star
   geom_path(
     data = center_star,
     aes(x = angle, y = radius, group = group),
@@ -184,19 +266,20 @@ ggplot() +
     size = 0.5,
     lineend = "round"
   ) +
+  # Plant points
   geom_point(
     data = plot_data,
-    aes(x = angle_final, y = radius_final),
-    size = 1.8,
+    aes(x = angle_final, y = radius_final, color = water_cat),
+    size = 2.2,
     shape = 21,
     fill = "#2D5016",
-    color = "#E8DCC4",
-    stroke = 0.4
+    stroke = 0.6
   ) +
+  # Plant labels
   geom_text_repel(
     data = labeled_plants,
     aes(x = angle_final, y = radius_final, label = common_name),
-    size = 6.8,
+    size = 5.8,
     color = "#1A2E10",
     fontface = "bold",
     family = "spacemono",
@@ -210,9 +293,10 @@ ggplot() +
     bg.color = "#E8DCC4",
     bg.r = .15
   ) +
+  # Sunlight category labels
   geom_textpath(
     data = wedge_stats,
-    aes(x = (start_deg + end_deg) / 2, y = 5, label = sun_cat),
+    aes(x = (start_deg + end_deg) / 2, y = 5.5, label = sun_cat),
     fontface = "bold",
     size = 8,
     color = "#172915ff",
@@ -220,7 +304,7 @@ ggplot() +
     upright = TRUE,
     hjust = 0.5,
   ) +
-  # Updated color scale for 3 categories
+  # Color scales
   scale_fill_manual(
     values = c(
       "FULL SUN" = "#E8A848",
@@ -228,7 +312,15 @@ ggplot() +
       "PART SHADE" = "#8FAA7E"
     )
   ) +
-  # Updated pattern scale for 3 categories
+  scale_color_manual(
+    values = c(
+      "Very High" = "#1E5A8E",
+      "High" = "#4A7B94",
+      "Medium" = "#E8DCC4",
+      "Low" = "#C8B89F",
+      "Very Low" = "#A89A7E"
+    )
+  ) +
   scale_pattern_manual(
     values = c(
       "FULL SUN" = "none",
@@ -237,10 +329,15 @@ ggplot() +
     )
   ) +
   coord_polar(clip = "off") +
-  scale_y_continuous(limits = c(0, 5), expand = c(0, 0)) +
+  scale_y_continuous(
+    limits = c(0, 4),
+    expand = c(0, 0),
+    oob = scales::oob_keep
+  ) +
   scale_x_continuous(limits = c(0, 360), expand = c(0, 0)) +
   labs(
-    title = "Sunlight Requirements for Edible Plants"
+    title = str_wrap("Sunlight & Water Requirements for Edible Plants", 30),
+    caption = "Source: The Edible Plant Database | Visualization: @aman.bh"
   ) +
   theme_void() +
   theme(
@@ -249,7 +346,30 @@ ggplot() +
       color = "#3D4A36",
       size = 4
     ),
-    plot.margin = margin(0, 0, 0, 0),
+    plot.title = element_text(
+      family = "atkinson",
+      size = 38,
+      face = "bold",
+      color = "#1A2E10",
+      hjust = 0.5,
+      lineheight = 0.5,
+      margin = margin(-20, 0, 30, 0)
+    ),
+    plot.subtitle = element_text(
+      family = "spacemono",
+      size = 16,
+      color = "#3D4A36",
+      hjust = 0.5,
+      margin = margin(0, 0, 20, 0)
+    ),
+    plot.caption = element_text(
+      family = "spacemono",
+      size = 14,
+      color = "#3D4A36",
+      hjust = 0.5,
+      margin = margin(40, 0, -50, 0)
+    ),
+    plot.margin = margin(50, 50, 80, 50),
     legend.position = "none"
   )
 ```
