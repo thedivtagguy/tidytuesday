@@ -1,0 +1,256 @@
+---
+title: "TidyTuesday 2026 Week 05"
+format:
+  html:
+    theme: cosmo
+    code-fold: false
+    toc: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(tidytuesdayR)
+library(camcorder)
+library(here)
+library(showtext)
+library(clipr)
+library(geomtextpath)
+library(ggpattern)
+library(geomtextpath)
+library(ggrepel)
+
+setwd(here::here("2026/week-05-jan-2026-edible-plants"))
+font_add(
+  "retrosun",
+  regular = "/Users/amnbh/Library/Fonts/RetroSun.otf",
+  bold = "/Users/amnbh/Library/Fonts/RetroSun.otf"
+)
+font_add_google("Righteous", "righteous")
+font_add_google("Space Mono", "spacemono")
+font_add_google("Libre Franklin", "franklin")
+showtext_auto()
+
+gg_record(
+  dir = here("output"),
+  device = "png",
+  width = 18,
+  height = 18,
+  units = "in",
+  dpi = 300
+)
+
+tuesdata <- tt_load(2026, week = 05)
+df <- tuesdata$edible_plants |>
+  select(common_name, water, sunlight, nutrients)
+```
+
+```{r}
+#| fig-width: 20
+#| fig-height: 20
+
+# CORRECTED CATEGORIZATION - Only 3 categories
+clean_df <- df %>%
+  mutate(
+    sun_cat = factor(
+      case_when(
+        # Plants that ONLY need partial shade (no full sun option)
+        sunlight == "Partial shade" ~ "PART SHADE",
+        # Plants that can do full sun OR partial shade
+        grepl("Full sun", sunlight, ignore.case = T) &
+          grepl("partial", sunlight, ignore.case = T) ~ "PART SUN",
+        # Everything else is full sun only
+        TRUE ~ "FULL SUN"
+      ),
+      levels = c("FULL SUN", "PART SUN", "PART SHADE")
+    )
+  )
+
+# Updated for 120° wedges (3 categories)
+wedge_stats <- clean_df %>%
+  count(sun_cat) %>%
+  mutate(
+    width = 120, # Changed from 90
+    start_deg = (as.integer(sun_cat) - 1) * 120, # Changed from 90
+    end_deg = start_deg + 120, # Changed from 90
+    radius_max = scales::rescale(n, to = c(2, 4.5))
+  )
+
+bg_ribbons <- wedge_stats %>%
+  rowwise() %>%
+  reframe(
+    sun_cat = sun_cat,
+    angle = seq(start_deg, end_deg, length.out = 100),
+    radius_max = radius_max,
+    wavy_radius = radius_max + sin(angle * 0.15) * 0.25 + rnorm(100, 0, 0.04)
+  )
+
+set.seed(123)
+plot_data <- clean_df %>%
+  left_join(wedge_stats, by = "sun_cat") %>%
+  rowwise() %>%
+  mutate(
+    angle_final = runif(1, start_deg + 2, end_deg - 2),
+    radius_final = runif(1, 0.9, radius_max - 0.15)
+  )
+
+labeled_plants <- plot_data %>%
+  group_by(sun_cat) %>%
+  slice_max(radius_final, n = 10) %>%
+  ungroup()
+
+# Updated sun icons for 3 categories
+sun_icons <- data.frame(
+  sun_cat = factor(
+    c("FULL SUN", "PART SUN", "PART SHADE"),
+    levels = c("FULL SUN", "PART SUN", "PART SHADE")
+  ),
+  angle = c(60, 180, 300), # Center of each 120° wedge
+  radius = c(2.5, 2.5, 2.5),
+  icon = c("Y", "P", "R") # Full sun, partial sun, shade
+)
+
+grid_circles <- data.frame(radius = c(1.25, 2.08, 2.92, 5.5)) %>%
+  rowwise() %>%
+  reframe(
+    radius = radius,
+    angle = seq(0, 360, length.out = 100)
+  )
+
+# Updated grid spokes for 3 sections
+grid_spokes <- data.frame(angle = seq(0, 240, 120)) # 3 spokes at 120° intervals
+
+center_star <- data.frame(
+  angle = rep(seq(0, 240, 120), each = 2), # Updated for 3 sections
+  radius = rep(c(0, 0.29), 3) # Changed from 8 to 3
+) %>%
+  mutate(group = rep(1:3, each = 2)) # Changed from 8 to 3
+
+ggplot() +
+  geom_ribbon_pattern(
+    data = bg_ribbons,
+    aes(
+      x = angle,
+      ymin = 0,
+      ymax = wavy_radius,
+      fill = sun_cat,
+      pattern = sun_cat
+    ),
+    alpha = 0.85,
+    pattern_alpha = 0.08,
+    pattern_density = 0.08,
+    pattern_spacing = 0.025,
+    color = NA
+  ) +
+  geom_text(
+    data = sun_icons,
+    aes(x = angle, y = radius + 2, label = icon),
+    family = "retrosun",
+    size = 40,
+    color = "#3D4A36",
+    alpha = 0.3,
+  ) +
+  annotate(
+    "path",
+    x = seq(0, 360, length.out = 200),
+    y = 5,
+    linewidth = 8,
+    color = "#5C7856",
+    alpha = 0.9
+  ) +
+  geom_path(
+    data = grid_circles,
+    aes(x = angle, y = radius, group = radius),
+    color = "#3D4A36",
+    alpha = 0.5,
+    linewidth = 0.4,
+    linetype = "dotted"
+  ) +
+  geom_segment(
+    data = grid_spokes,
+    aes(x = angle, xend = angle, y = 0, yend = 5.5),
+    color = "#3D4A36",
+    alpha = 0.2,
+    linewidth = 0.3
+  ) +
+  geom_path(
+    data = center_star,
+    aes(x = angle, y = radius, group = group),
+    color = "#473827ff",
+    size = 0.5,
+    lineend = "round"
+  ) +
+  geom_point(
+    data = plot_data,
+    aes(x = angle_final, y = radius_final),
+    size = 1.8,
+    shape = 21,
+    fill = "#2D5016",
+    color = "#E8DCC4",
+    stroke = 0.4
+  ) +
+  geom_text_repel(
+    data = labeled_plants,
+    aes(x = angle_final, y = radius_final, label = common_name),
+    size = 6.8,
+    color = "#1A2E10",
+    fontface = "bold",
+    family = "spacemono",
+    max.overlaps = 20,
+    min.segment.length = 0.1,
+    segment.color = "#3D4A36",
+    segment.size = 0.5,
+    box.padding = 0.5,
+    point.padding = 0.3,
+    force = 2,
+    bg.color = "#E8DCC4",
+    bg.r = .15
+  ) +
+  geom_textpath(
+    data = wedge_stats,
+    aes(x = (start_deg + end_deg) / 2, y = 5, label = sun_cat),
+    fontface = "bold",
+    size = 8,
+    color = "#172915ff",
+    family = "franklin",
+    upright = TRUE,
+    hjust = 0.5,
+  ) +
+  # Updated color scale for 3 categories
+  scale_fill_manual(
+    values = c(
+      "FULL SUN" = "#E8A848",
+      "PART SUN" = "#D49B5C",
+      "PART SHADE" = "#8FAA7E"
+    )
+  ) +
+  # Updated pattern scale for 3 categories
+  scale_pattern_manual(
+    values = c(
+      "FULL SUN" = "none",
+      "PART SUN" = "stripe",
+      "PART SHADE" = "circle"
+    )
+  ) +
+  coord_polar(clip = "off") +
+  scale_y_continuous(limits = c(0, 5), expand = c(0, 0)) +
+  scale_x_continuous(limits = c(0, 360), expand = c(0, 0)) +
+  labs(
+    title = "Sunlight Requirements for Edible Plants"
+  ) +
+  theme_void() +
+  theme(
+    plot.background = element_rect(
+      fill = "#E8DCC4",
+      color = "#3D4A36",
+      size = 4
+    ),
+    plot.margin = margin(0, 0, 0, 0),
+    legend.position = "none"
+  )
+```
+
