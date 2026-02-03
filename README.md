@@ -2,6 +2,7 @@
 
 | Year | Week | Month | Title | Link |
 | ---- | ---- | ----- | ----- | ---- |
+| 2023 | 03 | jan | art history | [week-03-jan-2023-art-history](./2023/week-03-jan-2023-art-history) |
 | 2023 | 35 | aug | fair use | [week-35-aug-2023-fair-use](./2023/week-35-aug-2023-fair-use) |
 | 2023 | 37 | sept | human day | [week-37-sept-2023-human-day](./2023/week-37-sept-2023-human-day) |
 | 2023 | 38 | sept | cran collaus | [week-38-sept-2023-cran-collabs](./2023/week-38-sept-2023-cran-collabs) |
@@ -12,10 +13,16 @@
 | 2023 | 46 | nov | diwali sales | [week-46-nov-2023-diwali-sales](./2023/week-46-nov-2023-diwali-sales) |
 | 2023 | 47 | nov | r ladies | [week-47-nov-2023-r-ladies](./2023/week-47-nov-2023-r-ladies) |
 | 2023 | 48 | nov | doctor who | [week-48-nov-2023-doctor-who](./2023/week-48-nov-2023-doctor-who) |
-| 2023 | 50 | dec | holiday movies | [week-50-holiday-movies](./2023/week-50-holiday-movies) |
-| 2024 | 01 | jan | canadian nfl players | [week-01-canadian-nfl-players](./2024/week-01-canadian-nfl-players) |
-| 2024 | 03 | jan | polling places | [week-03-polling-places](./2024/week-03-polling-places) |
+| 2023 | 49 | dec | life expectancy | [week-49-dec-2023-life-expectancy](./2023/week-49-dec-2023-life-expectancy) |
+| 2023 | 50 | dec | holiday movies | [week-50-dec-2023-holiday-movies](./2023/week-50-dec-2023-holiday-movies) |
+| 2023 | 50 | holiday | week 50 holiday movies | [week-50-holiday-movies](./2023/week-50-holiday-movies) |
+| 2024 | 01 | canadian | week 01 canadian nfl players | [week-01-canadian-nfl-players](./2024/week-01-canadian-nfl-players) |
+| 2024 | 01 | jan | canadian nfl players | [week-01-jan-2024-canadian-nfl-players](./2024/week-01-jan-2024-canadian-nfl-players) |
+| 2024 | 03 | jan | polling places | [week-03-jan-2024-polling-places](./2024/week-03-jan-2024-polling-places) |
+| 2024 | 03 | polling | week 03 polling places | [week-03-polling-places](./2024/week-03-polling-places) |
+| 2024 | 38 | sept | shakespeare | [week-38-sept-2024-shakespeare](./2024/week-38-sept-2024-shakespeare) |
 | 2024 | 39 | sept | imo | [week-39-sept-2024-imo](./2024/week-39-sept-2024-imo) |
 | 2026 | 02 | jan | african languages | [week-02-jan-2026-african-languages](./2026/week-02-jan-2026-african-languages) |
 | 2026 | 03 | jan | apod images | [week-03-jan-2026-apod-images](./2026/week-03-jan-2026-apod-images) |
 | 2026 | 04 | jan | brazil companies | [week-04-jan-2026-brazil-companies](./2026/week-04-jan-2026-brazil-companies) |
+| 2026 | 05 | jan | edible plants | [week-05-jan-2026-edible-plants](./2026/week-05-jan-2026-edible-plants) |
