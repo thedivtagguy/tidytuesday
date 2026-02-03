@@ -1,5 +1,5 @@
 ---
-title: "TidyTuesday 2026 Week 05 - Water & Sunlight"
+title: "TidyTuesday 2026 Week 05"
 format:
   html:
     theme: cosmo
@@ -21,10 +21,10 @@ library(showtext)
 library(clipr)
 library(geomtextpath)
 library(ggpattern)
-library(geomtextpath)
 library(ggrepel)
 
 setwd(here::here("2026/week-05-jan-2026-edible-plants"))
+
 font_add(
   "retrosun",
   regular = "/Users/amnbh/Library/Fonts/RetroSun.otf",
@@ -60,33 +60,28 @@ df <- tuesdata$edible_plants |>
 clean_df <- df %>%
   mutate(
     sun_cat = case_when(
-      sunlight == "Partial shade" ~ "PART SHADE",
-      sunlight == "partial shade" ~ "PART SHADE",
-      sunlight == "Full sun/partial shade" ~ "PART SUN",
-      sunlight == "Full sun/partial shade/full shade" ~ "PART SUN",
-      sunlight == "full sun/partial shade/ full shade" ~ "PART SUN",
-      sunlight == "Full sun" ~ "FULL SUN",
+      sunlight %in% c("Partial shade", "partial shade") ~ "PART SHADE",
+      sunlight %in%
+        c(
+          "Full sun/partial shade",
+          "Full sun/partial shade/full shade",
+          "full sun/partial shade/ full shade"
+        ) ~ "PART SUN",
       TRUE ~ "FULL SUN"
     ),
     sun_cat = factor(sun_cat, levels = c("FULL SUN", "PART SUN", "PART SHADE")),
-
     water_cat = case_when(
-      water == "Very High" ~ "Very High",
-      water == "very high" ~ "Very High",
-      water == "High" ~ "High",
-      water == "high" ~ "High",
+      water %in% c("Very High", "very high") ~ "Very High",
+      water %in% c("High", "high") ~ "High",
       water == "Medium" ~ "Medium",
       water == "Low" ~ "Low",
-      water == "Very Low" ~ "Very Low",
-      water == "Very low" ~ "Very Low",
+      water %in% c("Very Low", "Very low") ~ "Very Low",
       TRUE ~ "Medium"
     ),
     water_cat = factor(
       water_cat,
       levels = c("Very High", "High", "Medium", "Low", "Very Low")
     ),
-
-    # Map water needs to radius (higher water = closer to pond/center)
     water_radius = case_when(
       water_cat == "Very High" ~ 1.0,
       water_cat == "High" ~ 1.8,
@@ -98,7 +93,6 @@ clean_df <- df %>%
   ) |>
   distinct(common_name, sun_cat, water_cat, water_radius)
 
-# Updated for 120° wedges (3 categories)
 wedge_stats <- clean_df %>%
   count(sun_cat) %>%
   mutate(
@@ -117,14 +111,12 @@ bg_ribbons <- wedge_stats %>%
     wavy_radius = radius_max + sin(angle * 0.15) * 0.25 + rnorm(100, 0, 0.04)
   )
 
-set.seed(123)
+set.seed(453)
 plot_data <- clean_df %>%
   left_join(wedge_stats, by = "sun_cat") %>%
   rowwise() %>%
   mutate(
     angle_final = runif(1, start_deg + 2, end_deg - 2),
-    # Map water_radius proportionally within each wedge's radius_max
-    # Water radius ranges from 1.0 to 4.3, map to 0.9 to radius_max
     radius_final = scales::rescale(
       water_radius,
       to = c(0.9, radius_max - 0.15),
@@ -139,22 +131,9 @@ labeled_plants <- plot_data %>%
   slice_sample(n = 3) %>%
   ungroup()
 
-# Pond circle data
 pond_data <- data.frame(
   angle = seq(0, 360, length.out = 200),
   radius = 0.2
-)
-
-
-# Updated sun icons for 3 categories
-sun_icons <- data.frame(
-  sun_cat = factor(
-    c("FULL SUN", "PART SUN", "PART SHADE"),
-    levels = c("FULL SUN", "PART SUN", "PART SHADE")
-  ),
-  angle = c(60, 180, 300),
-  radius = c(2.5, 2.5, 2.5),
-  icon = c("Y", "P", "R")
 )
 
 grid_circles <- data.frame(radius = c(1.25, 2.08, 3, 4)) %>%
@@ -164,7 +143,6 @@ grid_circles <- data.frame(radius = c(1.25, 2.08, 3, 4)) %>%
     angle = seq(0, 360, length.out = 100)
   )
 
-# Updated grid spokes for 3 sections
 grid_spokes <- data.frame(angle = seq(0, 240, 120))
 
 center_star <- data.frame(
@@ -173,15 +151,13 @@ center_star <- data.frame(
 ) %>%
   mutate(group = rep(1:3, each = 2))
 
-
 water_arrow <- data.frame(
-  angle = 120, # Choose which spoke (60, 180, or 300)
+  angle = 240,
   y = seq(0.9, 4.5, length.out = 50)
 )
 
 
-ggplot() +
-  # Background ribbons
+p <- ggplot() +
   geom_ribbon_pattern(
     data = bg_ribbons,
     aes(
@@ -197,7 +173,6 @@ ggplot() +
     pattern_spacing = 0.025,
     color = NA
   ) +
-  # Pond - main circle
   geom_polygon(
     data = pond_data,
     aes(x = angle, y = radius),
@@ -206,16 +181,6 @@ ggplot() +
     color = "#4A7B94",
     linewidth = 12.5
   ) +
-  # Sun icons
-  # geom_text(
-  #   data = sun_icons,
-  #   aes(x = angle, y = radius + 2, label = icon),
-  #   family = "retrosun",
-  #   size = 40,
-  #   color = "#3D4A36",
-  #   alpha = 0.3,
-  # ) +
-  # Outer border
   annotate(
     "path",
     x = seq(0, 360, length.out = 200),
@@ -224,7 +189,6 @@ ggplot() +
     color = "#263922ff",
     alpha = 0.2
   ) +
-  # Grid circles
   geom_path(
     data = grid_circles,
     aes(x = angle, y = radius, group = radius),
@@ -233,24 +197,6 @@ ggplot() +
     linewidth = 0.4,
     linetype = "dotted"
   ) +
-  # Grid spokes
-  geom_segment(
-    data = data.frame(angle = 120),
-    aes(x = angle, xend = angle, y = 0.2, yend = 4.8),
-    arrow = arrow(length = unit(0.08, "inches"), type = "closed"),
-    color = "#4A7B94",
-    linewidth = 0.6,
-    alpha = 1
-  ) +
-  geom_textpath(
-    data = water_arrow,
-    aes(x = angle, y = y, label = "WATER REQUIREMENT"),
-    family = "spacemono",
-    size = 5,
-    color = "#2e4858ff",
-    fontface = "bold",
-    hjust = 0.5
-  ) +
   geom_segment(
     data = grid_spokes,
     aes(x = angle, xend = angle, y = 0.7, yend = 4),
@@ -258,7 +204,6 @@ ggplot() +
     alpha = 0.2,
     linewidth = 0.3
   ) +
-  # Center star
   geom_path(
     data = center_star,
     aes(x = angle, y = radius, group = group),
@@ -266,7 +211,6 @@ ggplot() +
     size = 0.5,
     lineend = "round"
   ) +
-  # Plant points
   geom_point(
     data = plot_data,
     aes(x = angle_final, y = radius_final, color = water_cat),
@@ -275,7 +219,24 @@ ggplot() +
     fill = "#2D5016",
     stroke = 0.6
   ) +
-  # Plant labels
+  geom_segment(
+    data = data.frame(angle = 240),
+    aes(x = angle, xend = angle, y = 0.2, yend = 4.8),
+    arrow = arrow(length = unit(0.08, "inches"), type = "closed"),
+    color = "#2e4858ff",
+    linewidth = 0.6,
+    alpha = 1
+  ) +
+  geom_textpath(
+    data = water_arrow,
+    aes(x = angle, y = y, label = "LOWER WATER NEEDS"),
+    family = "spacemono",
+    size = 5,
+    color = "#2e4858ff",
+    fontface = "bold",
+    hjust = 0.65,
+    vjust = 1
+  ) +
   geom_text_repel(
     data = labeled_plants,
     aes(x = angle_final, y = radius_final, label = common_name),
@@ -293,7 +254,6 @@ ggplot() +
     bg.color = "#E8DCC4",
     bg.r = .15
   ) +
-  # Sunlight category labels
   geom_textpath(
     data = wedge_stats,
     aes(x = (start_deg + end_deg) / 2, y = 5.5, label = sun_cat),
@@ -302,9 +262,8 @@ ggplot() +
     color = "#172915ff",
     family = "franklin",
     upright = TRUE,
-    hjust = 0.5,
+    hjust = 0.5
   ) +
-  # Color scales
   scale_fill_manual(
     values = c(
       "FULL SUN" = "#E8A848",
@@ -337,6 +296,7 @@ ggplot() +
   scale_x_continuous(limits = c(0, 360), expand = c(0, 0)) +
   labs(
     title = str_wrap("Sunlight & Water Requirements for Edible Plants", 30),
+    subtitle = "Plants grouped by sunlight needs. \nLarger distance from center indicates lower water requirements.",
     caption = "Source: The Edible Plant Database | Visualization: @aman.bh"
   ) +
   theme_void() +
@@ -348,29 +308,30 @@ ggplot() +
     ),
     plot.title = element_text(
       family = "atkinson",
-      size = 38,
+      size = 40,
       face = "bold",
       color = "#1A2E10",
-      hjust = 0.5,
       lineheight = 0.5,
-      margin = margin(-20, 0, 30, 0)
+      margin = margin(-10, 0, 20, 0)
     ),
     plot.subtitle = element_text(
       family = "spacemono",
-      size = 16,
+      size = 20,
       color = "#3D4A36",
-      hjust = 0.5,
-      margin = margin(0, 0, 20, 0)
+      face = "bold",
+      lineheight = 0.8,
+      margin = margin(0, 0, 30, 0)
     ),
     plot.caption = element_text(
       family = "spacemono",
       size = 14,
       color = "#3D4A36",
-      hjust = 0.5,
-      margin = margin(40, 0, -50, 0)
+      margin = margin(45, 0, -50, 0)
     ),
     plot.margin = margin(50, 50, 80, 50),
     legend.position = "none"
   )
+
+p
 ```
 
